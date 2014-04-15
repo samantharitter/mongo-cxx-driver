@@ -1,16 +1,22 @@
+## BSON
+
+#### Working with BSON
+
+## Using the driver
+
 ```cpp
 #include "mongo/bson/bson.h"
 #include "mongo/client/dbclient.h"
 ```
 
-### Making a Connection
+#### Making a Connection
 ```cpp
 using namespace mongo;
 DBClientConnection conn;
 conn.connect("localhost");
 ```
 
-### Inserting a Document
+#### Inserting a Document
 ```cpp
 conn.insert(
     "test.test",
@@ -22,6 +28,6 @@ conn.insert(
 );
 ```
 
-### Querying for a document
-### Updating a document
-### Removing a document
+#### Querying for a document
+#### Updating a document
+#### Removing a document

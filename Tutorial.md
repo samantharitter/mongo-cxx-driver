@@ -16,6 +16,17 @@ DBClientConnection conn;
 conn.connect("localhost");
 ```
 
+#### Using the Connection Pool
+```cpp
+ScopedDbConnection conn("localhost");
+
+// The scoped connection can be used like a pointer to a connection
+conn->query();
+// etc
+
+// When finished with the connection you must call done
+conn.done();
+
 #### Inserting a Document
 ```cpp
 conn.insert(

@@ -26,6 +26,7 @@ conn->query();
 
 // When finished with the connection you must call done
 conn.done();
+```
 
 #### Inserting a Document
 ```cpp

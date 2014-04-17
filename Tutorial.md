@@ -2,6 +2,17 @@
 
 #### Working with BSON
 
+##### BSON Macros
+BSON()
+BSONArray()
+
+##### BSON Builders
+BSONObjBuilder
+BSONArrayBuilder
+
+##### BSON Element
+
+
 ## Using the driver
 
 ```cpp

@@ -59,28 +59,28 @@ Include the WinSock library in your application: Linker ‣ Input ‣ Additional
 
 The following are examples of building the C++ driver.
 
-The following example installs the driver to $HOME/mongo-client-install:
+The following example installs the driver to `$HOME/mongo-client-install`:
 
 ```sh
 scons --prefix=$HOME/mongo-client-install install-mongoclient
 ```
 
-To enable SSL, add the --ssl option:
+To enable SSL, add the `--ssl` option:
 ```sh
 scons --prefix=$HOME/mongo-client-install --ssl install-mongoclient
 ```
 
-To enable SASL support for use with Kerberos authentication on MongoDB Enterprise, add the --use-sasl-client option:
+To enable SASL support for use with Kerberos authentication on MongoDB Enterprise, add the `--use-sasl-client` option:
 ```sh
 scons --prefix=$HOME/mongo-client-install --use-sasl-client install-mongoclient
 ```
 
-To build a shared library version of the driver, along with the normal static library, use the --sharedclient option:
+To build a shared library version of the driver, along with the normal static library, use the `--sharedclient` option:
 ```sh
 scons --prefix=$HOME/mongo-client-install --sharedclient install-mongoclient
 ```
 
-To use a custom version of boost installed to /dev/boost, use the --extrapath=<path-to-boost> option:
+To use a custom version of boost installed to /dev/boost, use the `--extrapath=<path-to-boost>` option:
 ```sh
 scons --prefix=$HOME/mongo-client-install --extrapath=/dev/boost install-mongoclient
 ```
@@ -92,7 +92,7 @@ To build a version of the library with debugging enabled, use `--dbg=on`. This t
 scons --prefix=$HOME/mongo-client-install --dbg=on --opt=on install-mongoclient
 ```
 
-To override the default compiler to a newer GCC installed in /opt/local/gcc-4.8, use the --cc and --cxx options:
+To override the default compiler to a newer GCC installed in /opt/local/gcc-4.8, use the `--cc` and `--cxx` options:
 ```sh
 scons --prefix=$HOME/mongo-client-install --cc=<path-to-gcc> --cxx=<path-to-g++> install-mongoclient
 ```

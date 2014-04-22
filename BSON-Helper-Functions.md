@@ -1,7 +1,7 @@
 ###  BSON Helper Functions
 
 This is a non-exhaustive list of helper functions for use in the C++
-stream syntax. An exhaustive list is here: [bsonmisc.h](https://github.com/mongodb/mongo-cxx-driver/blob/master/src/mongo/bson/bsonmisc.h)
+stream syntax. An exhaustive list is here: [bsonmisc.h](https://github.com/mongodb/mongo-cxx-driver/blob/legacy/src/mongo/bson/bsonmisc.h)
 
 Typical example of stream syntax:
 

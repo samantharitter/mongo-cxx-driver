@@ -1,7 +1,7 @@
 ### Prerequisites for compiling the driver
  - [Boost](http://www.boost.org/) (>= 1.49)
  - [Python](https://www.python.org/) (2.x)
- - [Scons](http://www.scons.org/)
+ - [SCons](http://www.scons.org/)
 
 ### Getting the Source Code
 ```sh

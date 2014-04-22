@@ -1,17 +1,15 @@
-### Prerequisites
+### Prerequisites for compiling the driver
  - [Boost](http://www.boost.org/) (>= 1.49)
  - [Python](https://www.python.org/) (2.x)
  - [Scons](http://www.scons.org/)
 
 ### Getting the Source Code
-
 ```sh
 git clone git@github.com:mongodb/mongo-cxx-driver.git
 git checkout legacy # if you want the legacy driver
 ```
 
 ### Compile the Driver
-
 From the directory where you cloned the code, compile the C++ driver by running the scons command. Use the scons options described in this section.
 
 To see the list of all SCons options, run: `scons --help`

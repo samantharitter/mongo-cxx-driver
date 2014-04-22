@@ -7,7 +7,7 @@ The current C++ driver is still compatible with earlier versions of MongoDB. For
  - [Python](https://www.python.org/)
  - [Scons](http://www.scons.org/)
 
-**IMPORTANT**
+**Important**
 The C++ driver requires Boost version 1.49 or greater. Earlier versions of Boost may work, but the behavior of the driver with those versions is untested.
 
 ### Clone the Driver Source Code
@@ -24,18 +24,20 @@ To see the list of all SCons options, run:
 
 `scons --help`
 
-**NOTE**
 #### SCons Options when Compiling the C++ Driver
 Select options as appropriate for your environment.
 
-```sh
---prefix=<path> The directory prefix for the installation directory. Set <path> to the directory where you want the build artifacts (headers and library files) installed. For example, you might set <path> to /opt/local, /usr/local, or $HOME/mongo-client-install.
---full Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory.
---ssl Enables SSL support. You will need a compatible version of the SSL libraries available.
---use-sasl-client Enables SASL, which MongoDB uses for the Kerberos authentication available on MongoDB Enterprise. You will need a compatible version of the SASL implementation libraries available.
---sharedclient Builds a shared library version of the client driver alongside the static library. If applicable for your application, prefer using the shared client.
---use-system-boost This is strongly recommended. This builds against the system version of Boost rather than the MongoDB vendor copy. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next.
-```
+`--prefix=<path>` The directory prefix for the installation directory. Set <path> to the directory where you want the build artifacts (headers and library files) installed. For example, you might set <path> to /opt/local, /usr/local, or $HOME/mongo-client-install.
+
+`--full` Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory.
+
+`--ssl` Enables SSL support. You will need a compatible version of the SSL libraries available.
+
+`--use-sasl-client` Enables SASL, which MongoDB uses for the Kerberos authentication available on MongoDB Enterprise. You will need a compatible version of the SASL implementation libraries available.
+
+`--sharedclient` Builds a shared library version of the client driver alongside the static library. If applicable for your application, prefer using the shared client.
+
+`--use-system-boost` This is strongly recommended. This builds against the system version of Boost rather than the MongoDB vendor copy. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next.
 
 **NOTE**
 While the C++ driver should in general be built against the system version of Boost, if you are building the MongoDB servers and tools from source, it is strongly recommended that you use the embedded version of Boost. This means that your build line for the driver and server will differ with respect to the --use-system-boost flag.

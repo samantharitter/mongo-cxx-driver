@@ -2,12 +2,29 @@
  - [Boost](http://www.boost.org/) (>= 1.49)
  - [Python](https://www.python.org/) (2.x)
  - [SCons](http://www.scons.org/)
+ - [Git](
 
 ### Getting the Source Code
+
 ```sh
 git clone git@github.com:mongodb/mongo-cxx-driver.git
-git checkout legacy # if you want the legacy driver
 ```
+
+### Choosing the right Driver
+
+#### Legacy Branch:
+
+You are using MongoDB's C++ driver for the first time and do not mind the driver being actively worked on.
+You had been using 26compat (or the driver inside of the server source) and want to benefit from incremental improvements while having the same overall API.
+
+`git checkout legacy`
+
+#### 26compat Branch:
+
+You need a production ready release of the C++ driver that is not under active development.
+You have existing code that used the driver from the server source and want it to continue working without modification.
+
+`git checkout 26compat`
 
 ### Compile the Driver
 From the directory where you cloned the code, compile the C++ driver by running the scons command. Use the scons options described in this section.

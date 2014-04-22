@@ -2,19 +2,23 @@
 
 > New in version 2.5.3: The procedure for compiling the C++ driver has changed, beginning with version 2.5.3.
 
-The code for the C++ driver is part of the MongoDB source code. Compiling the driver involves cloning the MongoDB source code and then compiling the C++ driver.
-
 The current C++ driver is still compatible with earlier versions of MongoDB. For example, if you run MongoDB 2.4, you can use the C++ driver compiled from MongoDB 2.5.3+. If, however, you need instructions for compiling the driver from the pre-2.5.3 code, see Download and Compile C++ Driver Before Version 2.5.3.
+
+#### Prerequisites
+ - [Boost](http://www.boost.org/) >= 1.49
+ - [Python](https://www.python.org/)
+ - [Scons](http://www.scons.org/)
 
 **IMPORTANT**
 The C++ driver requires Boost version 1.49 or greater. Earlier versions of Boost may work, but the behavior of the driver with those versions is untested.
-Clone the MongoDB Source Code
 
-Clone the full MongoDB source code at https://github.com/mongodb/mongo.git. The code for the C++ driver is part of the MongoDB source code.
+#### Clone the Driver Source Code
 
-**NOTE**
-You may also clone the driver sources from the new independent client driver repository at https://github.com/mongodb/mongo-cxx-driver/tree/legacy. For additional details, please see the blog post describing the reasons for migrating to this new repository: http://blog.mongodb.org/post/78478565493/upcoming-changes-to-the-mongodb-cpp-driver. The build instructions listed below should work without modifcation for the sources in the new repository.
-Building the Driver
+```sh
+git clone git@github.com:mongodb/mongo-cxx-driver.git
+```
+
+#### Compile the Driver
 
 From the directory where you cloned the code, compile the C++ driver by running the scons command. Use the scons options described in this section.
 
@@ -23,17 +27,16 @@ To see the list of all SCons options, run:
 `scons --help`
 
 **NOTE**
-Many of the options listed when you run scons --help are relevant only to building the server and tools, and can be ignored.
-SCons Options when Compiling the C++ Driver
+##### SCons Options when Compiling the C++ Driver
 Select options as appropriate for your environment.
 
 ```sh
---prefix=<path>. The directory prefix for the installation directory. Set <path> to the directory where you want the build artifacts (headers and library files) installed. For example, you might set <path> to /opt/local, /usr/local, or $HOME/mongo-client-install.
---full. Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory.
---ssl. Enables SSL support. You will need a compatible version of the SSL libraries available.
---use-sasl-client. Enables SASL, which MongoDB uses for the Kerberos authentication available on MongoDB Enterprise. You will need a compatible version of the SASL implementation libraries available.
---sharedclient. Builds a shared library version of the client driver alongside the static library. If applicable for your application, prefer using the shared client.
---use-system-boost. This is strongly recommended. This builds against the system version of Boost rather than the MongoDB vendor copy. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next.
+--prefix=<path> The directory prefix for the installation directory. Set <path> to the directory where you want the build artifacts (headers and library files) installed. For example, you might set <path> to /opt/local, /usr/local, or $HOME/mongo-client-install.
+--full Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory.
+--ssl Enables SSL support. You will need a compatible version of the SSL libraries available.
+--use-sasl-client Enables SASL, which MongoDB uses for the Kerberos authentication available on MongoDB Enterprise. You will need a compatible version of the SASL implementation libraries available.
+--sharedclient Builds a shared library version of the client driver alongside the static library. If applicable for your application, prefer using the shared client.
+--use-system-boost This is strongly recommended. This builds against the system version of Boost rather than the MongoDB vendor copy. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next.
 ```
 
 **NOTE**

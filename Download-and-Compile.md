@@ -64,37 +64,37 @@ The following are examples of building the C++ driver.
 The following example installs the new driver to $HOME/mongo-client-install, enables the “full” installation, and builds against the system version of Boost:
 
 ```sh
-scons --prefix=$HOME/mongo-client-install --full --use-system-boost install-mongoclient
+scons --prefix=$HOME/mongo-client-install install-mongoclient
 ```
 
 To enable SSL, add the --ssl option:
 ```sh
-scons --prefix=$HOME/mongo-client-install --full --use-system-boost --ssl install-mongoclient
+scons --prefix=$HOME/mongo-client-install --ssl install-mongoclient
 ```
 
 To enable SASL support for use with Kerberos authentication on MongoDB Enterprise, add the --use-sasl-client option:
 ```sh
-scons --prefix=$HOME/mongo-client-install --full --use-system-boost --use-sasl-client install-mongoclient
+scons --prefix=$HOME/mongo-client-install --use-sasl-client install-mongoclient
 ```
 
 To build a shared library version of the driver, along with the normal static library, use the --sharedclient option:
 ```sh
-scons --prefix=$HOME/mongo-client-install --full --use-system-boost --sharedclient install-mongoclient
+scons --prefix=$HOME/mongo-client-install --sharedclient install-mongoclient
 ```
 
 To use a custom version of boost installed to /dev/boost, use the --extrapath=<path-to-boost> option:
 ```sh
-scons --prefix=$HOME/mongo-client-install --full --use-system-boost --extrapath=/dev/boost install-mongoclient
+scons --prefix=$HOME/mongo-client-install --extrapath=/dev/boost install-mongoclient
 ```
 
 To build a version of the library with debugging enabled, use --dbg=on. This turns off optimization, which is on by default. To enable both debugging and optimization, pass --dbg=on --opt=on:
 ```sh
-scons --prefix=$HOME/mongo-client-install --full --use-system-boost --dbg=on --opt=on install-mongoclient
+scons --prefix=$HOME/mongo-client-install --dbg=on --opt=on install-mongoclient
 ```
 
 To override the default compiler to a newer GCC installed in /opt/local/gcc-4.8, use the --cc and --cxx options:
 ```sh
-scons --prefix=$HOME/mongo-client-install --full --use-system-boost --cc=/opt/local/gcc-4.8/bin/gcc --cxx=/opt/local/gcc-4.8/bin/g++ install-mongoclient
+scons --prefix=$HOME/mongo-client-install --cc=/opt/local/gcc-4.8/bin/gcc --cxx=/opt/local/gcc-4.8/bin/g++ install-mongoclient
 ```
 To build as a DLL on Windows:
 

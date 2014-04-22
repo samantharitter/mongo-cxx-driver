@@ -96,10 +96,10 @@ To override the default compiler to a newer GCC installed in /opt/local/gcc-4.8,
 ```sh
 scons --prefix=$HOME/mongo-client-install --cc=<path-to-gcc> --cxx=<path-to-g++> install-mongoclient
 ```
-To build as a DLL on Windows:
 
-**New in version 2.5.5**
+##### Building on Windows
 
+Building a DLL (New in version 2.5.5)
 ```sh
 scons
     <--64 or --32>

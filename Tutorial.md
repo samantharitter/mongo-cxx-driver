@@ -10,9 +10,31 @@ Next, you may wish to take a look at the [MongoDB Manual](http://docs.mongodb.or
 
 Please see [download and compile page](Download and Compile) for instructions on how to download, build, and install the C++ client driver.
 
-## Building projects with the C++ driver
+## A Program that uses the driver
 
-The C++ driver utilizes several Boost libraries. Be sure they are in your include and lib paths. You can usually install them from your OS’s package manager if you don’t already have them. We recommend using Boost 1.49.
+```cpp
+#include <cstdlib>
+#include <iostream>
+#include "mongo/client/dbclient.h" // for the driver
+
+using namespace std;
+using namespace mongo;
+
+void run() {
+  DBClientConnection c;
+  c.connect("localhost");
+}
+
+int main() {
+    try {
+        run();
+        cout << "connected ok" << endl;
+    } catch( const mongo::DBException &e ) {
+        cout << "caught " << e.what() << endl;
+    }
+    return EXIT_SUCCESS;
+}
+```
 
 ## BSON
 
@@ -66,12 +88,6 @@ BSONObj p = BSONObjBuilder().genOID().append("name","Joe").append("age",33).obj(
 
 Other helpers are listed [BSON Helpers](BSON Helper Functions).
 
-## Using the driver
-
-```cpp
-#include "mongo/bson/bson.h"
-#include "mongo/client/dbclient.h"
-```
 
 #### Making a Connection
 ```cpp

@@ -104,38 +104,134 @@ BSONObj p = BSONObjBuilder().genOID().append("name","Joe").append("age",33).obj(
 
 Other helpers are listed [BSON Helpers](BSON Helper Functions).
 
+## Inserting
 
-#### Making a Connection
+We now save our person object in a persons collection in the database:
 ```cpp
-using namespace mongo;
-DBClientConnection conn;
-conn.connect("localhost");
+c.insert("tutorial.persons", p);
+```
+The first parameter to insert is the namespace. tutorial is the database and persons is the collection name.
+
+## Count
+
+Let’s now fetch all objects from the persons collection, and display them. We’ll also show here how to use count().
+
+```cpp
+cout << "count:" << c.count("tutorial.persons") << endl;
 ```
 
-#### Using the Connection Pool
+## Query
+
 ```cpp
-ScopedDbConnection conn("localhost");
+auto_ptr<DBClientCursor> cursor = c.query("tutorial.persons", BSONObj());
 
-// The scoped connection can be used like a pointer to a connection
-conn->query();
-// etc
-
-// When finished with the connection you must call done
-conn.done();
+while (cursor->more())
+   cout << cursor->next().toString() << endl;
 ```
 
-#### Inserting a Document
+`BSONObj()` is an empty BSON object – it represents `{}` which indicates an empty query pattern (an empty query is a query for all objects).
+
+We use `BSONObj::toString()` above to print out information about each object retrieved. `BSONObj::toString` is a diagnostic function which prints an abbreviated JSON string representation of the object. For full JSON output, use `BSONObj::jsonString`.
+
+Let’s now write a function which prints out the name (only) of all persons in the collection whose age is a given value:
+
 ```cpp
-conn.insert(
-    "test.test",
-    BSON(
-        "name" << "Tyler" <<
-        "age" << 29 <<
-        "awesome" << true
-    )
+void printIfAge(DBClientConnection& c, int age) {
+    auto_ptr<DBClientCursor> cursor =
+        c.query("tutorial.persons", QUERY("age" << age));
+    while (cursor->more()) {
+        BSONObj p = cursor->next();
+        cout << p.getStringField("name") << endl;
+    }
+}
+```
+
+`getStringField()` is a helper that assumes the name field is of type string. To manipulate an element in a more generic fashion we can retrieve the particular BSONElement from the enclosing object:
+
+```cpp
+BSONElement name = p["name"];
+// or:
+BSONElement name = p.getField("name");
+```
+
+See the api docs, and jsobj.h, for more information.
+
+Our query above, written as JSON, is of the form
+
+`{ age : <agevalue> }`
+
+Queries are BSON objects of a particular format – in fact, we could have used the BSON() macro above instead of QUERY(). See class Query in dbclient.h for more information on Query objects, and the Sorting section below.
+
+In the mongo shell (which uses javascript), we could invoke:
+
+```js
+use tutorial;
+db.persons.find({age : 33});
+```
+
+## Indexing
+
+Let’s suppose we want to have an index on age so that our queries are fast. We would use:
+
+```cpp
+c.ensureIndex("tutorial.persons", fromjson("{age:1}"));
+```
+
+The ensureIndex method checks if the index exists; if it does not, it is created. ensureIndex is intelligent and does not repeat transmissions to the server; thus it is safe to call it many times in your code, for example, adjacent to every insert operation.
+
+In the above example we use a new function, fromjson. fromjson converts a JSON string to a BSONObj. This is sometimes a convenient way to specify BSON. Alternatively, we could have written:
+
+```cpp
+c.ensureIndex("tutorial.persons", BSON( "age" << 1 ));
+```
+
+## Sorting
+
+Let’s now make the results from printIfAge sorted alphabetically by name. To do this, we change the query statement from:
+
+```cpp
+auto_ptr<DBClientCursor> cursor = c.query("tutorial.persons", QUERY("age" << age));
+```
+
+to
+
+```cpp
+auto_ptr<DBClientCursor> cursor = c.query("tutorial.persons", QUERY("age" << age ).sort("name"));
+```
+
+Here we have used `Query::sort()` to add a modifier to our query expression for sorting.
+
+## Updating
+
+Use the `update()` method to perform a database update . For example the following update in the mongo shell:
+
+```js
+> use tutorial
+> db.persons.update( { name : 'Joe', age : 33 },
+...                  { $inc : { visits : 1 } } )
+```
+
+is equivalent to the following C++ code:
+
+```cpp
+db.update("tutorial.persons",
+    BSON("name" << "Joe" << "age" << 33),
+    BSON("$inc" << BSON( "visits" << 1))
 );
 ```
 
-#### Querying for a document
-#### Updating a document
-#### Removing a document
+## Example
+
+A simple example illustrating usage of BSON arrays and the `$nin` operator is available here.
+
+## Further Reading
+
+This overview just touches on the basics of using MongoDB from C++. There are many more capabilities. For further exploration:
+
+See the language-independent MongoDB Manual;
+Experiment with the mongo shell;
+Review the doxygen API docs;
+See connecting pooling information in the API docs;
+See GridFS file storage information in the API docs;
+See the HOWTO pages under the C++ Language Center
+Consider getting involved to make the product (either C++ driver, tools, or the database itself) better!

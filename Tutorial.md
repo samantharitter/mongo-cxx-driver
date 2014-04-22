@@ -222,14 +222,14 @@ db.update("tutorial.persons",
 
 ### Example
 
-A simple example illustrating usage of BSON arrays and the `$nin` operator is available here.
+A simple example illustrating usage of BSON arrays and the `$nin` operator is available [here](https://github.com/mongodb/mongo-cxx-driver/blob/legacy/src/mongo/client/examples/arrayExample.cpp).
 
 ### Further Reading
 
 This overview just touches on the basics of using MongoDB from C++. There are many more capabilities. For further exploration:
- - See the language-independent MongoDB Manual;
- - Experiment with the mongo shell;
- - Review the doxygen API docs;
+ - See the language-independent [MongoDB Manual](http://docs.mongodb.org/manual/);
+ - Experiment with the [mongo shell](http://docs.mongodb.org/manual/mongo/);
+ - Review the [doxygen API docs](http://api.mongodb.org/cxx/current/annotated.html);
  - See connecting pooling information in the API docs;
  - See GridFS file storage information in the API docs;
  - See the HOWTO pages under the C++ Language Center

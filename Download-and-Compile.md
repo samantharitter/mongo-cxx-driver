@@ -66,44 +66,40 @@ The following example installs the new driver to $HOME/mongo-client-install, ena
 
 ```sh
 scons --prefix=$HOME/mongo-client-install --full --use-system-boost install-mongoclient
-To enable SSL, add the --ssl option:
 ```
 
+To enable SSL, add the --ssl option:
 ```sh
 scons --prefix=$HOME/mongo-client-install --full --use-system-boost --ssl install-mongoclient
-To enable SASL support for use with Kerberos authentication on MongoDB Enterprise, add the --use-sasl-client option:
 ```
 
+To enable SASL support for use with Kerberos authentication on MongoDB Enterprise, add the --use-sasl-client option:
 ```sh
 scons --prefix=$HOME/mongo-client-install --full --use-system-boost --use-sasl-client install-mongoclient
 ```
 
 To build a shared library version of the driver, along with the normal static library, use the --sharedclient option:
-
 ```sh
 scons --prefix=$HOME/mongo-client-install --full --use-system-boost --sharedclient install-mongoclient
-To use a custom version of boost installed to /dev/boost, use the --extrapath=<path-to-boost> option:
 ```
 
+To use a custom version of boost installed to /dev/boost, use the --extrapath=<path-to-boost> option:
 ```sh
 scons --prefix=$HOME/mongo-client-install --full --use-system-boost --extrapath=/dev/boost install-mongoclient
 ```
 
 To build a version of the library with debugging enabled, use --dbg=on. This turns off optimization, which is on by default. To enable both debugging and optimization, pass --dbg=on --opt=on:
-
 ```sh
 scons --prefix=$HOME/mongo-client-install --full --use-system-boost --dbg=on --opt=on install-mongoclient
 ```
 
 To override the default compiler to a newer GCC installed in /opt/local/gcc-4.8, use the --cc and --cxx options:
-
 ```sh
 scons --prefix=$HOME/mongo-client-install --full --use-system-boost --cc=/opt/local/gcc-4.8/bin/gcc --cxx=/opt/local/gcc-4.8/bin/g++ install-mongoclient
 ```
-
 To build as a DLL on Windows:
 
-New in version 2.5.5.
+**New in version 2.5.5**
 
 ```sh
 scons <--64 or --32> --mute --sharedclient --dynamic-windows --release --full --prefix=<install-path> --use-system-boost --cpppath=<path-to-boost-headers> --libpath=<path-to-boost-libs> --variant-dir=<path-to-a-variant-directory> install-mongoclient

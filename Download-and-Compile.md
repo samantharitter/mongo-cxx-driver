@@ -25,7 +25,6 @@ Select options as appropriate for your environment.
  - `--use-sasl-client` Enables SASL, which MongoDB uses for the Kerberos authentication available on MongoDB Enterprise. You will need a compatible version of the SASL implementation libraries available.
  - `--sharedclient` Builds a shared library version of the client driver alongside the static library. If applicable for your application, prefer using the shared client.
  - `--extrapath=<path-to-boost>` Specifies the path to your Boost libraries if they are not in a standard search path for your toolchain.
-install-mongoclient. This is the build target.
 
 ##### Build Options
  - `--dbg=[on|off]` Enables runtime debugging checks. Defaults to off. Specifying --dbg=on implies --opt=off unless explicitly overridden with --opt=on.
@@ -44,7 +43,7 @@ install-mongoclient. This is the build target.
 
 > **Note:** In the legacy release stream of the driver these options are implied, you always build using system boost and with the full installation (if you provide a prefix).
 
-#### Additional Windows Considerations
+#### Windows Considerations
 When building on Windows, use of the SCons `--dynamic-windows` option can result in an error unless all libraries and sources for the application use the same runtime library. This option builds the driver to link against the dynamic windows libraries instead of the static windows runtime libraries. If the Boost library being linked against is expecting an /MT build (static libraries), this can result in an error similar to the following:
 
 ```

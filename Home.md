@@ -7,11 +7,9 @@ The MongoDB C++ driver library includes a bson package that implements the BSON 
  - [Getting Started with the C++ Driver](Tutorial)
  - [BSON Helper Functions](BSON Helper Functions)
 
-
-###
-API Documentation
-Create Tailable Cursor
-SQL to mongo Shell to C++
+### Documentation
+ - [API Documentation](http://api.mongodb.org/cxx/)
+ - [SQL to Mongo Shell to C++](SQL to Shell to CPP)
 C++ BSON Library
 
 Include bson/bson.h in your application. See the bsondemo.cpp for example usage.
@@ -31,34 +29,3 @@ See the bsondemo.cpp example at github.com
 
 API Documentation
 http://api.mongodb.org/cplusplus
-Short Class Names
-Add
-
-using namespace bson;
-to your code to use the following shorter names for the BSON classes:
-
-// from bsonelement.h
-namespace bson {
-    typedef mongo::BSONElement be;
-    typedef mongo::BSONObj bo;
-    typedef mongo::BSONObjBuilder bob;
-}
-(Or one could use bson::bo fully qualified for example).
-
-Also available is bo::iterator as a synonym for BSONObjIterator.
-
-C++ DBClientConnection
-
-The C++ driver includes several classes for managing collections under the parent class DBClientInterface.
-
-DBClientConnection is the normal connection class for a connection to a single MongoDB database server (or shard manager). Other classes exist for connecting to a replica set.
-
-See http://api.mongodb.org/cplusplus for details on each of the above classes.
-
-C++ getLastError
-
-string mongo::DBClientWithCommands::getLastError(); Get error result from the last operation on this connection. Empty string if no error.
-BSONObj DBClientWithCommands::getLastErrorDetailed(); Get the full last error object. See the getLastError Command page for details.
-For an example, see client/simple_client_demo.cpp.
-
-Also see getLastError Command.

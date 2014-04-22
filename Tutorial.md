@@ -1,4 +1,4 @@
-## Getting started with the C++ Driver
+### Getting started with the C++ Driver
 
 This is an introduction to usage of the MongoDB database from a C++ program.
 
@@ -6,11 +6,11 @@ First, install MongoDB – see the [installation](http://docs.mongodb.org/manual
 
 Next, you may wish to take a look at the [MongoDB Manual](http://docs.mongodb.org/manual/) for a language independent look at how to use MongoDB. Also, we suggest some basic familiarity with the [mongo shell](http://docs.mongodb.org/manual/mongo/) – the shell is the primary database administration tool and is useful for manually inspecting the contents of a database after your C++ program runs.
 
-## Installing the Driver Library and Headers
+### Installing the Driver Library and Headers
 
 Please see [download and compile page](Download and Compile) for instructions on how to download, build, and install the C++ client driver.
 
-## Connecting
+### Connecting
 
 #### A simple program that connects to the database
 
@@ -104,7 +104,7 @@ BSONObj p = BSONObjBuilder().genOID().append("name","Joe").append("age",33).obj(
 
 Other helpers are listed [BSON Helpers](BSON Helper Functions).
 
-## Inserting
+### Inserting
 
 We now save our person object in a persons collection in the database:
 ```cpp
@@ -112,7 +112,7 @@ c.insert("tutorial.persons", p);
 ```
 The first parameter to insert is the namespace. tutorial is the database and persons is the collection name.
 
-## Count
+### Count
 
 Let’s now fetch all objects from the persons collection, and display them. We’ll also show here how to use count().
 
@@ -120,7 +120,7 @@ Let’s now fetch all objects from the persons collection, and display them. We�
 cout << "count:" << c.count("tutorial.persons") << endl;
 ```
 
-## Query
+### Query
 
 ```cpp
 auto_ptr<DBClientCursor> cursor = c.query("tutorial.persons", BSONObj());
@@ -169,7 +169,7 @@ use tutorial;
 db.persons.find({age : 33});
 ```
 
-## Indexing
+### Indexing
 
 Let’s suppose we want to have an index on age so that our queries are fast. We would use:
 
@@ -185,7 +185,7 @@ In the above example we use a new function, fromjson. fromjson converts a JSON s
 c.ensureIndex("tutorial.persons", BSON( "age" << 1 ));
 ```
 
-## Sorting
+### Sorting
 
 Let’s now make the results from printIfAge sorted alphabetically by name. To do this, we change the query statement from:
 
@@ -201,7 +201,7 @@ auto_ptr<DBClientCursor> cursor = c.query("tutorial.persons", QUERY("age" << age
 
 Here we have used `Query::sort()` to add a modifier to our query expression for sorting.
 
-## Updating
+### Updating
 
 Use the `update()` method to perform a database update . For example the following update in the mongo shell:
 
@@ -220,11 +220,11 @@ db.update("tutorial.persons",
 );
 ```
 
-## Example
+### Example
 
 A simple example illustrating usage of BSON arrays and the `$nin` operator is available here.
 
-## Further Reading
+### Further Reading
 
 This overview just touches on the basics of using MongoDB from C++. There are many more capabilities. For further exploration:
  - See the language-independent MongoDB Manual;

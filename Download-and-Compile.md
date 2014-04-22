@@ -7,7 +7,7 @@
 
 ```sh
 git clone git@github.com:mongodb/mongo-cxx-driver.git
-git checkout legacy // if you want the legacy driver
+git checkout legacy # if you want the legacy driver
 ```
 
 ### Compile the Driver

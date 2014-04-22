@@ -64,11 +64,11 @@ The MongoDB database stores data in BSON format. BSON is a binary object format 
 
 To save data in the database we must create objects of class BSONObj. The components of a BSONObj are represented as BSONElement objects. We use BSONObjBuilder to make BSON objects, and BSONObjIterator to enumerate BSON objects.
 
-#### The C++ BSON Library
+### The C++ BSON Library
 
 Include bson/bson.h in your application. See [bsondemo](https://github.com/mongodb/mongo-cxx-driver/blob/legacy/src/mongo/bson/bsondemo/bsondemo.cpp) for example usage.
 
-Key classes:
+#### Key classes
 
 ```cpp
 mongo::BSONObj (aka bson::bo): a BSON object

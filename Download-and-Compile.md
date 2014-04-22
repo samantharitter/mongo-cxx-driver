@@ -1,5 +1,5 @@
 ### Prerequisites
- - [Boost](http://www.boost.org/) (>= 1.49)
+ - [Boost](http://www.boost.org/) (>= 1.49) # May work with older versions back to 1.41
  - [Python](https://www.python.org/) (2.x)
  - [SCons](http://www.scons.org/)
  - [Git](http://git-scm.com/)

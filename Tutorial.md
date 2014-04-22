@@ -227,11 +227,10 @@ A simple example illustrating usage of BSON arrays and the `$nin` operator is av
 ## Further Reading
 
 This overview just touches on the basics of using MongoDB from C++. There are many more capabilities. For further exploration:
-
-See the language-independent MongoDB Manual;
-Experiment with the mongo shell;
-Review the doxygen API docs;
-See connecting pooling information in the API docs;
-See GridFS file storage information in the API docs;
-See the HOWTO pages under the C++ Language Center
-Consider getting involved to make the product (either C++ driver, tools, or the database itself) better!
+ - See the language-independent MongoDB Manual;
+ - Experiment with the mongo shell;
+ - Review the doxygen API docs;
+ - See connecting pooling information in the API docs;
+ - See GridFS file storage information in the API docs;
+ - See the HOWTO pages under the C++ Language Center
+ - Consider getting involved to make the product (either C++ driver, tools, or the database itself) better!

@@ -252,11 +252,15 @@ See the [API documentation](http://api.mongodb.org/cxx) for details on each of t
 
 ### C++ getLastError
 
-Get error result from the last operation on this connection. Empty string if no error:
-`string mongo::DBClientWithCommands::getLastError();`
+Get error result from the last operation on this connection.
+```cpp
+string mongo::DBClientWithCommands::getLastError(); // Empty string if no error
+```
 
-Get the full last error object. See the getLastError Command page for details.
-`BSONObj DBClientWithCommands::getLastErrorDetailed();`
+Get the full last error object.
+```cpp
+BSONObj DBClientWithCommands::getLastErrorDetailed();
+```
  
 For an example, see [this demo](https://github.com/mongodb/mongo-cxx-driver/blob/legacy/src/mongo/client/examples/simple_client_demo.cpp).
 

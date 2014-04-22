@@ -31,7 +31,7 @@ int main() {
     try {
         run();
         cout << "connected ok" << endl;
-    } catch( const mongo::DBException &e ) {
+    } catch( const DBException &e ) {
         cout << "caught " << e.what() << endl;
     }
     return EXIT_SUCCESS;

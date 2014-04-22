@@ -255,14 +255,6 @@ namespace bson {
 
 Also available is bo::iterator as a synonym for BSONObjIterator.
 
-### C++ DBClientConnection
-
-The C++ driver includes several classes for managing collections under the parent class `DBClientInterface`.
-
-`DBClientConnection` is the normal connection class for a connection to a single MongoDB database server (or shard manager). Other classes exist for connecting to a replica set.
-
-See the [API documentation](http://api.mongodb.org/cxx) for details on each of the above classes.
-
 ### C++ getLastError
 
 Get error result from the last operation on this connection.

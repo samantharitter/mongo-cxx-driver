@@ -124,6 +124,6 @@ scons
     install-mongoclient
 ```
 
-**Windows Notes**
+Windows Notes
  - You must configure Visual Studio for release builds when building your application with the C++ driver DLL.
  - Disable STL iterator debugging to ensure compatibility with the STL binary.

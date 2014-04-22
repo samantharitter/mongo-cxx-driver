@@ -4,13 +4,13 @@
  - [SCons](http://www.scons.org/)
  - [Git](http://git-scm.com/)
 
-### Getting the Source Code
+### Get the Source Code
 
 ```sh
 git clone git@github.com:mongodb/mongo-cxx-driver.git
 ```
 
-### Choosing a Branch
+### Choose a Branch
 
 #### Legacy Branch:
 

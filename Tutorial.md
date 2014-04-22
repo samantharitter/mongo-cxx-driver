@@ -207,8 +207,10 @@ Use the `update()` method to perform a database update . For example the followi
 
 ```js
 > use tutorial
-> db.persons.update( { name : 'Joe', age : 33 },
-...                  { $inc : { visits : 1 } } )
+> db.persons.update( 
+    { name : 'Joe', age : 33 },
+    { $inc : { visits : 1 } }
+)
 ```
 
 is equivalent to the following C++ code:

@@ -19,7 +19,7 @@ To see the list of all SCons options, run: `scons --help`
 #### SCons Options when Compiling the C++ Driver
 Select options as appropriate for your environment.
 
-##### Client Options (All Versions)
+##### Client Options
  - `--prefix=<path>` The directory prefix for the installation directory. Set <path> to the directory where you want the build artifacts (headers and library files) installed. For example, you might set <path> to /opt/local, /usr/local, or $HOME/mongo-client-install.
  - `--ssl` Enables SSL support. You will need a compatible version of the SSL libraries available.
 `--use-sasl-client` Enables SASL, which MongoDB uses for the Kerberos authentication available on MongoDB Enterprise. You will need a compatible version of the SASL implementation libraries available.
@@ -27,18 +27,18 @@ Select options as appropriate for your environment.
  - `--extrapath=<path-to-boost>` Specifies the path to your Boost libraries if they are not in a standard search path for your toolchain.
 install-mongoclient. This is the build target.
 
-##### Build Options (All Versions)
+##### Build Options
  - `--dbg=[on|off]` Enables runtime debugging checks. Defaults to off. Specifying --dbg=on implies --opt=off unless explicitly overridden with --opt=on.
  - `--opt=[on|off]` Enables compile-time optimization. Defaults to on. Can be freely mixed with the values for the --dbg flag.
 
-##### Compiler Options (All Versions)
+##### Compiler Options
  - `--cc` The compiler to use for C. Use the following syntax: `--cc=<path-to-c-compiler>`
  - `--cxx` The compiler to use for C++. Use the following syntax: `--cxx=<path-to-c++-compiler>`
 
-##### Windows Options (All Versions -- Windows Only)
+##### Windows Options (Windows Only)
  - `--dynamic-windows` By default, on Windows, compilation uses /MT. Use this flag to compile with /MD. Note that /MD is required to build the shared client on Windows. Also note that your application compiler flags must match. If you build with --dbg=on, /MTd or /MDd will be used in place of /MT or /MD, respectively.
 
-#### 2.6Compat Only
+#### Deprecated Options (2.6Compat Branch Only)
  - `--full` Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory.
  - `--use-system-boost` This is strongly recommended. This builds against the system version of Boost rather than the MongoDB vendor copy. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next.
 

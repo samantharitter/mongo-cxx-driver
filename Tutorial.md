@@ -41,7 +41,7 @@ int main() {
 If you are using gcc on Linux, you would compile with something like this, depending on location of your include files and libraries:
 
 ```sh
-$ g++ tutorial.cpp -pthread -lmongoclient -lboost_thread-mt -lboost_filesystem -lboost_program_options -lboost_system -o tutorial
+$ g++ tutorial.cpp -pthread -lmongoclient -lboost_thread-mt -lboost_system -o tutorial
 $ ./tutorial
 connected ok
 ```
@@ -50,6 +50,7 @@ connected ok
  - Since the tutorial program attempts to connect to a MongoDB database server, you must start it by running mongod before running the tutorial.
  - You may need to append -mt to boost_filesystem and boost_program_options. If using a recent boost, -mt is not needed anymore.
  - You may need to use -I and -L to specify the locations of your mongo and boost headers and libraries.
+ - If using the 26compat branch you need to additionally specify `-lboost_filesystem` and `-lboost_program_options`
 
 ## BSON
 

@@ -10,12 +10,13 @@
 git clone git@github.com:mongodb/mongo-cxx-driver.git
 ```
 
-### Choosing the right Driver
+### Choosing a Branch
 
 #### Legacy Branch:
 
-You are using MongoDB's C++ driver for the first time and do not mind the driver being actively worked on.
-You had been using 26compat (or the driver inside of the server source) and want to benefit from incremental improvements while having the same overall API.
+Use the `legacy` branch if:
+ - You are using MongoDB's C++ driver for the first time and do not mind the driver being actively worked on.
+ - You had been using 26compat (or the driver inside of the server source) and want to benefit from incremental improvements while having the same overall API.
 
 ```
 git checkout legacy
@@ -23,8 +24,9 @@ git checkout legacy
 
 #### 26compat Branch:
 
-You need a production ready release of the C++ driver that is not under active development.
-You have existing code that used the driver from the server source and want it to continue working without modification.
+Use the `26compat` branch if:
+ - You need a production ready release of the C++ driver that is not under active development.
+ - You have existing code that used the driver from the server source and want it to continue working without modification.
 
 ```
 git checkout 26compat

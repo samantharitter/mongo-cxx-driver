@@ -11,10 +11,4 @@ The MongoDB C++ driver library includes a bson package that implements the BSON 
  - [API Documentation](http://api.mongodb.org/cxx/)
  - [SQL to Mongo Shell to C++](SQL to Shell to CPP)
 
-Standalone Usage
-You can use the C++ BSON library without MongoDB. Most BSON methods under the bson/ directory are header-only. They require boost, but headers only.
-
 See the bsondemo.cpp example at github.com
-
-API Documentation
-http://api.mongodb.org/cplusplus

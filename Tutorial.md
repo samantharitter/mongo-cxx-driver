@@ -131,6 +131,24 @@ c.insert("tutorial.persons", p);
 ```
 The first parameter to insert is the namespace. tutorial is the database and persons is the collection name.
 
+#### getLastError
+
+In order to ensure the write succeeded we need to call getLastError.
+
+Get error result from the last operation on this connection:
+```cpp
+string mongo::DBClientWithCommands::getLastError(); // Empty string if no error
+```
+
+Get the full last error object:
+```cpp
+BSONObj DBClientWithCommands::getLastErrorDetailed();
+```
+ 
+For an example, see [this demo](https://github.com/mongodb/mongo-cxx-driver/blob/legacy/src/mongo/client/examples/simple_client_demo.cpp).
+
+For additional background information on getLastError see the [write operations documentation](http://docs.mongodb.org/manual/core/write-operations/#write-concern).
+
 ### Count
 
 Let’s now fetch all objects from the persons collection, and display them. We’ll also show here how to use count().
@@ -260,22 +278,6 @@ namespace bson {
 (Or one could use bson::bo fully qualified for example).
 
 Also available is bo::iterator as a synonym for BSONObjIterator.
-
-### C++ getLastError
-
-Get error result from the last operation on this connection.
-```cpp
-string mongo::DBClientWithCommands::getLastError(); // Empty string if no error
-```
-
-Get the full last error object.
-```cpp
-BSONObj DBClientWithCommands::getLastErrorDetailed();
-```
- 
-For an example, see [this demo](https://github.com/mongodb/mongo-cxx-driver/blob/legacy/src/mongo/client/examples/simple_client_demo.cpp).
-
-For additional background information on getLastError see the [write operations documentation](http://docs.mongodb.org/manual/core/write-operations/#write-concern).
 
 ### Further Reading
 

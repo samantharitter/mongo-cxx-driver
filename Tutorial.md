@@ -10,7 +10,9 @@ Next, you may wish to take a look at the [MongoDB Manual](http://docs.mongodb.or
 
 Please see [download and compile page](Download and Compile) for instructions on how to download, build, and install the C++ client driver.
 
-## A Program that uses the driver
+## Connecting
+
+#### A simple program that connects to the database
 
 ```cpp
 #include <cstdlib>
@@ -35,6 +37,19 @@ int main() {
     return EXIT_SUCCESS;
 }
 ```
+
+If you are using gcc on Linux, you would compile with something like this, depending on location of your include files and libraries:
+
+```sh
+$ g++ tutorial.cpp -pthread -lmongoclient -lboost_thread-mt -lboost_filesystem -lboost_program_options -lboost_system -o tutorial
+$ ./tutorial
+connected ok
+```
+
+> **Warning**
+ - Since the tutorial program attempts to connect to a MongoDB database server, you must start it by running mongod before running the tutorial.
+ - You may need to append -mt to boost_filesystem and boost_program_options. If using a recent boost, -mt is not needed anymore.
+ - You may need to use -I and -L to specify the locations of your mongo and boost headers and libraries.
 
 ## BSON
 

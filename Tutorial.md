@@ -12,6 +12,14 @@ Please see [download and compile page](Download and Compile) for instructions on
 
 ### Connecting
 
+#### DBClientConnection
+
+The C++ driver includes several classes for managing collections under the parent class `DBClientInterface`.
+
+`DBClientConnection` is the normal connection class for a connection to a single MongoDB database server (or shard manager). Other classes exist for connecting to a replica set.
+
+See the [API documentation](http://api.mongodb.org/cxx) for details on each of the above classes.
+
 #### A simple program that connects to the database
 
 ```cpp

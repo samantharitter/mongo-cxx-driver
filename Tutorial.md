@@ -28,20 +28,17 @@ See the [API documentation](http://api.mongodb.org/cxx) for details on each of t
 #include <iostream>
 #include "mongo/client/dbclient.h" // for the driver
 
-using namespace std;
-using namespace mongo;
-
 void run() {
-  DBClientConnection c;
+  mongo::DBClientConnection c;
   c.connect("localhost");
 }
 
 int main() {
     try {
         run();
-        cout << "connected ok" << endl;
-    } catch( const DBException &e ) {
-        cout << "caught " << e.what() << endl;
+        std::cout << "connected ok" << std::endl;
+    } catch( const mongo::DBException &e ) {
+        std::cout << "caught " << e.what() << std::endl;
     }
     return EXIT_SUCCESS;
 }

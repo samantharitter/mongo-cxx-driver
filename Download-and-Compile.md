@@ -14,9 +14,7 @@ git checkout legacy # if you want the legacy driver
 
 From the directory where you cloned the code, compile the C++ driver by running the scons command. Use the scons options described in this section.
 
-To see the list of all SCons options, run:
-
-`scons --help`
+To see the list of all SCons options, run: `scons --help`
 
 #### SCons Options when Compiling the C++ Driver
 Select options as appropriate for your environment.

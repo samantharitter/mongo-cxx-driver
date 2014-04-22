@@ -2,7 +2,7 @@
  - [Boost](http://www.boost.org/) (>= 1.49)
  - [Python](https://www.python.org/) (2.x)
  - [SCons](http://www.scons.org/)
- - [Git](
+ - [Git](http://git-scm.com/)
 
 ### Getting the Source Code
 

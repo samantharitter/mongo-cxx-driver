@@ -85,7 +85,9 @@ To use a custom version of boost installed to /dev/boost, use the --extrapath=<p
 scons --prefix=$HOME/mongo-client-install --extrapath=/dev/boost install-mongoclient
 ```
 
-To build a version of the library with debugging enabled, use --dbg=on. This turns off optimization, which is on by default. To enable both debugging and optimization, pass --dbg=on --opt=on:
+##### Debug Builds
+To build a version of the library with debugging enabled, use `--dbg=on`. This turns off optimization, which is on by default. To enable both debugging and optimization, pass `--dbg=on --opt=on`:
+
 ```sh
 scons --prefix=$HOME/mongo-client-install --dbg=on --opt=on install-mongoclient
 ```

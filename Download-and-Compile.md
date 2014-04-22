@@ -1,10 +1,8 @@
-### Download and Compile C++ Driver
-
 > New in version 2.5.3: The procedure for compiling the C++ driver has changed, beginning with version 2.5.3.
 
 The current C++ driver is still compatible with earlier versions of MongoDB. For example, if you run MongoDB 2.4, you can use the C++ driver compiled from MongoDB 2.5.3+. If, however, you need instructions for compiling the driver from the pre-2.5.3 code, see Download and Compile C++ Driver Before Version 2.5.3.
 
-#### Prerequisites
+### Prerequisites
  - [Boost](http://www.boost.org/) >= 1.49
  - [Python](https://www.python.org/)
  - [Scons](http://www.scons.org/)
@@ -12,13 +10,13 @@ The current C++ driver is still compatible with earlier versions of MongoDB. For
 **IMPORTANT**
 The C++ driver requires Boost version 1.49 or greater. Earlier versions of Boost may work, but the behavior of the driver with those versions is untested.
 
-#### Clone the Driver Source Code
+### Clone the Driver Source Code
 
 ```sh
 git clone git@github.com:mongodb/mongo-cxx-driver.git
 ```
 
-#### Compile the Driver
+### Compile the Driver
 
 From the directory where you cloned the code, compile the C++ driver by running the scons command. Use the scons options described in this section.
 
@@ -27,7 +25,7 @@ To see the list of all SCons options, run:
 `scons --help`
 
 **NOTE**
-##### SCons Options when Compiling the C++ Driver
+#### SCons Options when Compiling the C++ Driver
 Select options as appropriate for your environment.
 
 ```sh
@@ -41,6 +39,7 @@ Select options as appropriate for your environment.
 
 **NOTE**
 While the C++ driver should in general be built against the system version of Boost, if you are building the MongoDB servers and tools from source, it is strongly recommended that you use the embedded version of Boost. This means that your build line for the driver and server will differ with respect to the --use-system-boost flag.
+
 ```sh
 --extrapath=<path-to-boost>. Specifies the path to your Boost libraries if they are not in a standard search path for your toolchain.
 install-mongoclient. This is the build target.
@@ -52,6 +51,7 @@ install-mongoclient. This is the build target.
 --cxx=<path-to-c++-compiler>
 --dynamic-windows. By default, on Windows, compilation uses /MT. Use this flag to compile with /MD. Note that /MD is required to build the shared client on Windows. Also note that your application compiler flags must match.
 ```
+
 If you build with --dbg=on, /MTd or /MDd will be used in place of /MT or /MD, respectively.
 Windows Considerations
 When building on Windows, use of the SCons --dynamic-windows option can result in an error unless all libraries and sources for the application use the same runtime library. This option builds the driver to link against the dynamic windows libraries instead of the static windows runtime libraries. If the Boost library being linked against is expecting an /MT build (static libraries), this can result in an error similar to the following:
@@ -59,7 +59,7 @@ error LNK2005: ___ already defined in msvcprt.lib(MSVCP100.dll) libboost_thread-
 You may want to define _CRT_SECURE_NO_WARNINGS to avoid warnings on use of strncpy and such by the MongoDB client code.
 Include the WinSock library in your application: Linker ‣ Input ‣ Additional Dependencies. Add ws2_32.lib.
 
-#### Example C++ Driver Compilations
+### Example C++ Driver Compilations
 
 The following are examples of building the C++ driver.
 

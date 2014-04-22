@@ -117,8 +117,8 @@ scons
     --dynamic-windows
     --release
     --prefix=%HOME%\mongo-client-install
-    --cpppath=C:\local\boost_1_55_0\include
-    --libpath=C:\local\boost_1_55_0\lib64-msvc-12.0
+    --cpppath="C:\local\boost_1_55_0\include"
+    --libpath="C:\local\boost_1_55_0\lib64-msvc-12.0"
     install-mongoclient
 ```
 

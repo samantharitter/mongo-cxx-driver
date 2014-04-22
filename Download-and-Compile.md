@@ -22,7 +22,7 @@ Select options as appropriate for your environment.
 ##### Client Options
  - `--prefix=<path>` The directory prefix for the installation directory. Set <path> to the directory where you want the build artifacts (headers and library files) installed. For example, you might set <path> to /opt/local, /usr/local, or $HOME/mongo-client-install.
  - `--ssl` Enables SSL support. You will need a compatible version of the SSL libraries available.
-`--use-sasl-client` Enables SASL, which MongoDB uses for the Kerberos authentication available on MongoDB Enterprise. You will need a compatible version of the SASL implementation libraries available.
+ - `--use-sasl-client` Enables SASL, which MongoDB uses for the Kerberos authentication available on MongoDB Enterprise. You will need a compatible version of the SASL implementation libraries available.
  - `--sharedclient` Builds a shared library version of the client driver alongside the static library. If applicable for your application, prefer using the shared client.
  - `--extrapath=<path-to-boost>` Specifies the path to your Boost libraries if they are not in a standard search path for your toolchain.
 install-mongoclient. This is the build target.

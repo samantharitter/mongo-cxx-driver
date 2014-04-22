@@ -92,30 +92,33 @@ scons --prefix=$HOME/mongo-client-install --dbg=on --opt=on install-mongoclient
 
 To override the default compiler to a newer GCC installed in /opt/local/gcc-4.8, use the --cc and --cxx options:
 ```sh
-scons --prefix=$HOME/mongo-client-install --cc=/opt/local/gcc-4.8/bin/gcc --cxx=/opt/local/gcc-4.8/bin/g++ install-mongoclient
+scons --prefix=$HOME/mongo-client-install --cc=<path-to-gcc> --cxx=<path-to-g++> install-mongoclient
 ```
 To build as a DLL on Windows:
 
 **New in version 2.5.5**
 
 ```sh
-scons <--64 or --32> --mute --sharedclient --dynamic-windows --release --full --prefix=<install-path> --use-system-boost --cpppath=<path-to-boost-headers> --libpath=<path-to-boost-libs> --variant-dir=<path-to-a-variant-directory> install-mongoclient
+scons
+    <--64 or --32>
+    --sharedclient
+    --dynamic-windows
+    --prefix=<install-path>
+    --cpppath=<path-to-boost-headers>
+    --libpath=<path-to-boost-libs>
+    install-mongoclient
 ```
 
 The following example issues the build command in a PowerShell:
 ```sh
-scons `
-    --64 `
-    --mute `
-    --sharedclient `
-    --dynamic-windows `
-    --release `
-    --full `
-    --prefix=%HOME%\mongo-client-install `
-    --use-system-boost `
-    --cpppath=C:\local\boost_1_55_0\include `
-    --libpath=C:\local\boost_1_55_0\lib64-msvc-12.0 `
-    --variant-dir=%HOME%\mongo-client-build `
+scons
+    --64
+    --sharedclient
+    --dynamic-windows
+    --release
+    --prefix=%HOME%\mongo-client-install
+    --cpppath=C:\local\boost_1_55_0\include
+    --libpath=C:\local\boost_1_55_0\lib64-msvc-12.0
     install-mongoclient
 ```
 

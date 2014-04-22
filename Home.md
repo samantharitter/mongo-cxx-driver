@@ -10,5 +10,3 @@ The MongoDB C++ driver library includes a bson package that implements the BSON 
 ### Documentation
  - [API Documentation](http://api.mongodb.org/cxx/)
  - [SQL to Mongo Shell to C++](SQL to Shell to CPP)
-
-See the bsondemo.cpp example at github.com

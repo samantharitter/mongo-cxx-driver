@@ -1,4 +1,4 @@
-## Getting started with the C++ Driver
+### Getting started with the C++ Driver
 
 This is an introduction to usage of the MongoDB database from a C++ program.
 
@@ -6,13 +6,13 @@ First, install MongoDB – see the [installation](http://docs.mongodb.org/manual
 
 Next, you may wish to take a look at the [MongoDB Manual](http://docs.mongodb.org/manual/) for a language independent look at how to use MongoDB. Also, we suggest some basic familiarity with the [mongo shell](http://docs.mongodb.org/manual/mongo/) – the shell is the primary database administration tool and is useful for manually inspecting the contents of a database after your C++ program runs.
 
-## Installing the Driver Library and Headers
+### Installing the Driver Library and Headers
 
 Please see [download and compile page](Download and Compile) for instructions on how to download, build, and install the C++ client driver.
 
 ### Connecting
 
-### DBClientConnection
+#### DBClientConnection
 
 The C++ driver includes several classes for managing collections under the parent class `DBClientInterface`.
 
@@ -21,7 +21,7 @@ The C++ driver includes several classes for managing collections under the paren
 
 See the [API documentation](http://api.mongodb.org/cxx) for details on each of the above classes.
 
-### A simple program that connects to the database
+#### A simple program that connects to the database
 
 ```cpp
 #include <cstdlib>
@@ -58,17 +58,17 @@ connected ok
  - You may need to use -I and -L to specify the locations of your mongo and boost headers and libraries.
  - If using the 26compat branch you need to additionally specify `-lboost_filesystem` and `-lboost_program_options`
 
-## BSON
+### BSON
 
 The MongoDB database stores data in BSON format. BSON is a binary object format that is JSON-like in terms of the data which can be stored (some extensions exist, for example, a Date datatype).
 
 To save data in the database we must create objects of class BSONObj. The components of a BSONObj are represented as BSONElement objects. We use BSONObjBuilder to make BSON objects, and BSONObjIterator to enumerate BSON objects.
 
-### The C++ BSON Library
+#### The C++ BSON Library
 
 Include bson/bson.h in your application. See [bsondemo](https://github.com/mongodb/mongo-cxx-driver/blob/legacy/src/mongo/bson/bsondemo/bsondemo.cpp) for example usage.
 
-#### Key classes
+##### Key classes
 
 ```cpp
 mongo::BSONObj (aka bson::bo): a BSON object
@@ -77,7 +77,7 @@ mongo::BSONObjBuilder (bson::bob): used to make BSON objects
 mongo::BSONObjIterator (bson::bo::iterator): used to enumerate BSON objects
 ```
 
-#### Working with BSON
+##### Working with BSON
 
 Let’s now create a BSON “person” object which contains name and age. We might invoke:
 
@@ -123,7 +123,7 @@ BSONObj p = BSONObjBuilder().genOID().append("name","Joe").append("age",33).obj(
 
 Other helpers are listed [BSON Helpers](BSON Helper Functions).
 
-#### Short Class Names
+##### Short Class Names
 Add `using namespace bson;` to your code to use the following shorter names for the BSON classes:
 
 ```cpp
@@ -139,7 +139,7 @@ namespace bson {
 
 Also available is bo::iterator as a synonym for BSONObjIterator.
 
-## Inserting
+### Inserting
 
 We now save our person object in a persons collection in the database:
 ```cpp
@@ -147,7 +147,7 @@ c.insert("tutorial.persons", p);
 ```
 The first parameter to insert is the namespace. tutorial is the database and persons is the collection name.
 
-### getLastError
+#### getLastError
 
 In order to ensure the write succeeded we need to call getLastError.
 
@@ -165,7 +165,7 @@ For an example, see [this demo](https://github.com/mongodb/mongo-cxx-driver/blob
 
 For additional background information on getLastError see the [write operations documentation](http://docs.mongodb.org/manual/core/write-operations/#write-concern).
 
-## Count
+### Count
 
 Let’s now fetch all objects from the persons collection, and display them. We’ll also show here how to use count().
 
@@ -173,7 +173,7 @@ Let’s now fetch all objects from the persons collection, and display them. We�
 cout << "count:" << c.count("tutorial.persons") << endl;
 ```
 
-## Query
+### Query
 
 ```cpp
 auto_ptr<DBClientCursor> cursor = c.query("tutorial.persons", BSONObj());
@@ -222,7 +222,7 @@ use tutorial;
 db.persons.find({age : 33});
 ```
 
-## Indexing
+### Indexing
 
 Let’s suppose we want to have an index on age so that our queries are fast. We would use:
 
@@ -238,7 +238,7 @@ In the above example we use a new function, fromjson. fromjson converts a JSON s
 c.ensureIndex("tutorial.persons", BSON( "age" << 1 ));
 ```
 
-## Sorting
+### Sorting
 
 Let’s now make the results from printIfAge sorted alphabetically by name. To do this, we change the query statement from:
 
@@ -254,7 +254,7 @@ auto_ptr<DBClientCursor> cursor = c.query("tutorial.persons", QUERY("age" << age
 
 Here we have used `Query::sort()` to add a modifier to our query expression for sorting.
 
-## Updating
+### Updating
 
 Use the `update()` method to perform a database update . For example the following update in the mongo shell:
 
@@ -275,11 +275,11 @@ db.update("tutorial.persons",
 );
 ```
 
-## Arrays
+### Arrays
 
 A simple example illustrating usage of BSON arrays and the `$nin` operator is available [here](https://github.com/mongodb/mongo-cxx-driver/blob/legacy/src/mongo/client/examples/arrayExample.cpp).
 
-## Further Reading
+### Further Reading
 
 This overview just touches on the basics of using MongoDB from C++. There are many more capabilities. For further exploration:
  - See the language-independent [MongoDB Manual](http://docs.mongodb.org/manual/);

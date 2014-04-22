@@ -38,9 +38,9 @@ install-mongoclient. This is the build target.
 ##### Windows Options (Windows Only)
  - `--dynamic-windows` By default, on Windows, compilation uses /MT. Use this flag to compile with /MD. Note that /MD is required to build the shared client on Windows. Also note that your application compiler flags must match. If you build with --dbg=on, /MTd or /MDd will be used in place of /MT or /MD, respectively.
 
-#### Deprecated Options (26Compat Branch Only)
- - `--full` Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory. **Required for 26compat**
- - `--use-system-boost` This is strongly recommended. This builds against the system version of Boost rather than the MongoDB vendor copy. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next. **Required for 26compat**
+##### Deprecated Options (26Compat Branch Only)
+ - `--full` Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory.
+ - `--use-system-boost` This is strongly recommended. This builds against the system version of Boost rather than the MongoDB vendor copy. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next.
 
 > **Note:** In the legacy release stream of the driver these options are implied, you always build using system boost and with the full installation (if you provide a prefix).
 

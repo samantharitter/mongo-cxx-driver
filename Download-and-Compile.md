@@ -1,4 +1,4 @@
-### Prerequisites for compiling the driver
+### Prerequisites
  - [Boost](http://www.boost.org/) (>= 1.49)
  - [Python](https://www.python.org/) (2.x)
  - [SCons](http://www.scons.org/)

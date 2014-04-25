@@ -153,6 +153,3 @@ scons
     --libpath="C:\local\boost_1_55_0\lib64-msvc-12.0"
     install-mongoclient
 ```
-
-Windows Notes
- - You must configure Visual Studio for Release builds when building your application with a C++ driver DLL built in release mode.

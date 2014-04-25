@@ -142,13 +142,12 @@ scons
     install-mongoclient
 ```
 
-The following example issues the build command in a PowerShell:
+The following example will build and install the C++ driver, in a PowerShell:
 ```sh
 scons
     --64
     --sharedclient
     --dynamic-windows
-    --release
     --prefix="%HOME%\mongo-client-install"
     --cpppath="C:\local\boost_1_55_0\include"
     --libpath="C:\local\boost_1_55_0\lib64-msvc-12.0"
@@ -156,5 +155,5 @@ scons
 ```
 
 Windows Notes
- - You must configure Visual Studio for release builds when building your application with the C++ driver DLL.
+ - You must configure Visual Studio for Release builds when building your application with a C++ driver DLL built in release mode.
  - Disable STL iterator debugging to ensure compatibility with the STL binary.

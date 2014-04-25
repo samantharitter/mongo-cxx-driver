@@ -156,4 +156,3 @@ scons
 
 Windows Notes
  - You must configure Visual Studio for Release builds when building your application with a C++ driver DLL built in release mode.
- - Disable STL iterator debugging to ensure compatibility with the STL binary.

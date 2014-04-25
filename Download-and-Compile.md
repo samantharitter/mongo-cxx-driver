@@ -45,11 +45,18 @@ Select options as appropriate for your environment.
  - `--ssl` Enables SSL support. You will need a compatible version of the SSL libraries available.
  - `--use-sasl-client` Enables SASL, which MongoDB uses for the Kerberos authentication available on MongoDB Enterprise. You will need a compatible version of the SASL implementation libraries available.
  - `--sharedclient` Builds a shared library version of the client driver alongside the static library. If applicable for your application, prefer using the shared client.
+
+##### Path Options
+ - `--libpath=<path-to-libs>` Specifies path to additional libraries.
+ - `--cpppath=<path-to-headers>` Specifies path to additional headers.
  - `--extrapath=<path-to-boost>` Specifies the path to your Boost libraries if they are not in a standard search path for your toolchain.
 
 ##### Build Options
  - `--dbg=[on|off]` Enables runtime debugging checks. Defaults to off. Specifying --dbg=on implies --opt=off unless explicitly overridden with --opt=on.
  - `--opt=[on|off]` Enables compile-time optimization. Defaults to on. Can be freely mixed with the values for the --dbg flag.
+
+##### Scons Options
+ - `--cache` Enables caching of object files.
 
 ##### Compiler Options
  - `--cc` The compiler to use for C. Use the following syntax: `--cc=<path-to-c-compiler>`
@@ -57,6 +64,9 @@ Select options as appropriate for your environment.
 
 ##### Windows Options (Windows Only)
  - `--dynamic-windows` By default, on Windows, compilation uses /MT. Use this flag to compile with /MD. Note that /MD is required to build the shared client on Windows. Also note that your application compiler flags must match. If you build with --dbg=on, /MTd or /MDd will be used in place of /MT or /MD, respectively.
+
+##### Mac OS X Options (Mac OS X Only)
+ - `--osx-version-min=[10.7|10.8|10.9]` Minimum version of Mac OS X to build for.
 
 ##### Deprecated Options (26Compat Branch Only)
  - `--full` Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory.

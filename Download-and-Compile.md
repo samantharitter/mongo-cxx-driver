@@ -76,7 +76,7 @@ Select options as appropriate for your environment.
 > **Note:** In the legacy release stream of the driver these options are implied, you always build using system boost and with the full installation (if you provide a prefix).
 
 #### Windows Considerations
-When building on Windows, use of the SCons `--dynamic-windows` option can result in an error unless all libraries and sources for the application use the same runtime library. This option builds the driver to link against the dynamic windows libraries instead of the static windows runtime libraries. If the Boost library being linked against is expecting an /MT build (static libraries), this can result in an error similar to the following:
+When building on Windows, use of the SCons `--dynamic-windows` option can result in an error unless all libraries and sources for the application use the same C runtime library. This option builds the driver to link against the dynamic link C RTL instead of the static C RTL. If the Boost library being linked against is expecting an /MT build (static C RTL), this can result in an error similar to the following:
 
 ```
 error LNK2005: ___ already defined in msvcprt.lib(MSVCP100.dll) libboost_thread-vc100-mt-1_42.lib(thread.obj)

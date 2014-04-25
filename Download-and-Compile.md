@@ -71,6 +71,7 @@ Select options as appropriate for your environment.
 ##### Deprecated Options (26Compat Branch Only)
  - `--full` Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory.
  - `--use-system-boost` This is strongly recommended. This builds against the system version of Boost rather than the MongoDB vendor copy. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next.
+ - `--allocator=[system|tcmalloc]` The allocator to use.
 
 > **Note:** In the legacy release stream of the driver these options are implied, you always build using system boost and with the full installation (if you provide a prefix).
 

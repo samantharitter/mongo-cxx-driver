@@ -130,7 +130,7 @@ scons --prefix=$HOME/mongo-client-install --cc=<path-to-gcc> --cxx=<path-to-g++>
 
 ##### Building on Windows
 
-Building a DLL (New in version 2.5.5)
+###### Building a DLL (New in version 2.5.5)
 ```sh
 scons
     <--64 or --32>
@@ -142,7 +142,7 @@ scons
     install-mongoclient
 ```
 
-The following example will build and install the C++ driver, in a PowerShell:
+###### The following example will build and install the C++ driver, in a PowerShell:
 ```sh
 scons
     --64
@@ -153,3 +153,31 @@ scons
     --libpath="C:\local\boost_1_55_0\lib64-msvc-12.0"
     install-mongoclient
 ```
+
+###### Building multiple Windows library variants:
+
+As of legacy-0.8, the Windows libraries are now tagged with boost-like ABI tags (see http://www.boost.org/doc/libs/1_55_0/more/getting_started/windows.html#library-naming), so it is possible to build several different variants (debug vs retail, static vs dynamic runtime) and install them to the same location. In the future we will be adding autolib support so that the selection of the library is handled automatically (see https://jira.mongodb.org/browse/CXX-200, which should land in the upcoming legacy-0.9 release). To build all of the different driver variants, repeatedly invoke scons as follows:
+
+```
+scons $ARGS install-mongoclient
+scons $ARGS install-mongoclient --dbg=on
+scons $ARGS install-mongoclient --dynamic-windows --sharedclient
+scons $ARGS install-mongoclient --dynamic-windows --sharedclient --dbg=on
+```
+
+Where ```$ARGS``` are the arguments you would normally pass (e.g. ```--cpppath```, ```--libpath```, ```--64```, ```--prefix```, etc.). You should ensure that you use the same arguments for all four invocations. If this works properly, your ```$PREFIX/lib``` directory should contain the following files:
+
+```
+libmongoclient.lib
+libmongoclient-gd.lib
+libmongoclient-s.lib
+libmongoclient-sgd.lib
+mongoclient.dll
+mongoclient.exp
+mongoclient.lib
+mongoclient.pdb
+mongoclient-gd.dll
+mongoclient-gd.exp
+mongoclient-gd.lib
+mongoclient-gd.pdb
+``` 

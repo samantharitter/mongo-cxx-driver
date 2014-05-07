@@ -40,6 +40,13 @@ To see the list of all SCons options, run: `scons --help`
 #### SCons Options when Compiling the C++ Driver
 Select options as appropriate for your environment.
 
+**Important 26compat Note**: If you are using the 26compat branch, the `install-mongoclient` target is only enabled when the `--full` flag is provided. Similarly, you must use the `--use-system-boost` flag when building 26compat.
+
+##### Targets
+
+There are several targets you can build, but the most common target for users of the library is `install-mongoclient`, which will build the driver, and install the driver and headers to the location specified with the `--prefix` argument.
+
+
 ##### Client Options
  - `--prefix=<path>` The directory prefix for the installation directory. Set <path> to the directory where you want the build artifacts (headers and library files) installed. For example, you might set <path> to /opt/local, /usr/local, or $HOME/mongo-client-install.
  - `--ssl` Enables SSL support. You will need a compatible version of the SSL libraries available.
@@ -69,9 +76,11 @@ Select options as appropriate for your environment.
  - `--osx-version-min=[10.7|10.8|10.9]` Minimum version of Mac OS X to build for.
 
 ##### Deprecated Options (26Compat Branch Only)
- - `--full` Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory.
- - `--use-system-boost` This is strongly recommended. This builds against the system version of Boost rather than the MongoDB vendor copy. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next.
- - `--allocator=[system|tcmalloc]` The allocator to use.
+ - `--full` Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory. This is required when building 26compat.
+ - `--use-system-boost` This is required when building 26compat, and is a vestige of a time when this code could be built either against the system boost or a private copy of boost in the repository. The driver no longer offers this built-in boost, so the use of the flag becomes mandatory. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next.
+ - `--allocator=[system|tcmalloc]` The allocator to use. You almost certainly do *not* want to set this flag, since the choice of the allocator should be tied to an application, not to a library. This option is documented here for completeness.
+
+Please note that there are many other flags in the build system, particularly on the 26compat branch, which are either no longer necessary or potentially actively harmful. We have removed these options on the legacy branch.
 
 > **Note:** In the legacy release stream of the driver these options are implied, you always build using system boost and with the full installation (if you provide a prefix).
 

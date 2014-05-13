@@ -15,7 +15,7 @@ git clone git@github.com:mongodb/mongo-cxx-driver.git
 #### Legacy Branch:
 
 Use the [legacy](https://github.com/mongodb/mongo-cxx-driver/tree/legacy) branch if:
- - You are using MongoDB's C++ driver for the first time and do not mind the driver being actively worked on.
+ - You are experimenting with the C++ driver and do not need a production ready driver.
  - You had been using 26compat (or the driver inside of the server source) and want to benefit from incremental improvements while having the same overall API.
 
 ```
@@ -33,7 +33,7 @@ git checkout 26compat
 ```
 
 ### Compile the Driver
-From the directory where you cloned the code, compile the C++ driver by running the scons command. Use the scons options described in this section.
+From the directory where you cloned the code, compile the C++ driver by running the `scons` command. Use the SCons options described in this section.
 
 To see the list of all SCons options, run: `scons --help`
 
@@ -44,13 +44,13 @@ Select options as appropriate for your environment.
 
 ##### Targets
 
-There are several targets you can build, but the most common target for users of the library is `install-mongoclient`, which will build the driver, and install the driver and headers to the location specified with the `--prefix` argument. If no prefix is specified, `--prefix` defaults to a directory named ```build/install``` under the source directory.
+There are several targets you can build, but the most common target for users of the library is `install-mongoclient`, which will build the driver, and install the driver and headers to the location specified with the `--prefix` argument. If no prefix is specified, `--prefix` defaults to a directory named ```build/install``` under the current source directory.
 
-**Important 26compat Note**: On the 26compat branch, the default argument to `--prefix` is /usr/local, so the build will fail unless you either build with sudo, or change the install prefix to a directory where you have write permissions.
+**Important 26compat Note**: On the 26compat branch, the default argument to `--prefix` is `/usr/local`, so the build will fail unless you either build with `sudo`, or change the install prefix to a directory where you have write permissions.
 
 
 ##### Client Options
- - `--prefix=<path>` The directory prefix for the installation directory. Set <path> to the directory where you want the build artifacts (headers and library files) installed. For example, you might set <path> to /opt/local, /usr/local, or $HOME/mongo-client-install.
+ - `--prefix=<path>` The directory prefix for the installation directory. Set <path> to the directory where you want the build artifacts (headers and library files) installed. For example, you might set <path> to `/opt/local`, `/usr/local`, or `$HOME/mongo-client-install`.
  - `--ssl` Enables SSL support. You will need a compatible version of the SSL libraries available.
  - `--use-sasl-client` Enables SASL, which MongoDB uses for the Kerberos authentication available on MongoDB Enterprise. You will need a compatible version of the SASL implementation libraries available.
  - `--sharedclient` Builds a shared library version of the client driver alongside the static library. If applicable for your application, prefer using the shared client.
@@ -61,8 +61,8 @@ There are several targets you can build, but the most common target for users of
  - `--extrapath=<path-to-boost>` Specifies the path to your Boost libraries if they are not in a standard search path for your toolchain.
 
 ##### Build Options
- - `--dbg=[on|off]` Enables runtime debugging checks. Defaults to off. Specifying --dbg=on implies --opt=off unless explicitly overridden with --opt=on.
- - `--opt=[on|off]` Enables compile-time optimization. Defaults to on. Can be freely mixed with the values for the --dbg flag.
+ - `--dbg=[on|off]` Enables runtime debugging checks. Defaults to off. Specifying `--dbg=on` implies `--opt=off` unless explicitly overridden with `--opt=on`.
+ - `--opt=[on|off]` Enables compile-time optimization. Defaults to on. Can be freely mixed with the values for the `--dbg` flag.
 
 ##### Scons Options
  - `--cache` Enables caching of object files.
@@ -72,14 +72,14 @@ There are several targets you can build, but the most common target for users of
  - `--cxx` The compiler to use for C++. Use the following syntax: `--cxx=<path-to-c++-compiler>`
 
 ##### Windows Options (Windows Only)
- - `--dynamic-windows` By default, on Windows, compilation uses /MT. Use this flag to compile with /MD. Note that /MD is required to build the shared client on Windows. Also note that your application compiler flags must match. If you build with --dbg=on, /MTd or /MDd will be used in place of /MT or /MD, respectively.
+ - `--dynamic-windows` By default, on Windows, compilation uses `/MT`. Use this flag to compile with `/MD`. Note that `/MD` is required to build the shared client on Windows. Also note that your application compiler flags must match. If you build with `--dbg=on`, `/MTd` or `/MDd` will be used in place of `/MT` or `/MD`, respectively.
 
 ##### Mac OS X Options (Mac OS X Only)
  - `--osx-version-min=[10.7|10.8|10.9]` Minimum version of Mac OS X to build for.
 
 ##### Deprecated Options (26Compat Branch Only)
  - `--full` Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory. This is required when building 26compat.
- - `--use-system-boost` This is required when building 26compat, and is a vestige of a time when this code could be built either against the system boost or a private copy of boost in the repository. The driver no longer offers this built-in boost, so the use of the flag becomes mandatory. If your Boost libraries are not in a standard search path for your toolchain, include the --extrapath option, described next.
+ - `--use-system-boost` This is required when building 26compat, and is a vestige of a time when this code could be built either against the system boost or a private copy of boost in the repository. The driver no longer offers this built-in boost, so the use of the flag becomes mandatory. If your Boost libraries are not in a standard search path for your toolchain, include the `--extrapath` option, described next.
  - `--allocator=[system|tcmalloc]` The allocator to use. You almost certainly do *not* want to set this flag, since the choice of the allocator should be tied to an application, not to a library. This option is documented here for completeness.
 
 Please note that there are many other flags in the build system, particularly on the 26compat branch, which are either no longer necessary or potentially actively harmful. We have removed these options on the legacy branch.
@@ -87,7 +87,7 @@ Please note that there are many other flags in the build system, particularly on
 > **Note:** In the legacy release stream of the driver these options are implied, you always build using system boost and with the full installation (if you provide a prefix).
 
 #### Windows Considerations
-When building on Windows, use of the SCons `--dynamic-windows` option can result in an error unless all libraries and sources for the application use the same C runtime library. This option builds the driver to link against the dynamic link C RTL instead of the static C RTL. If the Boost library being linked against is expecting an /MT build (static C RTL), this can result in an error similar to the following:
+When building on Windows, use of the SCons `--dynamic-windows` option can result in an error unless all libraries and sources for the application use the same C runtime library. This option builds the driver to link against the dynamic link C RTL instead of the static C RTL. If the Boost library being linked against is expecting an `/MT` build (static C RTL), this can result in an error similar to the following:
 
 ```
 error LNK2005: ___ already defined in msvcprt.lib(MSVCP100.dll) libboost_thread-vc100-mt-1_42.lib(thread.obj)
@@ -134,7 +134,7 @@ To build a version of the library with debugging enabled, use `--dbg=on`. This t
 scons --prefix=$HOME/mongo-client-install --dbg=on --opt=on install-mongoclient
 ```
 
-To override the default compiler to a newer GCC installed in /opt/local/gcc-4.8, use the `--cc` and `--cxx` options:
+To override the default compiler to a newer GCC installed in `/opt/local/gcc-4.8`, use the `--cc` and `--cxx` options:
 ```sh
 scons --prefix=$HOME/mongo-client-install --cc=<path-to-gcc> --cxx=<path-to-g++> install-mongoclient
 ```

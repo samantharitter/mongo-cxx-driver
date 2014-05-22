@@ -6,7 +6,7 @@ The MongoDB C++ driver library includes a bson package that implements the BSON 
  - [Download and Compile](Download and Compile)
  - [Getting Started with the C++ Driver](Tutorial)
  - [BSON Helper Functions](BSON Helper Functions)
- - [Breaking changes when moving from 26compat to legacy](Breaking changes: legacy vs 26compat)
+ - [Breaking changes between 26compat and legacy](Breaking changes between 26compat and legacy)
 
 ### Documentation
  - [API Documentation](http://api.mongodb.org/cxx/)

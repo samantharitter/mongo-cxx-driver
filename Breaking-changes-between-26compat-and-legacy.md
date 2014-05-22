@@ -32,7 +32,7 @@ This page attempts to serve as a transition guide for those users looking to mig
 ## Behavior Changes
 * The driver is now unlikely to function correctly unless `mongo::client::initialize` is invoked before using the driver APIs.
 * The driver no longer logs any output by default. You may configure and inject a logger to re-enable logging. See `src/mongo/client/examples/clientTest.cpp` for an example of how to enable logging.
-* Writes are now acknowledged by default.
+* Writes are now "[acknowledged](http://docs.mongodb.org/manual/core/write-concern/#write-concern-acknowledged)" by default. In all previous releases the default write concern was “[unacknowledged](http://docs.mongodb.org/manual/core/write-concern/#unacknowledged)”. This change may have performance and behavior implications for existing applications that did not confirm writes. You can read more about the change [here](http://docs.mongodb.org/manual/release-notes/drivers-write-concern/#driver-write-concern-change).
 
 # Improvements
 

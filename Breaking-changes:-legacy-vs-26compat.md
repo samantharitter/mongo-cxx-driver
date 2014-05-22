@@ -6,9 +6,9 @@ The legacy release series, on the other hand, is under active development. Our p
 
 This page attempts to serve as a transition guide for those users looking to migrate from the 26compat branch to the legacy branch. Note that it does *not* discuss new features in detail and simply points to the per-release notes.
 
-**NOTE: This is a living document, and tracks the current state of the legacy branch. While we have attempted to capture the big ticket breakages here, there are likely to be small ones that we have missed. The C++ driver developers would appreciate it greatly if, when you are moving from 26compat to legacy, you find issues not tracked here: please send us a pull request so we can keep this page up to date and useful.
+> **NOTE**: This is a living document, and tracks the current state of the legacy branch. While we have attempted to capture the big ticket breakages here, there are likely to be small ones that we have missed. The C++ driver developers would appreciate it greatly if, when you are moving from 26compat to legacy, you find issues not tracked here: please send us a pull request so we can keep this page up to date and useful.
 
-**NOTE: The legacy branch is currently unstable and under active development.**
+**Warning: The legacy branch is currently unstable and under active development.**
 
 # Breaking Changes
 

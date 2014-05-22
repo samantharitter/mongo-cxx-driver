@@ -32,6 +32,7 @@ This page attempts to serve as a transition guide for those users looking to mig
 ## Behavior Changes
 * The driver is now unlikely to function correctly unless `mongo::client::initialize` is invoked before using the driver APIs.
 * The driver no longer logs any output by default. You may configure and inject a logger to re-enable logging. See `src/mongo/client/examples/clientTest.cpp` for an example of how to enable logging.
+* Writes are now acknowledged by default.
 
 # Improvements
 

@@ -33,7 +33,11 @@ Could not find boost headers in include search path
 
 _Why can't the build system find the boost headers?_
 
+Thanks
+
 ***
+
+While collecting this information will take some additional time and effort, providing it will make it much more likely for your question to receive a prompt and immediately helpful reply.
 
 ### Prerequisites
  - [Boost](http://www.boost.org/) (>= 1.49) # May work with older versions back to 1.41

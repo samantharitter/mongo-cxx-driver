@@ -1,6 +1,6 @@
 ### How to ask for Help
 
-If you are having difficulty building the driver after reading the below instructions, please email the mongodb-user mailing list (https://groups.google.com/forum/#!forum/mongodb-user) to ask for help. Please include in your email **all** of the following information:
+If you are having difficulty building the driver after reading the below instructions, please email the [mongodb-user mailing list](https://groups.google.com/forum/#!forum/mongodb-user) to ask for help. Please include in your email **all** of the following information:
 
  - The version of the driver you are trying to build (branch or tag). Examples: _26compat branch_, _legacy-0.9.0 tag_
  - Host OS, version, and architecture. Examples: _Windows 8 64-bit_ x86, _Ubuntu 12.04 32-bit x86_, _OS X Mavericks_
@@ -19,8 +19,8 @@ Failure to include the relevant information will result in additional round-trip
 _I'm trying to build the legacy-0.9 tag on Windows 8 64-bit, using MSVC 2013. I have the boost 1.55 pre-built Windows binaries for VC12 installed to D:\local\boost-1.55. When I invoked scons as 'scons --mute --64 --extrapath=D:\local\boost-1.55', the configure step can't find the boost headers. The build gives the following configure output:_
 
 ```
-Checking whether the C++ compiler worksyes
-Checking whether the C compiler worksyes
+Checking whether the C++ compiler works yes
+Checking whether the C compiler works yes
 Checking if C++ compiler "$CC" is MSVC... yes
 Checking if C compiler "cl" is MSVC... yes
 Checking if we are using libstdc++... no

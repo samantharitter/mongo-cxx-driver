@@ -1,3 +1,40 @@
+### How to ask for Help
+
+If you are having difficulty building the driver after reading the below instructions, please email the mongodb-user mailing list (https://groups.google.com/forum/#!forum/mongodb-user) to ask for help. Please include in your email **all** of the following information:
+
+ - The version of the driver you are trying to build (branch or tag). Examples: _26compat branch_, _legacy-0.9.0 tag_
+ - Host OS, version, and architecture. Examples: _Windows 8 64-bit_ x86, _Ubuntu 12.04 32-bit x86_, _OS X Mavericks_
+ - C++ Compiler and version. Examples: _GCC 4.8.2_, _MSVC 2013 Express_, _clang 3.4_, _XCode 5_
+ - Boost version. Examples: _boost 1.55_, _boost 1.49_
+ - How boost was built or installed. Examples: _apt-get install libboost-all-dev_, _built from source_, _windows binary install_
+   - If you built boost from source, please include your boost build invocation as well.
+ - The complete SCons invocation: Example: _scons -j10 install-mongoclient_
+ - The output of the configure phase of the build.
+ - The error you encountered. This may be compiler, SCons, or other output.
+
+Failure to include the relevant information will result in additional round-trip communications to ascertain the necessary details, delaying a useful response. Here is a made-up example of a help request that provides the relevant information:
+
+***
+
+_I'm trying to build the legacy-0.9 tag on Windows 8 64-bit, using MSVC 2013. I have the boost 1.55 pre-built Windows binaries for VC12 installed to D:\local\boost-1.55. When I invoked scons as 'scons --mute --64 --extrapath=D:\local\boost-1.55', the configure step can't find the boost headers. The build gives the following configure output:_
+
+```
+Checking whether the C++ compiler worksyes
+Checking whether the C compiler worksyes
+Checking if C++ compiler "$CC" is MSVC... yes
+Checking if C compiler "cl" is MSVC... yes
+Checking if we are using libstdc++... no
+WARNING: Cannot disable C++11 features when using MSVC
+Checking if we are on a POSIX system... no
+Checking for __declspec(thread)... yes
+Checking for C++ header file boost/version.hpp... no
+Could not find boost headers in include search path
+```
+
+_Why can't the build system find the boost headers?_
+
+***
+
 ### Prerequisites
  - [Boost](http://www.boost.org/) (>= 1.49) # May work with older versions back to 1.41
  - [Python](https://www.python.org/) (2.x)

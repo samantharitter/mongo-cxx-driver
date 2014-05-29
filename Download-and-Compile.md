@@ -33,7 +33,7 @@ Could not find boost headers in include search path
 
 _Why can't the build system find the boost headers?_
 
-Thanks
+_Thanks_
 
 ***
 

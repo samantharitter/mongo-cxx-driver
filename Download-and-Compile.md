@@ -18,7 +18,7 @@ Failure to include the relevant information will result in additional round-trip
 
 ***
 
-_I'm trying to build the legacy-0.9 tag on Windows 8 64-bit, using MSVC 2013. I have the boost 1.55 pre-built Windows binaries for VC12 installed to D:\local\boost-1.55. When I invoked scons as 'scons --mute --64 --extrapath=D:\local\boost-1.55', the configure step can't find the boost headers. The build gives the following configure output:_
+_I'm trying to build the legacy-0.9 tag on Windows 8 64-bit, using MSVC 2013. I have the boost 1.55 pre-built Windows binaries for VC12 installed to D:\local\boost-1.55. When I invoked scons as `scons --mute --64 --extrapath=D:\local\boost-1.55`, **the configure step will not find the boost headers**. The build gives the following configure output:_
 
 ```
 Checking whether the C++ compiler works yes

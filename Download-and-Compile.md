@@ -14,6 +14,8 @@ If you are having difficulty building the driver after reading the below instruc
 
 Failure to include the relevant information will result in additional round-trip communications to ascertain the necessary details, delaying a useful response. Here is a made-up example of a help request that provides the relevant information:
 
+**PLEASE NOTE: The build invocation below is incomplete and intentionally erroneous. Read the section on building against the pre-built boost binaries under the "Building on Windows" section to understand what is wrong here, and the rest of the page to learn about other important options you will want or need to use when building the driver.**
+
 ***
 
 _I'm trying to build the legacy-0.9 tag on Windows 8 64-bit, using MSVC 2013. I have the boost 1.55 pre-built Windows binaries for VC12 installed to D:\local\boost-1.55. When I invoked scons as 'scons --mute --64 --extrapath=D:\local\boost-1.55', the configure step can't find the boost headers. The build gives the following configure output:_
@@ -129,10 +131,10 @@ Please note that there are many other flags in the build system, particularly on
 
 #### Windows Considerations
 When building on Windows, use of the SCons `--dynamic-windows` option can result in an error unless all libraries and sources for the application use the same C runtime library. This option builds the driver to link against the dynamic link C RTL instead of the static C RTL. If the Boost library being linked against is expecting an `/MT` build (static C RTL), this can result in an error similar to the following:
-
 ```
 error LNK2005: ___ already defined in msvcprt.lib(MSVCP100.dll) libboost_thread-vc100-mt-1_42.lib(thread.obj)
 ```
+The same caveat applies to building with the --dbg=on flag, which will select the debug runtime library.
 
 You may want to define _CRT_SECURE_NO_WARNINGS to avoid warnings on use of strncpy and such by the MongoDB client code.
 
@@ -181,6 +183,16 @@ scons --prefix=$HOME/mongo-client-install --cc=<path-to-gcc> --cxx=<path-to-g++>
 ```
 
 ##### Building on Windows
+
+###### Building against the pre-built boost binaries.
+
+Building boost from source can be challenging on Windows. If appropriate for your situation, we recommend using the [pre built boost Windows binaries](http://sourceforge.net/projects/boost/files/boost-binaries/). Please note that you must select a download that properly reflects your target architecture (i.e. 32-bit or 64-bit) and toolchain revision (MSVC 10, 11, etc. Note that this is the VC version **not** the Visual Studio version).
+
+Due to the layout of the boost installation in the pre-built binaries, you cannot use the `--extrapath` SCons flag to inform the build of the installation path for the boost binaries. Instead, you should use the `--cpppath` flag to point to the root of the chosen boost installation path, and `--libpath` to point into the appropriately named library subdirectory of the boost installation. For example, if you have installed the 64-bit boost 1.55 libraries for MSVC11 into `D:\local\boost_1_55_0_msvc11`, then you would add
+```
+--cpppath=d:\local\boost_1_55_0_msvc --libpath=d:\local\boost_1_55_0_msvc11\lib64-msvc-11.0
+````
+to your SCons invocation.
 
 ###### Building a DLL (New in version 2.5.5)
 ```sh

@@ -2,13 +2,19 @@
 
 If you are having difficulty building the driver after reading the below instructions, please email the [mongodb-user mailing list](https://groups.google.com/forum/#!forum/mongodb-user) to ask for help. Please include in your email **all** of the following information:
 
- - The version of the driver you are trying to build (branch or tag). Examples: _26compat branch_, _legacy-0.9.0 tag_
- - Host OS, version, and architecture. Examples: _Windows 8 64-bit_ x86, _Ubuntu 12.04 32-bit x86_, _OS X Mavericks_
- - C++ Compiler and version. Examples: _GCC 4.8.2_, _MSVC 2013 Express_, _clang 3.4_, _XCode 5_
- - Boost version. Examples: _boost 1.55_, _boost 1.49_
- - How boost was built or installed. Examples: _apt-get install libboost-all-dev_, _built from source_, _windows binary install_
+ - The version of the driver you are trying to build (branch or tag).
+   - Examples: _26compat branch_, _legacy-0.9.0 tag_
+ - Host OS, version, and architecture.
+   - Examples: _Windows 8 64-bit_ x86, _Ubuntu 12.04 32-bit x86_, _OS X Mavericks_
+ - C++ Compiler and version.
+   - Examples: _GCC 4.8.2_, _MSVC 2013 Express_, _clang 3.4_, _XCode 5_
+ - Boost version.
+   - Examples: _boost 1.55_, _boost 1.49_
+ - How boost was built or installed.
+   - Examples: _apt-get install libboost-all-dev_, _built from source_, _windows binary install_
    - If you built boost from source, please include your boost build invocation as well.
- - The complete SCons invocation: Example: _scons -j10 install-mongoclient_
+ - The complete SCons invocation.
+   - Example: _scons -j10 install-mongoclient_
  - The output of the configure phase of the build.
  - The error you encountered. This may be compiler, SCons, or other output.
 

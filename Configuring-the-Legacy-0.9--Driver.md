@@ -50,21 +50,21 @@ if !(status.isOK()) {
 
 #### `Options::callShutdownAtExit` and `Options::setCallShutdownAtExit`
 
-- Type: bool
-- Default: true
+- Type: `bool`
+- Default: `true`
 - Semantics: If this option is 'true', then a successful call to `mongo::client::initialize` will schedule a call to `mongo::client::terminate` with `atexit`. The call to `mongo::client::terminate` will be made with the value of `mongo::client::Options::current::autoShutdownGracePeriodMillis`
 
 
 #### `Options::autoShutdownGracePeriodMillis` and `Options::setAutoShutdownGracePeriodMillis`
 
-- Type: int, interpreted as milliseconds
+- Type: `int`, interpreted as milliseconds
 - Default: 250
 - Semantics: If `mongo::client::initialize` scheduled a call to `mongo::client::terminate` with `atexit`, then that call to `mongo::client::terminate` will use the value `Options::autoShutdownGracePeriodMillis` when calling `mongo::client::terminate`.
 
 
 #### `Options::setDefaultLocalThresholdMillis` and `Options::defaultLocalThresholdMillis`
 
-- Type: int, interpreted as milliseconds
+- Type: `int`, interpreted as milliseconds
 - Default: 15
 - Semantics: TODO
 
@@ -74,7 +74,47 @@ if !(status.isOK()) {
 - Default: `Options::kSSLDisabled`
 - Semantics: If set to `Options:kSSLEnabled` the driver will require SSL connections to all mongo servers. If disabled, it will not request SSL. Note that if the servers you are connected to are in SSL required mode, you may not be able to connect. This value is an enumeration so that we may later extend it with a `kSSLPreferred` option, but that is not currently implemented.
 
-TODO: Remaining options.
+#### `Options::setFIPSMode` and `Options::FIPSMode`
+
+- Type: `bool`
+- Default: `false`
+- Semantics: If true, will attempt to use FIPS-140 validated crypto if supported by the crypto library currently in use.
+
+#### `Options::setSSLCAFile` and `Options::SSLCAFile`
+
+- Type: `std::string`
+- Default: `""`
+- Semantics: This flag only has an effect if `Options::current::SSLMode` is `Options::kSSLRequired`. If set, it specifies a file containing the certificate authority file to use. See the [MongoDB SSL documentation](http://docs.mongodb.org/manual/tutorial/configure-ssl/#set-up-mongod-and-mongos-with-ssl-certificate-and-key) for additional information on the CA file.
+
+#### `Options::setSSLPemKeyFile` and `Options::SSLPEMKeyFile`
+
+- Type: `std::string`
+- Default: `""`
+- Semantics: This flag only has an effect if `Options::current::SSLMode` is `Options::kSSLRequired`. If set, it specifies a file containing the SSL PEM key file to use. See the [MongoDB SSL documentation](http://docs.mongodb.org/manual/tutorial/configure-ssl/#set-up-mongod-and-mongos-with-ssl-certificate-and-key) for additional information on the PEM key file.
+
+#### `Options::setSSLPemKeyPassword` and `Options::SSLPEMKeyPassword`
+
+- Type: `std::string`
+- Default: `""`
+- Semantics: This flag only has an effect if `Options::current::SSLMode` is `Options::kSSLRequired`, and is only meaningful if a PEM key file has been set with `Options::setSSLPEMKeyFile`. If set, it specifies the password to be used to decrypt the SSL PEM key file specified with `Options::setSSLPEMKeyFile`. See the [MongoDB SSL documentation](http://docs.mongodb.org/manual/tutorial/configure-ssl/#set-up-mongod-and-mongos-with-ssl-certificate-and-key) for additional information on the PEM key file password.
+
+#### `Options::setSSLCRLFile` and `Options::SSLCRLFile`
+
+- Type: `std::string`
+- Default: `""`
+- Semantics: This flag only has an effect if `Options::current::SSLMode` is `Options::kSSLRequired`. If set, it specifies the file to use as the SSL certificate revocation list. See the [MongoDB SSL documentation](http://docs.mongodb.org/manual/tutorial/configure-ssl/#set-up-mongod-and-mongos-with-ssl-certificate-and-key) for additional information on the certificate revocation list file.
+
+#### `Options::setSSAllowInvalidCertificates` and `Options::SSLAllowInvalidCertificates`
+
+- Type: `bool`
+- Default: `false`
+- Semantics: This flag only has an effect if `Options::current::SSLMode` is `Options::kSSLRequired`. Setting this option to `true` suppresses validation of certificates. In other words, invalid certificates will be accepted.
+
+#### `Options::setValidateObjects` and `Options::validateObjects`
+
+- Type: `bool`
+- Default: `false`
+- Semantics: If enabled, the client library will run BSON validation on data returned from the server to ensure that the returned data is valid BSON. Note that there is a performance cost to doing so.
 
 ## Caveats
 
@@ -83,7 +123,6 @@ TODO: Remaining options.
 - Configuration of the driver is global. You may access the global configuration state of the driver by calling `mongo::client::Options::current`. If called before entering `main`, the values returned by `Options::current` are indeterminate. If called after `main` but before calling `mongo::client::initialize`, a default constructed instance of the Options class will be returned. If called after `mongo::client::initialize`, the value returned by `Options::current` will reflect any customized `Options` instance passed to `mongo::client::initialize`.
 
 - Configuration of the driver is not synchronized, and you may only invoke `mongo::client::initialize` once. We strongly recommend that you call `mongo::client::initialize` as early as possible in `main` or your application startup code, preferably before creating any additional threads.
-
 
 
 

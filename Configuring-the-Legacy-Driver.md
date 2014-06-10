@@ -37,8 +37,11 @@ using mongo::client::initialize;
 using mongo::client::Options;
 
 // Configure the mongo C++ client driver, enabling SSL and setting
-// the SSL Certificate Authority file to 'mycafile'.
-Status status = initialize(Options().setSSLMode(Options:kSSLModeRequired).setSSLCAFile('mycafile'));
+// the SSL Certificate Authority file to "mycafile".
+Status status = initialize(
+    Options().setSSLMode(Options:kSSLModeRequired).setSSLCAFile("mycafile")
+);
+
 if (!status.isOK()) {
     // deal with errors
 } else {

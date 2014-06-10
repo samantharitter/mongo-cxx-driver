@@ -24,7 +24,7 @@ If you would prefer to explicitly manage the lifetime of the driver and not rely
 
 ### Where to find it
 
-Configuration of the driver is managed through a new class, added in legacy-0.9.0, called `Options`. This class is hosted in the `mongo::client` namespace, and is defined in the header `mongo/client/options.h`.
+Configuration of the driver is managed through a new class, added in the `legacy-0.9.0` release, called `Options`. This class is hosted in the `mongo::client` namespace, and is defined in the header `mongo/client/options.h`.
 
 ### Passing an instance to `mongo::client::initialize`
 

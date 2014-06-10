@@ -120,7 +120,7 @@ if (!status.isOK()) {
 
 - You must call `mongo::client::initialize` before using the driver. You may only call `mongo::client::initialize` once.
 
-- Configuration of the driver is global. You may access the global configuration state of the driver by calling `mongo::client::Options::current`. If called before entering `main`, the values returned by `Options::current` are indeterminate. If called after `main` but before calling `mongo::client::initialize`, a default constructed instance of the Options class will be returned. If called after `mongo::client::initialize`, the value returned by `Options::current` will reflect any customized `Options` instance passed to `mongo::client::initialize`.
+- Configuration of the driver is global. You may access a `const` reference to the current global configuration state of the driver by calling `mongo::client::Options::current`. If called before entering `main`, the values returned by accessors of the `Options` object returned by `Options::current` are indeterminate. If called after `main` but before calling `mongo::client::initialize`, a default constructed instance of the `Options` class will be returned. If called after `mongo::client::initialize`, the value returned by `Options::current` will reflect any customized `Options` instance passed to `mongo::client::initialize`.
 
 - Configuration of the driver is not synchronized, and you may only invoke `mongo::client::initialize` once. We strongly recommend that you call `mongo::client::initialize` as early as possible in `main` or your application startup code, preferably before creating any additional threads.
 

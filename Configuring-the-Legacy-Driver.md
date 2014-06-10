@@ -32,7 +32,7 @@ By default, calling `mongo::client::initialize()` with no parameters is equivale
 
 Because the `mongo::client::Options` class has setters returning a `mongo::client::Options&` you can chain together options to easily configure them at the call site:
 
-```
+```cpp
 using mongo::client::initialize;
 using mongo::client::Options;
 
@@ -44,7 +44,6 @@ if (!status.isOK()) {
 } else {
     // Driver is up in SSL mode.
 }
-
 ```
 ### Available Options
 

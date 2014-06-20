@@ -254,3 +254,32 @@ mongoclient-gd.exp
 mongoclient-gd.lib
 mongoclient-gd.pdb
 ``` 
+
+### Using the driver in your application
+
+#### Client Headers
+
+There are only two headers intended for direct inclusion by consumers of the library:
+
+- `$PREFIX/include/mongo/bson/bson.h`
+- `$PREFIX/include/mongo/client/dbclient.h`
+
+These 'facade' headers should include all of the headers necessary to use the driver or BSON library. Directly including other headers from `$PREFIX/include/mongo/` is unlikely to work as intended and may lead to subtle or hard to diagnose problems.
+
+To consume the headers, you must configure your build system so that `$PREFIX/include` is incorporated into the header search path. For GCC-esque compilers, this is typically done with the `-I` flag. For IDEs, consult the relevant documentation on how to configure the header search path for your project.
+
+#### Client Libraries
+
+Depending on how you built the driver, you may end up with a static library, a dynamic library, or both. On Windows, you may end up with many libraries with different names.
+
+To link with the library, you must configure your build system so that `$PREFIX/lib` is incorporated into the link-time library search path. For GCC-esque compilers, this is typically done with the `-L` flag. For IDEs, consult the relevant documentation on how to configure the library search path for your project.
+
+Once you have added the search path, you may need to specify the name of the library you want to link against on your application link line. For GCC style compilers, this is typically done with the `-l` flag. For IDE's, consult the relevant documentation on how to add libraries to the link line.
+
+##### Windows autolinking
+
+For `legacy-0.9.0+` on Windows, the driver off autolib support. In this case, you do not need to add the client library as a dependent library. Inclusion of the client headers will register the dependency on the library and it will automatically be linked. You do still need to specify the library search path however.
+
+##### Linking with the static client library.
+
+If you intend to link against the static client library, you must also define the preprocessor symbol `STATIC_LIBMONGOCLIENT` in all translation units that include the driver or BSON headers. Failure to do so will result in hard to diagnose warnings or errors.

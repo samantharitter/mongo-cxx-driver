@@ -127,7 +127,7 @@ There are several targets you can build, but the most common target for users of
  - `--dynamic-windows` By default, on Windows, compilation uses `/MT`. Use this flag to compile with `/MD`. Note that `/MD` is required to build the shared client on Windows. Also note that your application compiler flags must match. If you build with `--dbg=on`, `/MTd` or `/MDd` will be used in place of `/MT` or `/MD`, respectively.
 
 ##### Mac OS X Options (Mac OS X Only)
- - `--osx-version-min=[10.7|10.8|10.9]` Minimum version of Mac OS X to build for.
+ - `--osx-version-min=[10.7|10.8|10.9]` Minimum version of Mac OS X to build for. Use `--osx-version-min=10.9` when compiling on OS X 10.9 Mavericks to automatically select `libc++` as the default runtime library, which is necessary if the prerequisite libraries (e.g. Boost) are built against `libc++`.
 
 ##### Deprecated Options (26Compat Branch Only)
  - `--full` Enables the “full” installation, directing SCons to install the driver headers and libraries to the prefix directory. This is required when building 26compat.
@@ -177,6 +177,11 @@ scons --prefix=$HOME/mongo-client-install --sharedclient install-mongoclient
 To use a custom version of boost installed to /dev/boost, use the `--extrapath=<path-to-boost>` option:
 ```sh
 scons --prefix=$HOME/mongo-client-install --extrapath=/dev/boost install-mongoclient
+```
+
+To target OS X 10.9 Mavericks (and default to using `libc++`, use the `--osx-version-min=<version>` option:
+```sh
+scons --prefix=$HOME/mongo-client-install --osx-version-min=10.9 install-mongoclient
 ```
 
 ##### Debug Builds

@@ -179,7 +179,7 @@ To use a custom version of boost installed to /dev/boost, use the `--extrapath=<
 scons --prefix=$HOME/mongo-client-install --extrapath=/dev/boost install-mongoclient
 ```
 
-To target OS X 10.9 Mavericks (and default to using `libc++`, use the `--osx-version-min=<version>` option:
+To target OS X 10.9 Mavericks (and default to using `libc++`), use the `--osx-version-min=<version>` option:
 ```sh
 scons --prefix=$HOME/mongo-client-install --osx-version-min=10.9 install-mongoclient
 ```

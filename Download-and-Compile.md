@@ -49,6 +49,8 @@ While collecting this information will take some additional time and effort, pro
 
 ### Prerequisites
  - [Boost](http://www.boost.org/) (>= 1.49) # May work with older versions back to 1.41
+   - NOTE: On systems offering multiple C++ standard libraries, you must ensure that the standard library
+     linked into boost matches that linked into the driver.
  - [Python](https://www.python.org/) (2.x)
  - [SCons](http://www.scons.org/)
  - [Git](http://git-scm.com/)

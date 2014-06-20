@@ -1,3 +1,33 @@
+### Table of Contents
+- [**How to ask for Help**](Download%20and%20Compile#how-to-ask-for-help)
+- [Get the source code](Download%20and%20Compile#get-the-source-code)
+- [Choose a branch](Download%20and%20Compile#choose-a-branch)
+  - [legacy branch](Download%20and%20Compile#legacy-branch)
+  - [26compat branch](Download%20and%20Compile#26compat-branch)
+- [Compile the Driver](Download%20and%20Compile#compile-the-driver)
+  - [SCons options when Compiling the C++ Driver](Download%20and%20Compile#scons-options-when-compiling-the-c-driver)
+    - [Targets](Download%20and%20Compile#targets)
+    - [Client Options](Download%20and%20Compile#client-options)
+    - [Path Options](Download%20and%20Compile#path-options)
+    - [Build Options](Download%20and%20Compile#build-options)
+    - [SCons Options](Download%20and%20Compile#scons-options) 
+    - [Compiler Options](Download%20and%20Compile#compiler-options)
+    - [Compiler Options](Download%20and%20Compile#windows-options)
+    - [Mac OS X Options](Download%20and%20Compile#mac-os-x-options)
+    - [Deprecated Options](Download%20and%20Compile#deprecated-options)
+  - [Windows Considerations](Download%20and%20Compile#windows-considerations)
+- [Example C++ Driver Compilations](Download%20and%20Compile#example-c-driver-compilations)
+  - [Debug Builds](Download%20and%20Compile#debug-builds)
+  - [Building on Windows](Download%20and%20Compile#building-on-windows)
+    - [Building against the pre-built boost binaries](Download%20and%20Compile#building-against-the-pre-built-boost-binaries)
+    - [Building a DLL](Download%20and%20Compile#building-a-dll-new-in-version-255)
+    - [Building multiple Windows library variants](Download%20and%20Compile#building-multiple-windows-library-variants)
+- [Using the driver in your application](Download%20and%20Compile#using-the-driver-in-your-application)
+  - [Client Headers](Download%20and%20Compile#client-headers)
+  - [Client Libraries](https://github.com/mongodb/mongo-cxx-driver/wiki/Download%20and%20Compile#client-libraries)
+    - [Windows autolinking](Download%20and%20Compile#windows-autolinking)
+    - [Linking with the static client library](Download%20and%20Compile#linking-with-the-static-client-library)
+
 ### How to ask for Help
 
 If you are having difficulty building the driver after reading the below instructions, please email the [mongodb-user mailing list](https://groups.google.com/forum/#!forum/mongodb-user) to ask for help. Please include in your email **all** of the following information:

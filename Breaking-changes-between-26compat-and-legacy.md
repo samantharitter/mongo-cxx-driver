@@ -28,6 +28,7 @@ This page attempts to serve as a transition guide for those users looking to mig
 * The `globalServerOptions` and `globalSSLOptions` objects and their classes have been removed. All driver configuration should be done through the new `mongo::client::Options` object.
 * The `RamLog`, `RotatableFileAppender`, and `Console` classes have been removed from the logging subsystem.
 * In addition, many auxiliary types, functions, and headers that were either unused, or minimally used, have been removed from the distribution.
+* The `ensureIndex` and related methods have been removed. The replacement is the new `createIndex` method.
 
 ## Behavior Changes
 * The driver is now unlikely to function correctly unless `mongo::client::initialize` is invoked before using the driver APIs.

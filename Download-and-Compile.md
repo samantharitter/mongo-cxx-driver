@@ -96,6 +96,7 @@ git clone git@github.com:mongodb/mongo-cxx-driver.git
 #### Legacy Branch:
 
 Use the [legacy](https://github.com/mongodb/mongo-cxx-driver/tree/legacy) branch if:
+ - You want to help test the new C++ driver.
  - You are experimenting with the C++ driver and do not need a production ready driver.
  - You had been using 26compat (or the driver inside of the server source) and want to benefit from incremental improvements while having the same overall API.
 

@@ -31,10 +31,16 @@ namespace document {
 /// sparingly; document::view should be used instead wherever possible.
 ///
 class BSONCXX_API value {
-
    public:
-    using deleter_type = void(*)(std::uint8_t*);
+    using deleter_type = void (*)(std::uint8_t*);
     using unique_ptr_type = std::unique_ptr<uint8_t, deleter_type>;
+
+    ///
+    /// Default constructs a value. The resulting value is equivalent to a moved-from
+    /// value. The only valid actions to take with a default constructed value type
+    /// are to assign to it or destroy it.
+    ///
+    value() noexcept;
 
     ///
     /// Constructs a value from a buffer.
@@ -98,7 +104,6 @@ class BSONCXX_API value {
    private:
     unique_ptr_type _data;
     std::size_t _length;
-
 };
 
 BSONCXX_INLINE document::view value::view() const noexcept {

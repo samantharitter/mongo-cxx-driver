@@ -28,7 +28,7 @@ void find_one_and_update::max_time_ms(std::int64_t max_time_ms) {
     _max_time_ms = max_time_ms;
 }
 
-void find_one_and_update::projection(bsoncxx::document::view projection) {
+void find_one_and_update::projection(bsoncxx::document::view_or_value projection) {
     _projection = projection;
 }
 
@@ -36,7 +36,7 @@ void find_one_and_update::return_document(enum return_document return_document) 
     _return_document = return_document;
 }
 
-void find_one_and_update::sort(bsoncxx::document::view ordering) {
+void find_one_and_update::sort(bsoncxx::document::view_or_value ordering) {
     _ordering = ordering;
 }
 
@@ -52,7 +52,7 @@ const stdx::optional<std::int64_t>& find_one_and_update::max_time_ms() const {
     return _max_time_ms;
 }
 
-const stdx::optional<bsoncxx::document::view>& find_one_and_update::projection() const {
+const stdx::optional<bsoncxx::document::view_or_value>& find_one_and_update::projection() const {
     return _projection;
 }
 
@@ -60,7 +60,7 @@ const stdx::optional<return_document>& find_one_and_update::return_document() co
     return _return_document;
 }
 
-const stdx::optional<bsoncxx::document::view>& find_one_and_update::sort() const {
+const stdx::optional<bsoncxx::document::view_or_value>& find_one_and_update::sort() const {
     return _ordering;
 }
 

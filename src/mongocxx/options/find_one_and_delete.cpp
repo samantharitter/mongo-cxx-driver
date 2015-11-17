@@ -24,19 +24,19 @@ void find_one_and_delete::max_time_ms(std::int64_t max_time_ms) {
     _max_time_ms = max_time_ms;
 }
 
-void find_one_and_delete::projection(bsoncxx::document::view projection) {
+void find_one_and_delete::projection(bsoncxx::document::view_or_value projection) {
     _projection = projection;
 }
 
-void find_one_and_delete::sort(bsoncxx::document::view ordering) {
+void find_one_and_delete::sort(bsoncxx::document::view_or_value ordering) {
     _ordering = ordering;
 }
 
-const stdx::optional<bsoncxx::document::view>& find_one_and_delete::projection() const {
+const stdx::optional<bsoncxx::document::view_or_value>& find_one_and_delete::projection() const {
     return _projection;
 }
 
-const stdx::optional<bsoncxx::document::view>& find_one_and_delete::sort() const {
+const stdx::optional<bsoncxx::document::view_or_value>& find_one_and_delete::sort() const {
     return _ordering;
 }
 

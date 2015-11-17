@@ -20,6 +20,7 @@
 
 #include <bsoncxx/document/value.hpp>
 #include <bsoncxx/document/view.hpp>
+#include <bsoncxx/document/view_or_value.hpp>
 #include <bsoncxx/stdx/optional.hpp>
 
 #include <mongocxx/stdx.hpp>
@@ -47,7 +48,6 @@ namespace libbson {
 /// instead.
 ///
 class scoped_bson_t {
-
    public:
     ///
     /// Constructs a new scoped_bson_t having a non-initialized interal bson_t.
@@ -60,6 +60,11 @@ class scoped_bson_t {
     /// If the optional argument is engaged the internal bson_t is considered initialized.
     ///
     scoped_bson_t(const stdx::optional<bsoncxx::document::view>& doc);
+
+    ///
+    /// Constructs a new scoped_bson_t from an optional document view_or_value.
+    ///
+    scoped_bson_t(const stdx::optional<bsoncxx::document::view_or_value>& doc);
 
     ///
     /// Constructs a new scoped_bson_t from a document view.

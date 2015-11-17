@@ -21,6 +21,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/builder/stream/helpers.hpp>
 #include <bsoncxx/private/helpers.hpp>
+#include <bsoncxx/json.hpp>
 #include <bsoncxx/stdx/make_unique.hpp>
 #include <bsoncxx/stdx/optional.hpp>
 #include <bsoncxx/types.hpp>
@@ -121,13 +122,12 @@ void collection::rename(stdx::string_view new_name, bool drop_target_before_rena
     bson_error_t error;
 
     auto result = libmongoc::collection_rename(_impl->collection_t, _impl->database_name.c_str(),
-                                                new_name.data(), drop_target_before_rename, &error);
+                                               new_name.data(), drop_target_before_rename, &error);
 
     if (!result) {
-      throw exception::operation(std::make_tuple(error.message, error.code));
+        throw exception::operation(std::make_tuple(error.message, error.code));
     }
 }
-
 
 collection::collection(const database& database, stdx::string_view collection_name)
     : _impl(stdx::make_unique<impl>(
@@ -163,9 +163,8 @@ stdx::optional<result::bulk_write> collection::bulk_write(const class bulk_write
 cursor collection::find(bsoncxx::document::view filter, const options::find& options) {
     using namespace bsoncxx;
     builder::stream::document filter_builder;
-
     scoped_bson_t filter_bson;
-    scoped_bson_t projection(options.projection());
+    scoped_bson_t projection{options.projection()};
 
     filter_builder << "$query" << bsoncxx::types::b_document{filter};
 

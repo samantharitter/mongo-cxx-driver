@@ -18,7 +18,7 @@
 
 #include <cstdint>
 
-#include <bsoncxx/document/view.hpp>
+#include <bsoncxx/document/view_or_value.hpp>
 #include <bsoncxx/stdx/optional.hpp>
 #include <mongocxx/options/find_one_common_options.hpp>
 #include <mongocxx/stdx.hpp>
@@ -80,7 +80,7 @@ class MONGOCXX_API find_one_and_replace {
     ///
     /// @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results/
     ///
-    void projection(bsoncxx::document::view projection);
+    void projection(bsoncxx::document::view_or_value projection);
 
     ///
     /// Gets the current projection for this operation.
@@ -89,7 +89,12 @@ class MONGOCXX_API find_one_and_replace {
     ///
     /// @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results/
     ///
+<<<<<<< HEAD
     const stdx::optional<bsoncxx::document::view>& projection() const;
+=======
+    ///
+    const stdx::optional<bsoncxx::document::view_or_value>& projection() const;
+>>>>>>> CXX-738: Options classes use view_or_value instead of views or values
 
     ///
     /// Set the desired version of the replaced document to return, either the original
@@ -124,7 +129,7 @@ class MONGOCXX_API find_one_and_replace {
     ///
     /// @see http://docs.mongodb.org/manual/reference/command/findAndModify/
     ///
-    void sort(bsoncxx::document::view ordering);
+    void sort(bsoncxx::document::view_or_value ordering);
 
     ///
     /// Gets the current sort ordering.
@@ -133,7 +138,7 @@ class MONGOCXX_API find_one_and_replace {
     ///
     /// @see http://docs.mongodb.org/manual/reference/command/findAndModify/
     ///
-    const stdx::optional<bsoncxx::document::view>& sort() const;
+    const stdx::optional<bsoncxx::document::view_or_value>& sort() const;
 
     ///
     /// Sets the upsert flag on the operation. When @c true, the operation creates a new document if
@@ -159,9 +164,9 @@ class MONGOCXX_API find_one_and_replace {
    private:
     stdx::optional<bool> _bypass_document_validation;
     stdx::optional<std::int64_t> _max_time_ms;
-    stdx::optional<bsoncxx::document::view> _projection;
+    stdx::optional<bsoncxx::document::view_or_value> _projection;
     stdx::optional<enum return_document> _return_document;
-    stdx::optional<bsoncxx::document::view> _ordering;
+    stdx::optional<bsoncxx::document::view_or_value> _ordering;
     stdx::optional<bool> _upsert;
 };
 

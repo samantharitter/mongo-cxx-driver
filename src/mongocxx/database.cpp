@@ -50,7 +50,7 @@ void* database::implementation() const {
     return _impl->database_t;
 }
 
-cursor database::list_collections(bsoncxx::document::view filter) {
+cursor database::list_collections(bsoncxx::document::view_or_value filter) {
     libbson::scoped_bson_t filter_bson{filter};
     bson_error_t error;
 
@@ -67,7 +67,7 @@ stdx::string_view database::name() const {
     return _impl->name;
 }
 
-bsoncxx::document::value database::command(bsoncxx::document::view command) {
+bsoncxx::document::value database::command(bsoncxx::document::view_or_value command) {
     libbson::scoped_bson_t command_bson{command};
     libbson::scoped_bson_t reply_bson;
     bson_error_t error;

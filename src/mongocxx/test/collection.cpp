@@ -477,7 +477,7 @@ TEST_CASE("CRUD functionality", "[driver::collection]") {
         coll.insert_one(b2.view());
 
         pipeline p;
-        p.match(b1);
+        p.match(b1.view());
 
         auto results = coll.aggregate(p);
     }

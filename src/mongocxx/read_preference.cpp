@@ -47,7 +47,7 @@ read_preference::read_preference(read_mode mode)
           libmongoc::read_prefs_new(static_cast<mongoc_read_mode_t>(mode)))) {
 }
 
-read_preference::read_preference(read_mode mode, bsoncxx::document::view tags)
+read_preference::read_preference(read_mode mode, bsoncxx::document::view_or_value tags)
     : read_preference(mode) {
     read_preference::tags(tags);
 }
@@ -62,7 +62,7 @@ void read_preference::mode(read_mode mode) {
     libmongoc::read_prefs_set_mode(_impl->read_preference_t, static_cast<mongoc_read_mode_t>(mode));
 }
 
-void read_preference::tags(bsoncxx::document::view tags) {
+void read_preference::tags(bsoncxx::document::view_or_value tags) {
     libbson::scoped_bson_t scoped_bson_tags(tags);
     libmongoc::read_prefs_set_tags(_impl->read_preference_t, scoped_bson_tags.bson());
 }

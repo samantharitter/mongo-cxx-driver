@@ -20,7 +20,7 @@
 #include <string>
 #include <memory>
 
-#include <bsoncxx/document/view.hpp>
+#include <bsoncxx/document/view_or_value.hpp>
 #include <bsoncxx/stdx/optional.hpp>
 
 #include <mongocxx/stdx.hpp>
@@ -52,9 +52,7 @@ class database;
 /// @see http://docs.mongodb.org/manual/core/read-preference/
 ///
 class MONGOCXX_API read_preference {
-
    public:
-
     ///
     /// Determines which members in a replica set are acceptable to read from.
     ///
@@ -111,7 +109,7 @@ class MONGOCXX_API read_preference {
     ///
     /// @see http://docs.mongodb.org/manual/core/read-preference/#tag-sets
     ///
-    read_preference(read_mode mode, bsoncxx::document::view tags);
+    read_preference(read_mode mode, bsoncxx::document::view_or_value tags);
 
     ///
     /// Copy constructs a read_preference.
@@ -171,7 +169,7 @@ class MONGOCXX_API read_preference {
     /// @param tags
     ///   Document representing the tags.
     ///
-    void tags(bsoncxx::document::view tags);
+    void tags(bsoncxx::document::view_or_value tags);
 
     ///
     /// Returns the current tags for this read_preference.
@@ -195,7 +193,6 @@ class MONGOCXX_API read_preference {
     MONGOCXX_PRIVATE read_preference(std::unique_ptr<impl>&& implementation);
 
     std::unique_ptr<impl> _impl;
-
 };
 
 MONGOCXX_INLINE_NAMESPACE_END

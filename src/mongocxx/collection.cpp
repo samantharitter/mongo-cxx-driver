@@ -160,7 +160,7 @@ stdx::optional<result::bulk_write> collection::bulk_write(const class bulk_write
     return stdx::optional<result::bulk_write>(std::move(result));
 }
 
-cursor collection::find(bsoncxx::document::view filter, const options::find& options) {
+cursor collection::find(bsoncxx::document::view_or_value filter, const options::find& options) {
     using namespace bsoncxx;
     builder::stream::document filter_builder;
     scoped_bson_t filter_bson;
@@ -196,8 +196,8 @@ cursor collection::find(bsoncxx::document::view filter, const options::find& opt
     return cursor{mongoc_cursor};
 }
 
-stdx::optional<bsoncxx::document::value> collection::find_one(bsoncxx::document::view filter,
-                                                              const options::find& options) {
+stdx::optional<bsoncxx::document::value> collection::find_one(
+    bsoncxx::document::view_or_value filter, const options::find& options) {
     options::find copy(options);
     copy.limit(1);
     cursor cursor = find(filter, copy);
@@ -254,20 +254,20 @@ void* collection::implementation() const {
     return _impl->collection_t;
 }
 
-stdx::optional<result::insert_one> collection::insert_one(bsoncxx::document::view document,
+stdx::optional<result::insert_one> collection::insert_one(bsoncxx::document::view_or_value document,
                                                           const options::insert& options) {
     class bulk_write bulk_op(false);
     bsoncxx::document::element oid{};
 
     bsoncxx::builder::stream::document new_document;
-    if (!document["_id"]) {
+    if (!document.view()["_id"]) {
         new_document << "_id" << bsoncxx::oid(bsoncxx::oid::init_tag);
         new_document << bsoncxx::builder::stream::concatenate{document};
         bulk_op.append(model::insert_one(new_document.view()));
         oid = new_document.view()["_id"];
     } else {
         bulk_op.append(model::insert_one(document));
-        oid = document["_id"];
+        oid = document.view()["_id"];
     }
 
     if (options.write_concern()) {
@@ -287,9 +287,9 @@ stdx::optional<result::insert_one> collection::insert_one(bsoncxx::document::vie
         result::insert_one(std::move(result.value()), std::move(oid.get_value())));
 }
 
-stdx::optional<result::replace_one> collection::replace_one(bsoncxx::document::view filter,
-                                                            bsoncxx::document::view replacement,
-                                                            const options::update& options) {
+stdx::optional<result::replace_one> collection::replace_one(
+    bsoncxx::document::view_or_value filter, bsoncxx::document::view_or_value replacement,
+    const options::update& options) {
     class bulk_write bulk_op(false);
     model::replace_one replace_op(filter, replacement);
 
@@ -309,8 +309,8 @@ stdx::optional<result::replace_one> collection::replace_one(bsoncxx::document::v
     return stdx::optional<result::replace_one>(result::replace_one(std::move(result.value())));
 };
 
-stdx::optional<result::update> collection::update_many(bsoncxx::document::view filter,
-                                                       bsoncxx::document::view update,
+stdx::optional<result::update> collection::update_many(bsoncxx::document::view_or_value filter,
+                                                       bsoncxx::document::view_or_value update,
                                                        const options::update& options) {
     class bulk_write bulk_op(false);
     model::update_many update_op(filter, update);
@@ -332,7 +332,7 @@ stdx::optional<result::update> collection::update_many(bsoncxx::document::view f
 }
 
 stdx::optional<result::delete_result> collection::delete_many(
-    bsoncxx::document::view filter, const options::delete_options& options) {
+    bsoncxx::document::view_or_value filter, const options::delete_options& options) {
     class bulk_write bulk_op(false);
     model::delete_many delete_op(filter);
     bulk_op.append(delete_op);
@@ -347,8 +347,8 @@ stdx::optional<result::delete_result> collection::delete_many(
     return stdx::optional<result::delete_result>(result::delete_result(std::move(result.value())));
 }
 
-stdx::optional<result::update> collection::update_one(bsoncxx::document::view filter,
-                                                      bsoncxx::document::view update,
+stdx::optional<result::update> collection::update_one(bsoncxx::document::view_or_value filter,
+                                                      bsoncxx::document::view_or_value update,
                                                       const options::update& options) {
     class bulk_write bulk_op(false);
     model::update_one update_op(filter, update);
@@ -370,7 +370,7 @@ stdx::optional<result::update> collection::update_one(bsoncxx::document::view fi
 }
 
 stdx::optional<result::delete_result> collection::delete_one(
-    bsoncxx::document::view filter, const options::delete_options& options) {
+    bsoncxx::document::view_or_value filter, const options::delete_options& options) {
     class bulk_write bulk_op(false);
     model::delete_one delete_op(filter);
     bulk_op.append(delete_op);
@@ -385,7 +385,7 @@ stdx::optional<result::delete_result> collection::delete_one(
 }
 
 stdx::optional<bsoncxx::document::value> collection::find_one_and_replace(
-    bsoncxx::document::view filter, bsoncxx::document::view replacement,
+    bsoncxx::document::view_or_value filter, bsoncxx::document::view_or_value replacement,
     const options::find_one_and_replace& options) {
     auto opts = libmongoc::find_and_modify_opts_new();
     auto opts_cleanup = make_guard([&opts] { libmongoc::find_and_modify_opts_destroy(opts); });
@@ -424,7 +424,7 @@ stdx::optional<bsoncxx::document::value> collection::find_one_and_replace(
 }
 
 stdx::optional<bsoncxx::document::value> collection::find_one_and_update(
-    bsoncxx::document::view filter, bsoncxx::document::view update,
+    bsoncxx::document::view_or_value filter, bsoncxx::document::view_or_value update,
     const options::find_one_and_update& options) {
     auto opts = libmongoc::find_and_modify_opts_new();
     auto opts_cleanup = make_guard([&opts] { libmongoc::find_and_modify_opts_destroy(opts); });
@@ -463,10 +463,12 @@ stdx::optional<bsoncxx::document::value> collection::find_one_and_update(
 }
 
 stdx::optional<bsoncxx::document::value> collection::find_one_and_delete(
-    bsoncxx::document::view filter, const options::find_one_and_delete& options) {
+    bsoncxx::document::view_or_value filter, const options::find_one_and_delete& options) {
     auto opts = libmongoc::find_and_modify_opts_new();
     auto opts_cleanup = make_guard([&opts] { libmongoc::find_and_modify_opts_destroy(opts); });
     auto flags = ::MONGOC_FIND_AND_MODIFY_REMOVE;
+
+    scoped_bson_t bson_filter{filter};
     scoped_bson_t bson_sort{options.sort()};
     scoped_bson_t bson_projection{options.projection()};
 
@@ -483,7 +485,8 @@ stdx::optional<bsoncxx::document::value> collection::find_one_and_delete(
     return find_and_modify(_impl->collection_t, filter, opts);
 }
 
-std::int64_t collection::count(bsoncxx::document::view filter, const options::count& options) {
+std::int64_t collection::count(bsoncxx::document::view_or_value filter,
+                               const options::count& options) {
     scoped_bson_t bson_filter{filter};
     bson_error_t error;
 
@@ -514,7 +517,7 @@ std::int64_t collection::count(bsoncxx::document::view filter, const options::co
     return result;
 }
 
-bsoncxx::document::value collection::create_index(bsoncxx::document::view keys,
+bsoncxx::document::value collection::create_index(bsoncxx::document::view_or_value keys,
                                                   const options::index& options) {
     scoped_bson_t bson_keys{keys};
     bson_error_t error;
@@ -621,12 +624,18 @@ bsoncxx::document::value collection::create_index(bsoncxx::document::view keys,
     return bsoncxx::document::value{bsoncxx::document::view{}};
 }
 
-cursor collection::distinct(stdx::string_view field_name, bsoncxx::document::view query,
+// we are trying to send a larger thing than the max allowed message size
+// this happens when the rpc's header's message length is too big
+// - where do the rpcs come from?
+// - we're calling mongoc_database_command -> mongoc_client_command -> _mongoc_cursor_new
+
+cursor collection::distinct(stdx::string_view field_name, bsoncxx::document::view_or_value query,
                             const options::distinct& options) {
     auto command = bsoncxx::builder::stream::document{}
                    << "distinct" << name() << "key" << field_name << "query"
                    << bsoncxx::types::b_document{query} << bsoncxx::builder::stream::finalize;
-    scoped_bson_t command_bson{command};
+
+    scoped_bson_t command_bson{std::move(command)};
 
     auto database =
         libmongoc::client_get_database(_impl->client_impl->client_t, _impl->database_name.data());

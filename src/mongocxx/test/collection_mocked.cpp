@@ -199,14 +199,14 @@ TEST_CASE("Collection", "[collection]") {
             });
 
         SECTION("Succeeds with defaults") {
-            REQUIRE_NOTHROW(mongo_coll.count(filter_doc));
+            REQUIRE_NOTHROW(mongo_coll.count(filter_doc.view()));
         }
 
         SECTION("Succeeds with options") {
             options::count opts;
             opts.skip(expected_skip);
             opts.limit(expected_limit);
-            REQUIRE_NOTHROW(mongo_coll.count(filter_doc, opts));
+            REQUIRE_NOTHROW(mongo_coll.count(filter_doc.view(), opts));
         }
 
         SECTION("Succeeds with hint") {
@@ -219,10 +219,10 @@ TEST_CASE("Collection", "[collection]") {
                 bsoncxx::builder::stream::document{}
                 << bsoncxx::builder::stream::concatenate{index_hint.to_document()}
                 << bsoncxx::builder::stream::finalize;
-            libbson::scoped_bson_t cmd_opts{doc};
+            libbson::scoped_bson_t cmd_opts{std::move(doc)};
             expected_opts = cmd_opts.bson();
 
-            REQUIRE_NOTHROW(mongo_coll.count(filter_doc, opts));
+            REQUIRE_NOTHROW(mongo_coll.count(filter_doc.view(), opts));
         }
 
         SECTION("Succeeds with read_prefs") {
@@ -230,12 +230,12 @@ TEST_CASE("Collection", "[collection]") {
             read_preference rp;
             rp.mode(read_preference::read_mode::k_secondary);
             opts.read_preference(rp);
-            REQUIRE_NOTHROW(mongo_coll.count(filter_doc, opts));
+            REQUIRE_NOTHROW(mongo_coll.count(filter_doc.view(), opts));
         }
 
         SECTION("Fails") {
             success = false;
-            REQUIRE_THROWS_AS(mongo_coll.count(filter_doc), exception::operation);
+            REQUIRE_THROWS_AS(mongo_coll.count(filter_doc.view()), exception::operation);
         }
 
         REQUIRE(collection_count_called);
@@ -274,12 +274,12 @@ TEST_CASE("Collection", "[collection]") {
 
         SECTION("Succeeds") {
             success = true;
-            REQUIRE_NOTHROW(mongo_coll.create_index(index_spec));
+            REQUIRE_NOTHROW(mongo_coll.create_index(index_spec.view()));
         }
 
         SECTION("Fails") {
             success = false;
-            REQUIRE_THROWS_AS(mongo_coll.create_index(index_spec), exception::operation);
+            REQUIRE_THROWS_AS(mongo_coll.create_index(index_spec.view()), exception::operation);
         }
 
         SECTION("Succeeds With Options") {
@@ -364,7 +364,7 @@ TEST_CASE("Collection", "[collection]") {
             auto sort_doc = builder::stream::document{} << "x" << -1 << builder::stream::finalize;
             expected_sort = sort_doc.view();
             opts.sort(*expected_sort);
-            REQUIRE_NOTHROW(mongo_coll.find(doc,opts));
+            REQUIRE_NOTHROW(mongo_coll.find(doc, opts));
         }
 
         REQUIRE(collection_find_called);
@@ -432,7 +432,7 @@ TEST_CASE("Collection", "[collection]") {
                 REQUIRE(bson_get_data(doc) == filter_doc.view().data());
             });
 
-            mongo_coll.insert_one(filter_doc);
+            mongo_coll.insert_one(filter_doc.view());
         }
 
         SECTION("Insert One Bypassing Validation", "[collection::insert_one]") {
@@ -442,15 +442,15 @@ TEST_CASE("Collection", "[collection]") {
             });
 
             expect_set_bypass_document_validation_called = true;
-            SECTION("...set to false"){
+            SECTION("...set to false") {
                 expected_bypass_document_validation = false;
             }
-            SECTION("...set to true"){
+            SECTION("...set to true") {
                 expected_bypass_document_validation = true;
             }
             options::insert opts{};
             opts.bypass_document_validation(expected_bypass_document_validation);
-            mongo_coll.insert_one(filter_doc, opts);
+            mongo_coll.insert_one(filter_doc.view(), opts);
         }
 
         SECTION("Update One", "[collection::update_one]") {
@@ -491,7 +491,7 @@ TEST_CASE("Collection", "[collection]") {
                 expect_set_write_concern_called = true;
             }
 
-            mongo_coll.update_one(filter_doc, modification_doc, options);
+            mongo_coll.update_one(filter_doc.view(), modification_doc.view(), options);
         }
 
         SECTION("Update Many", "[collection::update_many]") {
@@ -521,7 +521,7 @@ TEST_CASE("Collection", "[collection]") {
                 options.upsert(upsert_option);
             }
 
-            mongo_coll.update_many(filter_doc, modification_doc, options);
+            mongo_coll.update_many(filter_doc.view(), modification_doc.view(), options);
         }
 
         SECTION("Replace One", "[collection::replace_one]") {
@@ -552,7 +552,7 @@ TEST_CASE("Collection", "[collection]") {
                 options.upsert(upsert_option);
             }
 
-            mongo_coll.replace_one(filter_doc, modification_doc, options);
+            mongo_coll.replace_one(filter_doc.view(), modification_doc.view(), options);
         }
 
         SECTION("Delete One", "[collection::delete_one]") {
@@ -562,7 +562,7 @@ TEST_CASE("Collection", "[collection]") {
                     REQUIRE(bson_get_data(doc) == filter_doc.view().data());
                 });
 
-            mongo_coll.delete_one(filter_doc);
+            mongo_coll.delete_one(filter_doc.view());
         }
 
         SECTION("Delete Many", "[collection::delete_many]") {
@@ -571,12 +571,13 @@ TEST_CASE("Collection", "[collection]") {
                 REQUIRE(bson_get_data(doc) == filter_doc.view().data());
             });
 
-            mongo_coll.delete_many(filter_doc);
+            mongo_coll.delete_many(filter_doc.view());
         }
 
         REQUIRE(bulk_operation_new_called);
         REQUIRE(expect_set_write_concern_called == bulk_operation_set_write_concern_called);
-        REQUIRE(expect_set_bypass_document_validation_called == bulk_operation_set_bypass_document_validation_called);
+        REQUIRE(expect_set_bypass_document_validation_called ==
+                bulk_operation_set_bypass_document_validation_called);
         REQUIRE(bulk_operation_op_called);
         REQUIRE(bulk_operation_set_client_called);
         REQUIRE(bulk_operation_set_database_called);

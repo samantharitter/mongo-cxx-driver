@@ -50,42 +50,37 @@ namespace libbson {
 class scoped_bson_t {
    public:
     ///
-    /// Constructs a new scoped_bson_t having a non-initialized interal bson_t.
+    /// Constructs a new scoped_bson_t having a non-initialized internal bson_t.
     ///
     scoped_bson_t();
 
     ///
-    /// Constructs a new scoped_bson_t from an optional document view.
+    /// Constructs a new scoped_bson_t from a document view_or_value.
     ///
-    /// If the optional argument is engaged the internal bson_t is considered initialized.
+    /// The internal bson_t is considered initialized.
     ///
-    scoped_bson_t(const stdx::optional<bsoncxx::document::view>& doc);
+    scoped_bson_t(bsoncxx::document::view_or_value doc);
 
     ///
     /// Constructs a new scoped_bson_t from an optional document view_or_value.
     ///
-    scoped_bson_t(const stdx::optional<bsoncxx::document::view_or_value>& doc);
+    /// The internal bson_t is initialized if the optional is populated.
+    ///
+    scoped_bson_t(bsoncxx::stdx::optional<bsoncxx::document::view_or_value> doc);
 
     ///
-    /// Constructs a new scoped_bson_t from a document view.
+    /// Initializes a bson_t from the provided document.
     ///
     /// The internal bson_t is considered initialized.
     ///
-    scoped_bson_t(const bsoncxx::document::view& doc);
+    void init_from_static(bsoncxx::document::view_or_value doc);
 
     ///
-    /// Constructs a read-only bson_t from the document::view argument if one is provided.
+    /// Initializes a bson_t from the provided optional document.
     ///
-    /// If the optional argument is engaged the internal bson_t is considered initialized.
+    /// The internal bson_t is initialized if the optional is populated.
     ///
-    void init_from_static(const stdx::optional<bsoncxx::document::view>& doc);
-
-    ///
-    /// Constructs a read-only bson_t from the provided document.
-    ///
-    /// The internal bson_t is considered initialized.
-    ///
-    void init_from_static(const bsoncxx::document::view& doc);
+    void init_from_static(bsoncxx::stdx::optional<bsoncxx::document::view_or_value> doc);
 
     ///
     /// Initialize the internal bson_t.
@@ -122,6 +117,9 @@ class scoped_bson_t {
    private:
     bson_t _bson;
     bool _is_initialized;
+
+    // If we are passed a value created on-the-fly, we'll need to own this.
+    bsoncxx::stdx::optional<bsoncxx::document::view_or_value> _doc;
 };
 
 }  // namespace libbson

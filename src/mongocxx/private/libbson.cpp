@@ -18,46 +18,40 @@ namespace mongocxx {
 MONGOCXX_INLINE_NAMESPACE_BEGIN
 namespace libbson {
 
-static void doc_to_bson_t(const bsoncxx::document::view& doc, bson_t* bson) {
+namespace {
+
+void doc_to_bson_t(const bsoncxx::document::view& doc, bson_t* bson) {
     bson_init_static(bson, doc.data(), doc.length());
 }
 
-static void optional_doc_to_bson_t(const stdx::optional<bsoncxx::document::view>& doc,
-                                   bson_t* bson) {
-    if (doc) {
-        doc_to_bson_t(*doc, bson);
-    }
-}
+}  // namespace
 
-static void optional_view_or_value_to_bson_t(
-    const stdx::optional<bsoncxx::document::view_or_value>& variant, bson_t* bson) {
-    if (variant) {
-        doc_to_bson_t(*variant, bson);
-    }
-}
-
-scoped_bson_t::scoped_bson_t(const stdx::optional<bsoncxx::document::view>& doc)
-    : _is_initialized(doc) {
-    optional_doc_to_bson_t(doc, &_bson);
-}
-
-scoped_bson_t::scoped_bson_t(const stdx::optional<bsoncxx::document::view_or_value>& doc)
-    : _is_initialized(doc) {
-    optional_view_or_value_to_bson_t(doc, &_bson);
-}
-
-scoped_bson_t::scoped_bson_t(const bsoncxx::document::view& doc) : _is_initialized(true) {
+scoped_bson_t::scoped_bson_t(bsoncxx::document::view_or_value doc)
+    : _is_initialized(true), _doc(std::move(doc)) {
     doc_to_bson_t(doc, &_bson);
 }
 
-void scoped_bson_t::init_from_static(const stdx::optional<bsoncxx::document::view>& doc) {
-    _is_initialized = static_cast<bool>(doc);
-    optional_doc_to_bson_t(doc, &_bson);
+scoped_bson_t::scoped_bson_t(bsoncxx::stdx::optional<bsoncxx::document::view_or_value> doc)
+    : _is_initialized(doc) {
+    if (doc) {
+        doc_to_bson_t(*doc, &_bson);
+        _doc = doc;
+    }
 }
 
-void scoped_bson_t::init_from_static(const bsoncxx::document::view& doc) {
+void scoped_bson_t::init_from_static(bsoncxx::document::view_or_value doc) {
     _is_initialized = true;
     doc_to_bson_t(doc, &_bson);
+    _doc = doc;
+}
+
+void scoped_bson_t::init_from_static(
+    bsoncxx::stdx::optional<bsoncxx::document::view_or_value> doc) {
+    if (doc) {
+        _is_initialized = true;
+        doc_to_bson_t(*doc, &_bson);
+        _doc = doc;
+    }
 }
 
 void scoped_bson_t::init() {
@@ -83,8 +77,16 @@ bson_t* scoped_bson_t::bson() {
 }
 
 bsoncxx::document::view scoped_bson_t::view() {
-    return _is_initialized ? bsoncxx::document::view(bson_get_data(bson()), bson()->len)
-                           : bsoncxx::document::view();
+    // if we were initialized with a view_or_value just use that view
+    if (_doc) {
+        return _doc->view();
+    }
+    // otherwise, if we were initialized from libmongoc, construct
+    if (_is_initialized) {
+        return bsoncxx::document::view(bson_get_data(bson()), bson()->len);
+    }
+    // otherwise, return an empty view
+    return bsoncxx::document::view();
 }
 
 namespace {

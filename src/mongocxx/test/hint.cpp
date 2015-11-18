@@ -17,6 +17,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/document/element.hpp>
 #include <bsoncxx/document/view.hpp>
+#include <bsoncxx/document/view_or_value.hpp>
 #include <bsoncxx/json.hpp>
 #include <mongocxx/hint.hpp>
 
@@ -58,7 +59,9 @@ TEST_CASE("Hint", "[hint]") {
 
     SECTION("Can be constructed with index document value") {
         auto index_doc = builder::stream::document{} << "a" << 1 << builder::stream::finalize;
-        hint index_hint{index_doc};
+        document::value index_copy{index_doc};
+
+        hint index_hint{std::move(index_doc)};
 
         SECTION("Can be applied to a query") {
             document::value filter = builder::stream::document{}
@@ -69,14 +72,14 @@ TEST_CASE("Hint", "[hint]") {
             document::element ele{view["hint"]};
             REQUIRE(ele);
             REQUIRE(ele.type() == type::k_document);
-            REQUIRE(ele.get_document().value == index_doc);
+            REQUIRE(ele.get_document().value == index_copy);
         }
 
         SECTION("Compares equal to matching index doc view or value") {
-            REQUIRE(index_hint == index_doc);
-            REQUIRE(index_hint == index_doc.view());
-            REQUIRE(index_doc == index_hint);
-            REQUIRE(index_doc.view() == index_hint);
+            REQUIRE(index_hint == index_copy);
+            REQUIRE(index_hint == index_copy.view());
+            REQUIRE(index_copy == index_hint);
+            REQUIRE(index_copy.view() == index_hint);
         }
 
         SECTION("Does not equal non-matching index doc") {

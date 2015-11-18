@@ -90,6 +90,9 @@ class BSONCXX_API view_or_value {
     /// @return a View into this view_or_value.
     ///
     BSONCXX_INLINE operator View() const;
+    BSONCXX_INLINE const View view() const {
+        return _view;
+    }
 
    private:
     stdx::optional<Value> _value;

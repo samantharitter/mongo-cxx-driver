@@ -21,11 +21,7 @@
 namespace mongocxx {
 MONGOCXX_INLINE_NAMESPACE_BEGIN
 
-hint::hint(bsoncxx::document::value index)
-    : _owned_index_doc(std::move(index)), _index_doc(_owned_index_doc->view()) {
-}
-
-hint::hint(bsoncxx::document::view index) : _index_doc(std::move(index)) {
+hint::hint(bsoncxx::document::view_or_value index) : _index_doc(index) {
 }
 
 hint::hint(stdx::string_view index) : _index_string(std::move(index)) {
@@ -62,8 +58,7 @@ bool operator!=(std::string index, const hint& index_hint) {
 }
 
 bool operator==(const hint& index_hint, bsoncxx::document::view index) {
-    return index_hint._index_doc && *index_hint._index_doc == index;
-    // return index_hint._index_doc && index_hint._index_doc->view() == index;
+    return index_hint._index_doc && index_hint._index_doc->view() == index;
 }
 
 bool operator==(bsoncxx::document::view index, const hint& index_hint) {

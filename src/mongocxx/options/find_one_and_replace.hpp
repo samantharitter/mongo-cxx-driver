@@ -89,12 +89,7 @@ class MONGOCXX_API find_one_and_replace {
     ///
     /// @see http://docs.mongodb.org/manual/tutorial/project-fields-from-query-results/
     ///
-<<<<<<< HEAD
-    const stdx::optional<bsoncxx::document::view>& projection() const;
-=======
-    ///
     const stdx::optional<bsoncxx::document::view_or_value>& projection() const;
->>>>>>> CXX-738: Options classes use view_or_value instead of views or values
 
     ///
     /// Set the desired version of the replaced document to return, either the original

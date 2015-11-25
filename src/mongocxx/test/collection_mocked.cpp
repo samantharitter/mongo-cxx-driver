@@ -255,7 +255,6 @@ TEST_CASE("Collection", "[collection]") {
                                                       << "foo"
                                                       << "bar" << builder::stream::finalize;
 
-
         collection_create_index->interpose([&](mongoc_collection_t* coll, const bson_t* keys,
                                                const mongoc_index_opt_t* opt, bson_error_t* error) {
             collection_create_index_called = true;
@@ -287,7 +286,7 @@ TEST_CASE("Collection", "[collection]") {
             options.unique(expected_unique);
             options.expire_after_seconds(expected_expire_after_seconds);
             options.name(expected_name);
-            REQUIRE_NOTHROW(mongo_coll.create_index(index_spec, options));
+            REQUIRE_NOTHROW(mongo_coll.create_index(index_spec.view(), options));
         }
 
         SECTION("Succeeds With Storage Engine Options") {
@@ -296,7 +295,7 @@ TEST_CASE("Collection", "[collection]") {
                 mongocxx::stdx::make_unique<options::index::wiredtiger_storage_options>();
             wt_options->config_string(expected_config_string);
             REQUIRE_NOTHROW(options.storage_options(std::move(wt_options)));
-            REQUIRE_NOTHROW(mongo_coll.create_index(index_spec, options));
+            REQUIRE_NOTHROW(mongo_coll.create_index(index_spec.view(), options));
         }
 
         REQUIRE(collection_create_index_called);
@@ -594,7 +593,7 @@ TEST_CASE("Collection", "[collection]") {
         auto fam_called = false;
         auto return_doc = builder::stream::document{} << "value" << open_document << "key"
                                                       << "val" << close_document << finalize;
-        libbson::scoped_bson_t return_bson{return_doc};
+        libbson::scoped_bson_t return_bson{return_doc.view()};
         bsoncxx::stdx::optional<bsoncxx::document::value> fam_result;
 
         collection_find_and_modify_with_opts->interpose(
@@ -657,9 +656,8 @@ TEST_CASE("Collection", "[collection]") {
             update << "newdoc" << true;
             expected_find_and_modify_opts_update = update.view();
 
-            expected_find_and_modify_opts_flags =
-                static_cast<::mongoc_find_and_modify_flags_t>(
-                    ::MONGOC_FIND_AND_MODIFY_UPSERT | ::MONGOC_FIND_AND_MODIFY_RETURN_NEW);
+            expected_find_and_modify_opts_flags = static_cast<::mongoc_find_and_modify_flags_t>(
+                ::MONGOC_FIND_AND_MODIFY_UPSERT | ::MONGOC_FIND_AND_MODIFY_RETURN_NEW);
 
             expected_find_and_modify_opts_bypass_document_validation = true;
             opts.bypass_document_validation(

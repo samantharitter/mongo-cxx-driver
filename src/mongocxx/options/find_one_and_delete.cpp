@@ -25,11 +25,11 @@ void find_one_and_delete::max_time_ms(std::int64_t max_time_ms) {
 }
 
 void find_one_and_delete::projection(bsoncxx::document::view_or_value projection) {
-    _projection = projection;
+    _projection = std::move(projection);
 }
 
 void find_one_and_delete::sort(bsoncxx::document::view_or_value ordering) {
-    _ordering = ordering;
+    _ordering = std::move(ordering);
 }
 
 const stdx::optional<bsoncxx::document::view_or_value>& find_one_and_delete::projection() const {

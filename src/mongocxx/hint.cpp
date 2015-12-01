@@ -21,7 +21,7 @@
 namespace mongocxx {
 MONGOCXX_INLINE_NAMESPACE_BEGIN
 
-hint::hint(bsoncxx::document::view_or_value index) : _index_doc(index) {
+hint::hint(bsoncxx::document::view_or_value index) : _index_doc(std::move(index)) {
 }
 
 hint::hint(stdx::string_view index) : _index_string(std::move(index)) {

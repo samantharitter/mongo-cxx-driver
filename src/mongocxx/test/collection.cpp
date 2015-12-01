@@ -16,7 +16,7 @@ using namespace bsoncxx::builder::stream;
 using namespace mongocxx;
 
 namespace {
-const auto kEmptyDoc = document{} << finalize;
+const auto k_empty_doc = document{} << finalize;
 }  // namespace
 
 TEST_CASE("collection renaming", "[collection]") {
@@ -25,7 +25,7 @@ TEST_CASE("collection renaming", "[collection]") {
 
     std::string collname{"mongo_cxx_driver"};
     collection coll = db[collname];
-    coll.insert_one(kEmptyDoc.view());  // Ensure that the collection exists.
+    coll.insert_one(k_empty_doc.view());  // Ensure that the collection exists.
 
     REQUIRE(coll.name() == stdx::string_view{collname});
 
@@ -84,7 +84,7 @@ TEST_CASE("CRUD functionality", "[driver::collection]") {
         REQUIRE(result);
         REQUIRE(result->inserted_count() == 4);
 
-        auto cursor = coll.find(kEmptyDoc.view());
+        auto cursor = coll.find(k_empty_doc.view());
 
         std::size_t i = 0;
         for (auto&& x : cursor) {
@@ -336,7 +336,7 @@ TEST_CASE("CRUD functionality", "[driver::collection]") {
             options::find opts{};
             opts.sort(sort.view());
 
-            auto cursor = coll.find(kEmptyDoc.view(), opts);
+            auto cursor = coll.find(k_empty_doc.view(), opts);
 
             std::int32_t x = 1;
             for (auto&& doc : cursor) {
@@ -351,7 +351,7 @@ TEST_CASE("CRUD functionality", "[driver::collection]") {
             options::find opts{};
             opts.sort(sort.view());
 
-            auto cursor = coll.find(kEmptyDoc.view(), opts);
+            auto cursor = coll.find(k_empty_doc.view(), opts);
 
             std::int32_t x = 3;
             for (auto&& doc : cursor) {
@@ -510,7 +510,7 @@ TEST_CASE("CRUD functionality", "[driver::collection]") {
 
         distinct_coll.bulk_write(bulk);
 
-        auto distinct_results = distinct_coll.distinct("foo", kEmptyDoc.view());
+        auto distinct_results = distinct_coll.distinct("foo", k_empty_doc.view());
 
         // copy into a vector.
         std::vector<bsoncxx::document::value> results;

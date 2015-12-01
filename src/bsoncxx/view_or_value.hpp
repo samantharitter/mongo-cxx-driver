@@ -30,6 +30,12 @@ template <typename View, typename Value>
 class BSONCXX_API view_or_value {
    public:
     ///
+    /// Class View must be constructible from an instance of class Value.
+    ///
+    static_assert(std::is_constructible<View, Value>::value,
+                  "View type must be constructible from a Value");
+
+    ///
     /// Construct a view_or_value from a View. When constructed with a View,
     /// this object is non-owning. The Value underneath the given View must outlive this object.
     ///
@@ -47,12 +53,6 @@ class BSONCXX_API view_or_value {
     ///
     BSONCXX_INLINE view_or_value(Value&& value) : _value{std::move(value)}, _view{*_value} {
     }
-
-    ///
-    /// Class View must be constructible from an instance of class Value.
-    ///
-    static_assert(std::is_constructible<View, Value>::value,
-                  "View type must be constructible from a Value");
 
     ///
     /// Construct a view_or_value from a moved-in view_or_value.
@@ -89,7 +89,9 @@ class BSONCXX_API view_or_value {
     ///
     /// @return a View into this view_or_value.
     ///
-    BSONCXX_INLINE operator View() const;
+    BSONCXX_INLINE operator View() const {
+        return _view;
+    }
     BSONCXX_INLINE const View view() const {
         return _view;
     }
@@ -98,11 +100,6 @@ class BSONCXX_API view_or_value {
     stdx::optional<Value> _value;
     View _view;
 };
-
-template <typename View, typename Value>
-BSONCXX_INLINE view_or_value<View, Value>::operator View() const {
-    return _view;
-}
 
 BSONCXX_INLINE_NAMESPACE_END
 }  // namespace bsoncxx

@@ -49,7 +49,7 @@ read_preference::read_preference(read_mode mode)
 
 read_preference::read_preference(read_mode mode, bsoncxx::document::view_or_value tags)
     : read_preference(mode) {
-    read_preference::tags(tags);
+    read_preference::tags(std::move(tags));
 }
 
 read_preference::~read_preference() = default;

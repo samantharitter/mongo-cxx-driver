@@ -622,11 +622,6 @@ bsoncxx::document::value collection::create_index(view_or_value keys,
     return bsoncxx::document::value{bsoncxx::document::view{}};
 }
 
-// we are trying to send a larger thing than the max allowed message size
-// this happens when the rpc's header's message length is too big
-// - where do the rpcs come from?
-// - we're calling mongoc_database_command -> mongoc_client_command -> _mongoc_cursor_new
-
 cursor collection::distinct(stdx::string_view field_name, view_or_value query,
                             const options::distinct& options) {
     auto command = bsoncxx::builder::stream::document{}

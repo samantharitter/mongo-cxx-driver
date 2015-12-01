@@ -29,7 +29,7 @@ void find_one_and_update::max_time_ms(std::int64_t max_time_ms) {
 }
 
 void find_one_and_update::projection(bsoncxx::document::view_or_value projection) {
-    _projection = projection;
+    _projection = std::move(projection);
 }
 
 void find_one_and_update::return_document(enum return_document return_document) {
@@ -37,7 +37,7 @@ void find_one_and_update::return_document(enum return_document return_document) 
 }
 
 void find_one_and_update::sort(bsoncxx::document::view_or_value ordering) {
-    _ordering = ordering;
+    _ordering = std::move(ordering);
 }
 
 void find_one_and_update::upsert(bool upsert) {

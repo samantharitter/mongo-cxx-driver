@@ -51,7 +51,7 @@ void find::max_time_ms(std::int64_t max_time_ms) {
 }
 
 void find::modifiers(bsoncxx::document::view_or_value modifiers) {
-    _modifiers = modifiers;
+    _modifiers = std::move(modifiers);
 }
 
 void find::no_cursor_timeout(bool no_cursor_timeout) {
@@ -63,7 +63,7 @@ void find::oplog_replay(bool oplog_replay) {
 }
 
 void find::projection(bsoncxx::document::view_or_value projection) {
-    _projection = projection;
+    _projection = std::move(projection);
 }
 
 void find::read_preference(class read_preference rp) {
@@ -75,7 +75,7 @@ void find::skip(std::int32_t skip) {
 }
 
 void find::sort(bsoncxx::document::view_or_value ordering) {
-    _ordering = ordering;
+    _ordering = std::move(ordering);
 }
 
 const stdx::optional<bool>& find::allow_partial_results() const {

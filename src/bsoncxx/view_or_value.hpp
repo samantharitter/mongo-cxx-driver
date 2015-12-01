@@ -36,6 +36,19 @@ class BSONCXX_API view_or_value {
                   "View type must be constructible from a Value");
 
     ///
+    /// Class View must be default constructible.
+    ///
+    static_assert(std::is_default_constructible<View>::value,
+                  "View type must be default constructible");
+
+    ///
+    /// Default-constructs a view_or_value. This is equivalent to constructing a
+    /// view_or_value with a default-constructed View.
+    ///
+    BSONCXX_INLINE view_or_value() : _view{} {
+    }
+
+    ///
     /// Construct a view_or_value from a View. When constructed with a View,
     /// this object is non-owning. The Value underneath the given View must outlive this object.
     ///

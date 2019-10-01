@@ -447,6 +447,9 @@ class MONGOCXX_API pipeline {
     ///
     bsoncxx::array::view view_array() const;
 
+    operator bsoncxx::array::view() const;
+    operator bsoncxx::document::view() const;
+
     ///
     /// @return A view of the underlying BSON document this pipeline represents.
     ///

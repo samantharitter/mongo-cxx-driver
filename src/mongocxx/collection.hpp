@@ -1402,7 +1402,7 @@ class MONGOCXX_API collection {
     /// @param filter
     ///   Document representing the match criteria.
     /// @param update
-    ///   Document representing the update to be applied to matching documents.
+    ///   Document or pipeline representing the update to be applied to matching documents.
     /// @param options
     ///   Optional arguments, see options::update.
     ///
@@ -1416,11 +1416,17 @@ class MONGOCXX_API collection {
     ///
     /// @see https://docs.mongodb.com/master/reference/command/update/
     ///
-    stdx::optional<result::update> update_many(bsoncxx::document::view_or_value filter,
-                                               bsoncxx::document::view_or_value update,
-                                               const options::update& options = options::update());
+    template <typename update_type = bsoncxx::document::view_or_value>
+    MONGOCXX_INLINE stdx::optional<result::update> update_many(bsoncxx::document::view_or_value filter,
+							       update_type update,
+							       const options::update& options = options::update()) {
+	if (std::is_constructible<bsoncxx::document::view_or_value, update_type>::value) {
+	    return _update_many(nullptr, filter, bsoncxx::document::view_or_value(update), options);
+	}
+	return _update_many(nullptr, filter, std::forward<update_type>(update), options);
+    }
 
-    ///
+   ///
     /// Updates multiple documents matching the provided filter in this collection.
     ///
     /// @param session
@@ -1428,7 +1434,7 @@ class MONGOCXX_API collection {
     /// @param filter
     ///   Document representing the match criteria.
     /// @param update
-    ///   Document representing the update to be applied to matching documents.
+    ///   Document or pipeline representing the update to be applied to matching documents.
     /// @param options
     ///   Optional arguments, see options::update.
     ///
@@ -1442,10 +1448,17 @@ class MONGOCXX_API collection {
     ///
     /// @see https://docs.mongodb.com/master/reference/command/update/
     ///
-    stdx::optional<result::update> update_many(const client_session& session,
-                                               bsoncxx::document::view_or_value filter,
-                                               bsoncxx::document::view_or_value update,
-                                               const options::update& options = options::update());
+   template <typename update_type = bsoncxx::document::view_or_value>
+   MONGOCXX_INLINE stdx::optional<result::update> update_many(const client_session& session,
+							      bsoncxx::document::view_or_value filter,
+							      update_type update,
+							      const options::update& options = options::update()) {
+       if (std::is_constructible<bsoncxx::document::view_or_value, update_type>::value) {
+	    return _update_many(nullptr, filter, bsoncxx::document::view_or_value(update), options);
+	}
+
+       return _update_many(&session, filter, std::forward<update_type>(update), options);
+   }
 
     ///
     /// @}
@@ -1473,9 +1486,12 @@ class MONGOCXX_API collection {
     ///
     /// @see https://docs.mongodb.com/master/reference/command/update/
     ///
-    stdx::optional<result::update> update_one(bsoncxx::document::view_or_value filter,
-                                              bsoncxx::document::view_or_value update,
-                                              const options::update& options = options::update());
+   template <typename update_type = bsoncxx::document::view_or_value>
+   MONGOCXX_INLINE stdx::optional<result::update> update_one(bsoncxx::document::view_or_value filter,
+							     update_type update,
+							     const options::update& options = options::update()) {
+       return _update_one(nullptr, filter, std::forward<update_type>(update), options);
+   }
 
     ///
     /// Updates a single document matching the provided filter in this collection.
@@ -1499,10 +1515,13 @@ class MONGOCXX_API collection {
     ///
     /// @see https://docs.mongodb.com/master/reference/command/update/
     ///
-    stdx::optional<result::update> update_one(const client_session& session,
-                                              bsoncxx::document::view_or_value filter,
-                                              bsoncxx::document::view_or_value update,
-                                              const options::update& options = options::update());
+   template <typename update_type = bsoncxx::document::view_or_value>
+   stdx::optional<result::update> update_one(const client_session& session,
+					     bsoncxx::document::view_or_value filter,
+					     update_type update,
+					     const options::update& options = options::update()) {
+       return _update_one(&session, filter, std::forward<update_type>(update), options);
+   }
 
     ///
     /// @}
@@ -1698,11 +1717,27 @@ class MONGOCXX_API collection {
         bsoncxx::document::view_or_value update,
         const options::update& options);
 
+    MONGOCXX_PRIVATE stdx::optional<result::update> _update_one(
+        const client_session* session,
+        bsoncxx::document::view_or_value filter,
+        const pipeline& update,
+        const options::update& options);
+
     MONGOCXX_PRIVATE stdx::optional<result::update> _update_many(
         const client_session* session,
         bsoncxx::document::view_or_value filter,
         bsoncxx::document::view_or_value update,
-        const options::update& options);
+        const options::update& options) {
+	return stdx::nullopt;
+    }
+
+    MONGOCXX_PRIVATE stdx::optional<result::update> _update_many(
+        const client_session* session,
+        bsoncxx::document::view_or_value filter,
+        const pipeline& update,
+        const options::update& options) {
+	return stdx::nullopt;
+    }
 
     MONGOCXX_PRIVATE change_stream _watch(const client_session* session,
                                           const pipeline& pipe,

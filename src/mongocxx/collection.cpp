@@ -634,59 +634,73 @@ stdx::optional<result::replace_one> collection::replace_one(const client_session
     return _replace_one(&session, filter, replacement, options);
 }
 
-stdx::optional<result::update> collection::_update_many(const client_session* session,
-                                                        view_or_value filter,
-                                                        view_or_value update,
-                                                        const options::update& options) {
-    options::bulk_write bulk_opts;
+// stdx::optional<result::update> collection::_update_many(const client_session* session,
+//                                                         view_or_value filter,
+//                                                         view_or_value update,
+//                                                         const options::update& options) {
+//     options::bulk_write bulk_opts;
 
-    if (options.bypass_document_validation()) {
-        bulk_opts.bypass_document_validation(*options.bypass_document_validation());
-    }
-    if (options.write_concern()) {
-        bulk_opts.write_concern(*options.write_concern());
-    }
+//     if (options.bypass_document_validation()) {
+//         bulk_opts.bypass_document_validation(*options.bypass_document_validation());
+//     }
+//     if (options.write_concern()) {
+//         bulk_opts.write_concern(*options.write_concern());
+//     }
 
-    auto bulk_op = session ? create_bulk_write(*session, bulk_opts) : create_bulk_write(bulk_opts);
+//     auto bulk_op = session ? create_bulk_write(*session, bulk_opts) : create_bulk_write(bulk_opts);
 
-    model::update_many update_op(filter, update);
-    if (options.collation()) {
-        update_op.collation(*options.collation());
-    }
-    if (options.upsert()) {
-        update_op.upsert(*options.upsert());
-    }
-    if (options.array_filters()) {
-        update_op.array_filters(*options.array_filters());
-    }
+//     model::update_many update_op(filter, update);
+//     if (options.collation()) {
+//         update_op.collation(*options.collation());
+//     }
+//     if (options.upsert()) {
+//         update_op.upsert(*options.upsert());
+//     }
+//     if (options.array_filters()) {
+//         update_op.array_filters(*options.array_filters());
+//     }
 
-    bulk_op.append(update_op);
+//     bulk_op.append(update_op);
 
-    auto result = bulk_op.execute();
-    if (!result) {
-        return stdx::nullopt;
-    }
+//     auto result = bulk_op.execute();
+//     if (!result) {
+//         return stdx::nullopt;
+//     }
 
-    return stdx::optional<result::update>(result::update(std::move(result.value())));
-}
+//     return stdx::optional<result::update>(result::update(std::move(result.value())));
+// }
 
-stdx::optional<result::update> collection::update_many(view_or_value filter,
-                                                       view_or_value update,
-                                                       const options::update& options) {
-    return _update_many(nullptr, filter, update, options);
-}
+// stdx::optional<result::update> collection::_update_many(const client_session* session,
+//                                                         view_or_value filter,
+//                                                         const pipeline& update,
+//                                                         const options::update& options) {
+//     // TODO
+//     return stdx::nullopt;
+// }
 
-stdx::optional<result::update> collection::update_many(const client_session& session,
-                                                       view_or_value filter,
-                                                       view_or_value update,
-                                                       const options::update& options) {
-    return _update_many(&session, filter, update, options);
-}
+   //  template stdx::optional<result::update>
+   //  collection::update_one<bsoncxx::document::view_or_value>(const client_session&,
+   // 							     bsoncxx::document::view_or_value,
+   // 							     bsoncxx::document::view_or_value,
+   // 							     const options::update&);
+   
+   // template stdx::optional<result::update>
+   // collection::update_one<const pipeline&>(const client_session&,
+   // 					   bsoncxx::document::view_or_value,
+   // 					   const pipeline&,
+   // 					   const options::update&);
+
+   //  template stdx::optional<result::update>
+   //  collection::update_one<bsoncxx::document::view>(const client_session&,
+   // 						    bsoncxx::document::view_or_value,
+   // 						    bsoncxx::document::view,
+   // 						    const options::update&);
+
 
 stdx::optional<result::update> collection::_update_one(const client_session* session,
-                                                       view_or_value filter,
-                                                       view_or_value update,
-                                                       const options::update& options) {
+						       view_or_value filter,
+						       view_or_value update,
+						       const options::update& options) {
     options::bulk_write bulk_opts;
 
     if (options.bypass_document_validation()) {
@@ -719,17 +733,11 @@ stdx::optional<result::update> collection::_update_one(const client_session* ses
     return stdx::optional<result::update>(result::update(std::move(result.value())));
 }
 
-stdx::optional<result::update> collection::update_one(view_or_value filter,
-                                                      view_or_value update,
-                                                      const options::update& options) {
-    return _update_one(nullptr, filter, update, options);
-}
-
-stdx::optional<result::update> collection::update_one(const client_session& session,
-                                                      view_or_value filter,
-                                                      view_or_value update,
-                                                      const options::update& options) {
-    return _update_one(&session, filter, update, options);
+stdx::optional<result::update> collection::_update_one(const client_session* session,
+                                                       view_or_value filter,
+                                                       const pipeline& update,
+                                                       const options::update& options) {
+    return stdx::nullopt;
 }
 
 stdx::optional<result::delete_result> collection::_delete_many(

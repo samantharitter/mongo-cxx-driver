@@ -20,15 +20,15 @@ To enable TLS (SSL), set `ssl=true` in the URI:
 
 By default, mongocxx will verify server certificates against the local
 system CA list.  You can override that by creating a
-[mongocxx::options::ssl] ({{< api3ref classmongocxx_1_1options_1_1ssl >}})
-object and passing it to `ssl_opts` on mongocxx::options::client.
+[mongocxx::options::tls] ({{< api3ref classmongocxx_1_1options_1_1ssl >}})
+object and passing it to `tls_opts` on mongocxx::options::client.
 
 For example, to use a custom CA or to disable certificate validation,
 uncomment the corresponding line in the following example:
 
 ```cpp
 mongocxx::options::client client_options;
-mongocxx::options::ssl ssl_options;
+mongocxx::options::tls ssl_options;
 
 // If the server certificate is not signed by a well-known CA,
 // you can set a custom CA file with the `ca_file` option.
@@ -38,7 +38,7 @@ mongocxx::options::ssl ssl_options;
 // can set the `allow_invalid_certificates` option.
 // ssl_options.allow_invalid_certificates(true);
 
-client_options.ssl_opts(ssl_options);
+client_options.tls_opts(ssl_options);
 ```
 
 ## Configuring authentication
@@ -96,11 +96,11 @@ with SSL enabled:
 #include <mongocxx/options/client.hpp>
 #include <mongocxx/options/ssl.hpp>
 
-mongocxx::options::ssl ssl_opts{};
-ssl_opts.pem_file("client.pem");
+mongocxx::options::tls tls_opts{};
+tls_opts.pem_file("client.pem");
 
 mongocxx::options::client client_opts{};
-client_opts.ssl_opts(ssl_opts);
+client_opts.tls_opts(tls_opts);
 
 auto client = mongocxx::client{
     uri{"mongodb://host1/?authMechanism=MONGODB-X509&ssl=true"}, client_opts};

@@ -60,8 +60,8 @@ int main(int argc, char* argv[]) {
         const auto uri = mongocxx::uri{(argc >= 2) ? argv[1] : mongocxx::uri::k_default_uri};
 
         mongocxx::options::client client_options;
-        if (uri.ssl()) {
-            mongocxx::options::ssl ssl_options;
+        if (uri.tls()) {
+            mongocxx::options::tls tls_options;
             // NOTE: To test SSL, you may need to set options.
             //
             // If the server certificate is not signed by a well-known CA,
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
             // If you want to disable certificate verification, you
             // can set the `allow_invalid_certificates` option.
             // ssl_options.allow_invalid_certificates(true);
-            client_options.ssl_opts(ssl_options);
+            client_options.tls_opts(tls_options);
         }
 
         auto client = mongocxx::client{uri, client_options};

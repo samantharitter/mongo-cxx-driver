@@ -104,6 +104,7 @@ set(mongocxx_sources
     options/private/rewriter.cpp
     options/replace.cpp
     options/ssl.cpp
+    options/tls.cpp
     options/transaction.cpp
     options/update.cpp
     pipeline.cpp
@@ -335,11 +336,14 @@ set_local_dist (src_mongocxx_DIST_local
    options/private/rewriter.cpp
    options/private/rewriter.hh
    options/private/ssl.hh
+   options/private/tls.hh
    options/private/transaction.hh
    options/replace.cpp
    options/replace.hpp
    options/ssl.cpp
    options/ssl.hpp
+   options/tls.cpp
+   options/tls.hpp
    options/transaction.cpp
    options/transaction.hpp
    options/update.cpp

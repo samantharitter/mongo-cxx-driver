@@ -112,7 +112,16 @@ std::string uri::to_string() const {
 }
 
 bool uri::ssl() const {
+    // libmongoc::uri_get_ssl is deprecated, and so is this method. To allow us
+    // to deprecate this method gracefully, suppress libmongoc's deprecation
+    // warnings until we remove uri::ssl() in a future release.
+    BSONCXX_SUPPRESS_DEPRECATION_WARNINGS_BEGIN
     return libmongoc::uri_get_ssl(_impl->uri_t);
+    BSONCXX_SUPPRESS_DEPRECATION_WARNINGS_END
+}
+
+bool uri::tls() const {
+    return libmongoc::uri_get_tls(_impl->uri_t);
 }
 
 std::string uri::username() const {

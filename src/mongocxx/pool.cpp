@@ -49,7 +49,7 @@ pool::pool(const uri& uri, const options::pool& options)
                             "cannot set SSL options if 'tls=true' not in URI"};
 
         auto mongoc_opts = options::make_tls_opts(*options.client_opts().tls_opts());
-        _impl->ssl_options = std::move(mongoc_opts.second);
+        _impl->tls_options = std::move(mongoc_opts.second);
         libmongoc::client_pool_set_ssl_opts(_impl->client_pool_t, &mongoc_opts.first);
     }
 #else

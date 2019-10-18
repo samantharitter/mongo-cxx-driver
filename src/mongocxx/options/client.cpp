@@ -29,6 +29,22 @@ const stdx::optional<tls>& client::tls_opts() const {
     return _tls_opts;
 }
 
+client& client::ssl_opts(ssl ssl_opts) {
+    return ssl_opts_deprecated(ssl_opts);
+}
+    
+client& client::ssl_opts_deprecated(ssl_deprecated ssl_opts) {
+    return tls_opts(std::move(ssl_opts));
+}
+
+const stdx::optional<ssl>& client::ssl_opts() const {
+    return ssl_opts_deprecated();
+}
+    
+const stdx::optional<ssl_deprecated>& client::ssl_opts_deprecated() const {
+    return tls_opts();
+}
+
 client& client::apm_opts(apm apm_opts) {
     _apm_opts = std::move(apm_opts);
     return *this;

@@ -62,15 +62,15 @@ int main(int argc, char* argv[]) {
         mongocxx::options::client client_options;
         if (uri.tls()) {
             mongocxx::options::tls tls_options;
-            // NOTE: To test SSL, you may need to set options.
+            // NOTE: To test TLS, you may need to set options.
             //
             // If the server certificate is not signed by a well-known CA,
             // you can set a custom CA file with the `ca_file` option.
-            // ssl_options.ca_file("/path/to/custom/cert.pem");
+            // tls_options.ca_file("/path/to/custom/cert.pem");
             //
             // If you want to disable certificate verification, you
             // can set the `allow_invalid_certificates` option.
-            // ssl_options.allow_invalid_certificates(true);
+            // tls_options.allow_invalid_certificates(true);
             client_options.tls_opts(tls_options);
         }
 

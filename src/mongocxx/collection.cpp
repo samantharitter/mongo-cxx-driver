@@ -670,19 +670,6 @@ stdx::optional<result::update> collection::_update_many(const client_session* se
     return stdx::optional<result::update>(result::update(std::move(result.value())));
 }
 
-stdx::optional<result::update> collection::update_many(view_or_value filter,
-                                                       view_or_value update,
-                                                       const options::update& options) {
-    return _update_many(nullptr, filter, update, options);
-}
-
-stdx::optional<result::update> collection::update_many(const client_session& session,
-                                                       view_or_value filter,
-                                                       view_or_value update,
-                                                       const options::update& options) {
-    return _update_many(&session, filter, update, options);
-}
-
 stdx::optional<result::update> collection::_update_one(const client_session* session,
                                                        view_or_value filter,
                                                        view_or_value update,
@@ -717,19 +704,6 @@ stdx::optional<result::update> collection::_update_one(const client_session* ses
     }
 
     return stdx::optional<result::update>(result::update(std::move(result.value())));
-}
-
-stdx::optional<result::update> collection::update_one(view_or_value filter,
-                                                      view_or_value update,
-                                                      const options::update& options) {
-    return _update_one(nullptr, filter, update, options);
-}
-
-stdx::optional<result::update> collection::update_one(const client_session& session,
-                                                      view_or_value filter,
-                                                      view_or_value update,
-                                                      const options::update& options) {
-    return _update_one(&session, filter, update, options);
 }
 
 stdx::optional<result::delete_result> collection::_delete_many(

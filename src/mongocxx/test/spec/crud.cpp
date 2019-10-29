@@ -86,17 +86,24 @@ void run_crud_tests_in_file(std::string test_path) {
             INFO("Operation: " << bsoncxx::to_json(operation));
             try {
                 actual_outcome_value = op_runner.run(operation);
-            } catch (...) {
+            } catch (const mongocxx::operation_exception& e) {
                 REQUIRE([&]() {
                     if (operation["error"]) { /* v2 tests expect tests[i].operation.error */
                         return operation["error"].get_bool().value;
-                    } else if (test["outcome"]) { /* v1 tests expect tests[i].outcome.error */
+                    } else if (test["outcome"] && test["outcome"]["error"]) {
+                        /* v1 tests expect tests[i].outcome.error (but some tests may
+                         have "outcome" without a nested "error") */
                         return test["outcome"]["error"].get_bool().value;
                     } else {
+                        WARN("Caught operation exception: " << e.what());
                         return false;
                     }
                 }());
                 return; /* do not check results if error is expected */
+            } catch (const std::exception& e) {
+                WARN("Caught exception: " << e.what());
+            } catch (...) {
+                WARN("Caught unknown exception");
             }
 
             if (test["outcome"]) {

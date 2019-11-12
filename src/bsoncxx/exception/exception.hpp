@@ -18,15 +18,28 @@
 
 #include <bsoncxx/config/prelude.hpp>
 
+#include <bsoncxx/util/backtrace.hpp>
+
 namespace bsoncxx {
 BSONCXX_INLINE_NAMESPACE_BEGIN
+
+using bsoncxx::trace::backtrace;
 
 ///
 /// Class representing any exceptions emitted from the bsoncxx library or
 /// its underlying implementation.
 ///
 class BSONCXX_API exception : public std::system_error {
-    using std::system_error::system_error;
+ public:
+    exception(std::error_code ec) : std::system_error(ec), _trace(backtrace()) {}
+    exception(std::error_code ec, std::string const &what_arg) : std::system_error(ec, what_arg), _trace(backtrace()) {}
+
+    const char *trace() { return _trace.c_str(); }
+
+ private:
+    std::string _trace;
+    
+    //using std::system_error::system_error;
 };
 
 BSONCXX_INLINE_NAMESPACE_END

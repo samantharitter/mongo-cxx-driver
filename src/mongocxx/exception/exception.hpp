@@ -19,14 +19,25 @@
 
 #include <mongocxx/config/prelude.hpp>
 
+#include <bsoncxx/util/backtrace.hpp>
+
 namespace mongocxx {
 MONGOCXX_INLINE_NAMESPACE_BEGIN
+
+using bsoncxx::trace::backtrace;
 
 ///
 /// A class to be used as the base class for all mongocxx exceptions.
 ///
 class MONGOCXX_API exception : public std::system_error {
-    using system_error::system_error;
+ public:
+    exception(std::error_code ec) : std::system_error(ec), _trace(backtrace()) {}
+    exception(std::error_code ec, std::string const &what_arg) : std::system_error(ec, what_arg), _trace(backtrace()) {}
+
+    const char *trace() const { return _trace.c_str(); }
+
+ private:
+    std::string _trace;
 };
 
 MONGOCXX_INLINE_NAMESPACE_END

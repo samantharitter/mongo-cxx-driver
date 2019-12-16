@@ -14,6 +14,7 @@
 
 #include <fstream>
 
+#include <bsoncxx/util/backtrace.hpp>
 #include <bsoncxx/string/to_string.hpp>
 #include <bsoncxx/test_util/catch.hh>
 #include <mongocxx/exception/operation_exception.hpp>
@@ -44,6 +45,8 @@ void run_crud_tests_in_file(std::string test_path) {
     if (should_skip_spec_test(client, test_spec_view)) {
         return;
     }
+
+    //bsoncxx::trace::print_backtrace();
 
     for (auto&& test : test_spec_view["tests"].get_array().value) {
         INFO("Test description: " << test["description"].get_utf8().value);
@@ -86,7 +89,8 @@ void run_crud_tests_in_file(std::string test_path) {
             INFO("Operation: " << bsoncxx::to_json(operation));
             try {
                 actual_outcome_value = op_runner.run(operation);
-            } catch (...) {
+            } catch (const mongocxx::exception& e) {
+		printf("Caught an exception: %s\nBacktrace: \n%s\n", e.what(), e.trace());
                 REQUIRE([&]() {
                     if (operation["error"]) { /* v2 tests expect tests[i].operation.error */
                         return operation["error"].get_bool().value;

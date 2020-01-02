@@ -19,14 +19,17 @@
 
 #include <mongocxx/config/prelude.hpp>
 
+#include <bsoncxx/exception/trace_exception.hpp>
+
 namespace mongocxx {
 MONGOCXX_INLINE_NAMESPACE_BEGIN
 
 ///
 /// A class to be used as the base class for all mongocxx exceptions.
 ///
-class MONGOCXX_API exception : public std::system_error {
-    using system_error::system_error;
+class MONGOCXX_API exception : public bsoncxx::trace_exception {
+   public:
+    using bsoncxx::trace_exception::trace_exception;
 };
 
 MONGOCXX_INLINE_NAMESPACE_END

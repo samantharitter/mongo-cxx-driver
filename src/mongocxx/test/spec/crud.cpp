@@ -16,6 +16,7 @@
 
 #include <bsoncxx/string/to_string.hpp>
 #include <bsoncxx/test_util/catch.hh>
+#include <bsoncxx/util/backtrace.hpp>
 #include <mongocxx/exception/operation_exception.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/test/spec/monitoring.hh>
@@ -86,7 +87,8 @@ void run_crud_tests_in_file(std::string test_path) {
             INFO("Operation: " << bsoncxx::to_json(operation));
             try {
                 actual_outcome_value = op_runner.run(operation);
-            } catch (...) {
+            } catch (mongocxx::exception& e) {
+                printf("Caught an exception: %s\nBacktrace: \n%s\n", e.what(), e.trace());
                 REQUIRE([&]() {
                     if (operation["error"]) { /* v2 tests expect tests[i].operation.error */
                         return operation["error"].get_bool().value;

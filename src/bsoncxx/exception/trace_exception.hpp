@@ -1,4 +1,4 @@
-// Copyright 2015 MongoDB Inc.
+// Copyright 2019 MongoDB Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 #include <bsoncxx/config/prelude.hpp>
 
-#include <bsoncxx/exception/trace_exception.hpp>
+#include <bsoncxx/util/backtrace.hpp>
 
 namespace bsoncxx {
 BSONCXX_INLINE_NAMESPACE_BEGIN
@@ -27,9 +27,15 @@ BSONCXX_INLINE_NAMESPACE_BEGIN
 /// Class representing any exceptions emitted from the bsoncxx library or
 /// its underlying implementation.
 ///
-class BSONCXX_API exception : public trace_exception {
-   public:
-    using trace_exception::trace_exception;
+class BSONCXX_API trace_exception : public std::system_error {
+ public:
+    trace_exception(std::error_code ec) : std::system_error(ec), _trace(bsoncxx::trace::backtrace()) {}
+    trace_exception(std::error_code ec, std::string const &what_arg) : std::system_error(ec, what_arg), _trace(bsoncxx::trace::backtrace()) {}
+
+    const char *trace() { return _trace.c_str(); }
+
+ private:
+    std::string _trace;
 };
 
 BSONCXX_INLINE_NAMESPACE_END

@@ -32,6 +32,15 @@ set(MONGOCXX_HEADER_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/mongocxx/${MONGOCXX
 set(LIBMONGOC_REQUIRED_VERSION 1.15.0)
 set(LIBMONGOC_REQUIRED_ABI_VERSION 1.0)
 
+# Dependencies for stack tracing
+#find_package(libunwind)
+#find_package(fmt)
+#if (libunwind_FOUND AND fmt_FOUND)
+#  set(MONGOCXX_STACK_TRACE_ENABLED 1)
+#else()
+#  set(MONGOCXX_STACK_TRACE_ENABLED 0)
+#endif()
+
 find_package(mongoc-${LIBMONGOC_REQUIRED_ABI_VERSION} ${LIBMONGOC_REQUIRED_VERSION} REQUIRED)
 if(NOT MONGOCXX_LINK_WITH_STATIC_MONGOC)
     set(libmongoc_target mongo::mongoc_shared)

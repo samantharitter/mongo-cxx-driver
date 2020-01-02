@@ -24,6 +24,8 @@ option(BSONCXX_POLY_USE_SYSTEM_MNMLSTC "Obtain mnmlstc/core from system" OFF)
 option(BSONCXX_POLY_USE_BOOST "Use boost for stdx polyfills" OFF)
 option(BSONCXX_POLY_USE_STD "Use C++17 std library for stdx polyfills" OFF)
 
+option(BSONCXX_ENABLE_STACK_TRACING "Use libunwind to support stack tracing" ON)
+
 set(BSONCXX_OUTPUT_BASENAME "bsoncxx" CACHE STRING "Output bsoncxx library base name")
 
 # Count how many polyfill options are true-ish
@@ -66,6 +68,12 @@ endif()
 if(BSONCXX_POLY_USE_STD_EXPERIMENTAL AND CMAKE_CXX_STANDARD LESS 14)
   message(FATAL_ERROR "Can only use BSONCXX_POLY_USE_STD_EXPERIMENTAL if CMAKE_CXX_STANDARD is 14 or higher")
 endif()
+
+# Dependencies for stack tracing
+#if (BSONCXX_ENABLE_STACK_TRACING)
+#  find_package(unwind REQUIRED)
+#  find_package(fmt REQUIRED)
+#endif()
 
 set(BSONCXX_VERSION_NO_EXTRA ${BSONCXX_VERSION_MAJOR}.${BSONCXX_VERSION_MINOR}.${BSONCXX_VERSION_PATCH})
 set(BSONCXX_VERSION ${BSONCXX_VERSION_NO_EXTRA}${BSONCXX_VERSION_EXTRA})
@@ -214,6 +222,7 @@ set_local_dist (src_bsoncxx_DIST_local
    exception/error_code.cpp
    exception/error_code.hpp
    exception/exception.hpp
+   exception/trace_exception.hpp
    json.cpp
    json.hpp
    oid.cpp
@@ -237,6 +246,7 @@ set_local_dist (src_bsoncxx_DIST_local
    types.hpp
    types/value.cpp
    types/value.hpp
+   util/backtrace.hpp
    util/functor.hpp
    validate.cpp
    validate.hpp

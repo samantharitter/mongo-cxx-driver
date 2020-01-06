@@ -18,6 +18,7 @@
 
 #include <bsoncxx/stdx/optional.hpp>
 #include <mongocxx/options/apm.hpp>
+#include <mongocxx/options/auto_encryption.hpp>
 #include <mongocxx/options/ssl.hpp>
 
 #include <mongocxx/config/prelude.hpp>
@@ -53,6 +54,26 @@ class MONGOCXX_API client {
     const stdx::optional<ssl>& ssl_opts() const;
 
     ///
+    /// Sets the automatic encryption options.
+    ///
+    /// @param auto_encryption_opts
+    ///   The options for automatic encryption.
+    ///
+    /// @return
+    ///   A reference to the object on which this member function is being called.  This facilitates
+    ///   method chaining.
+    ///
+    client& auto_encryption_opts(auto_encryption auto_encryption_opts);
+
+    ///
+    /// Gets the current automatic encryption options.
+    ///
+    /// @return
+    ///   The automatic encryption opts.
+    ///
+    const stdx::optional<auto_encryption>& auto_encryption_opts() const;
+
+    ///
     /// Sets the APM-related options.
     ///
     /// @param apm_opts
@@ -74,6 +95,7 @@ class MONGOCXX_API client {
    private:
     stdx::optional<ssl> _ssl_opts;
     stdx::optional<apm> _apm_opts;
+    stdx::optional<auto_encryption> _auto_encrypt_opts;
 };
 
 }  // namespace options

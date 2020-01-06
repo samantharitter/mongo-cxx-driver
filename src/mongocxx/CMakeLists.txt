@@ -92,6 +92,7 @@ set(mongocxx_sources
     model/write.cpp
     options/aggregate.cpp
     options/apm.cpp
+    options/auto_encryption.cpp
     options/bulk_write.cpp
     options/change_stream.cpp
     options/client.cpp

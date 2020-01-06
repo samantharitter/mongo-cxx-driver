@@ -67,22 +67,6 @@ using bsoncxx::builder::basic::make_document;
 using bsoncxx::stdx::optional;
 using bsoncxx::stdx::string_view;
 
-uint32_t error_code_from_name(string_view name) {
-    if (name.compare("CannotSatisfyWriteConcern") == 0) {
-        return 100;
-    } else if (name.compare("DuplicateKey") == 0) {
-        return 11000;
-    } else if (name.compare("NoSuchTransaction") == 0) {
-        return 251;
-    } else if (name.compare("WriteConflict") == 0) {
-        return 112;
-    } else if (name.compare("Interrupted") == 0) {
-        return 11601;
-    }
-
-    return 0;
-}
-
 void test_setup(document::view test,
                 document::view test_spec,
                 string_view db_name,
@@ -94,33 +78,11 @@ void test_setup(document::view test,
     } catch (const operation_exception& e) {
     }
 
-    // Step 2. "Create a collection object from the MongoClient, using the database_name and
-    // collection_name fields of the YAML file."
-    database db = client[db_name];
-    collection coll = db[coll_name];
-
-    // Step 3. "Drop the test collection, using writeConcern 'majority'."
-    write_concern wc_majority;
-    wc_majority.acknowledge_level(write_concern::level::k_majority);
-    coll.drop(wc_majority);
-
-    // Step 4. "Execute the 'create' command to recreate the collection"
-    coll = db.create_collection(coll_name, {}, wc_majority);
-
-    // Step 5. "If the YAML file contains a data array, insert the documents"
-    if (test_spec["data"]) {
-        array::view docs = test_spec["data"].get_array().value;
-        for (auto&& doc : docs) {
-            options::insert insert_opts;
-            insert_opts.write_concern(wc_majority);
-            coll.insert_one(doc.get_document().value, insert_opts);
-        }
-    }
+    // Steps 2 - 5, set up new collection
+    set_up_collection(client, test_spec);
 
     // Step 6. "If failPoint is specified, its value is a configureFailPoint command"
-    if (test["failPoint"]) {
-        client["admin"].run_command(test["failPoint"].get_document().value);
-    }
+    configure_fail_point(client, test);
 }
 
 void parse_session_opts(document::view session_opts, options::client_session* out) {
@@ -143,44 +105,6 @@ void parse_session_opts(document::view session_opts, options::client_session* ou
     }
 
     out->default_transaction_opts(txn_opts);
-}
-
-void parse_database_options(document::view op, database* out) {
-    if (op["databaseOptions"]) {
-        auto rc = lookup_read_concern(op["databaseOptions"].get_document());
-        if (rc) {
-            out->read_concern(*rc);
-        }
-
-        auto wc = lookup_write_concern(op["databaseOptions"].get_document());
-        if (wc) {
-            out->write_concern(*wc);
-        }
-
-        auto rp = lookup_read_preference(op["databaseOptions"].get_document());
-        if (rp) {
-            out->read_preference(*rp);
-        }
-    }
-}
-
-void parse_collection_options(document::view op, collection* out) {
-    if (op["collectionOptions"]) {
-        auto rc = lookup_read_concern(op["collectionOptions"].get_document());
-        if (rc) {
-            out->read_concern(*rc);
-        }
-
-        auto wc = lookup_write_concern(op["collectionOptions"].get_document());
-        if (wc) {
-            out->write_concern(*wc);
-        }
-
-        auto rp = lookup_read_preference(op["collectionOptions"].get_document());
-        if (rp) {
-            out->read_preference(*rp);
-        }
-    }
 }
 
 void run_transactions_tests_in_file(const std::string& test_path) {
@@ -249,79 +173,14 @@ void run_transactions_tests_in_file(const std::string& test_path) {
         for (auto&& op : operations) {
             fail_point_enabled =
                 fail_point_enabled || op.get_document().value["arguments"]["failPoint"];
-            std::string error_msg;
-            optional<document::value> server_error;
-            optional<operation_exception> exception;
-            optional<document::value> actual_result;
-            INFO("Operation: " << bsoncxx::to_json(op.get_document().value));
-            try {
-                auto operation = op.get_document().value;
-                database db = client[db_name];
-                parse_database_options(operation, &db);
-                collection coll = db[coll_name];
-                parse_collection_options(operation, &coll);
-                operation_runner op_runner{&db, &coll, &session0, &session1, &client};
-                actual_result = op_runner.run(operation);
-            } catch (const operation_exception& e) {
-                error_msg = e.what();
-                server_error = e.raw_server_error();
-                exception = e;
-            }
-
-            // "If the result document has an 'errorContains' field, verify that the method threw an
-            // exception or returned an error, and that the value of the 'errorContains' field
-            // matches the error string."
-            if (op["result"]["errorContains"]) {
-                REQUIRE(exception);
-                // Do a case insensitive check.
-                auto error_contains =
-                    test_util::tolowercase(op["result"]["errorContains"].get_utf8().value);
-                REQUIRE(test_util::tolowercase(error_msg).find(error_contains) <
-                        error_msg.length());
-            }
-
-            // "If the result document has an 'errorCodeName' field, verify that the method threw a
-            // command failed exception or returned an error, and that the value of the
-            // 'errorCodeName' field matches the 'codeName' in the server error response."
-            if (op["result"]["errorCodeName"]) {
-                REQUIRE(exception);
-                REQUIRE(server_error);
-                uint32_t expected =
-                    error_code_from_name(op["result"]["errorCodeName"].get_utf8().value);
-                REQUIRE(exception->code().value() == static_cast<int>(expected));
-            }
-
-            // "If the result document has an 'errorLabelsContain' field, [...] Verify that all of
-            // the error labels in 'errorLabelsContain' are present"
-            if (op["result"]["errorLabelsContain"]) {
-                REQUIRE(exception);
-                for (auto&& label_el : op["result"]["errorLabelsContain"].get_array().value) {
-                    auto label = label_el.get_utf8().value;
-                    REQUIRE(exception->has_error_label(label));
-                }
-            }
-
-            // "If the result document has an 'errorLabelsOmit' field, [...] Verify that none of the
-            // error labels in 'errorLabelsOmit' are present."
-            if (op["result"]["errorLabelsOmit"]) {
-                REQUIRE(exception);
-                for (auto&& label_el : op["result"]["errorLabelsOmit"].get_array().value) {
-                    auto label = label_el.get_utf8().value;
-                    REQUIRE(!exception->has_error_label(label));
-                }
-            }
-
-            // "If the operation returns a raw command response, eg from runCommand, then compare
-            // only the fields present in the expected result document. Otherwise, compare the
-            // method's return value to result using the same logic as the CRUD Spec Tests runner."
-            if (!exception && op["result"]) {
-                REQUIRE(actual_result);
-                REQUIRE(actual_result->view()["result"]);
-                INFO("actual result" << bsoncxx::to_json(actual_result->view()));
-                INFO("expected result" << bsoncxx::to_json(op.get_document().value));
-                REQUIRE(test_util::matches(actual_result->view()["result"].get_value(),
-                                           op["result"].get_value()));
-            }
+            auto op_view = op.get_document().value;
+            database db = client[db_name];
+            parse_database_options(op_view, &db);
+            collection coll = db[coll_name];
+            parse_collection_options(op_view, &coll);
+            run_operation_check_result(op_view, [&]() {
+                return operation_runner{&db, &coll, &session0, &session1, &client};
+            });
         }
 
         // Step 10. "Call session0.endSession() and session1.endSession." (done in destructors).

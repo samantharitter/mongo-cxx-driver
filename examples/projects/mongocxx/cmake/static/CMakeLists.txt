@@ -37,6 +37,7 @@ endif()
 # NOTE: For this to work, the CMAKE_PREFIX_PATH variable must be set to point to the directory that
 # was used as the argument to CMAKE_INSTALL_PREFIX when building libmongocxx.
 find_package(mongocxx REQUIRED)
+find_package(mongocrypt REQUIRED)
 
 add_executable(hello_mongocxx ../../hello_mongocxx.cpp)
 

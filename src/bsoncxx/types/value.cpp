@@ -127,6 +127,10 @@ void value::destroy() noexcept {
     }
 }
 
+//    std::string value::type_string() const {
+//	auto t = this->type();
+//}
+
 }  // namespace types
 BSONCXX_INLINE_NAMESPACE_END
 }  // namespace bsoncxx

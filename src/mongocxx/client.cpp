@@ -94,6 +94,53 @@ client::client(const class uri& uri, const options::client& options) {
         libmongoc::client_set_apm_callbacks(_get_impl().client_t, callbacks.get(), context);
     }
 
+    if (options.auto_encryption_opts()) {
+        auto mongoc_auto_encrypt_opts = libmongoc::auto_encryption_opts_new();
+        auto auto_encrypt_opts = *options.auto_encryption_opts();
+
+        if (auto_encrypt_opts.key_vault_client()) {
+            mongoc_client_t* client_t =
+                (*auto_encrypt_opts.key_vault_client())->_get_impl().client_t;
+            libmongoc::auto_encryption_opts_set_keyvault_client(mongoc_auto_encrypt_opts, client_t);
+        }
+
+        if (auto_encrypt_opts.key_vault_namespace()) {
+            auto ns = *auto_encrypt_opts.key_vault_namespace();
+            libmongoc::auto_encryption_opts_set_keyvault_namespace(
+                mongoc_auto_encrypt_opts, ns.first.c_str(), ns.second.c_str());
+        }
+
+        if (auto_encrypt_opts.kms_providers()) {
+            scoped_bson_t kms_providers{*auto_encrypt_opts.kms_providers()};
+            libmongoc::auto_encryption_opts_set_kms_providers(mongoc_auto_encrypt_opts,
+                                                              kms_providers.bson());
+        }
+
+        if (auto_encrypt_opts.schema_map()) {
+            scoped_bson_t schema_map{*auto_encrypt_opts.schema_map()};
+            libmongoc::auto_encryption_opts_set_schema_map(mongoc_auto_encrypt_opts,
+                                                           schema_map.bson());
+        }
+
+        if (auto_encrypt_opts.bypass_auto_encryption()) {
+            libmongoc::auto_encryption_opts_set_bypass_auto_encryption(mongoc_auto_encrypt_opts,
+                                                                       true);
+        }
+
+        if (auto_encrypt_opts.extra_options()) {
+            scoped_bson_t extra{*auto_encrypt_opts.extra_options()};
+            libmongoc::auto_encryption_opts_set_extra(mongoc_auto_encrypt_opts, extra.bson());
+        }
+
+        bson_error_t error;
+        if (!libmongoc::client_enable_auto_encryption(
+                _get_impl().client_t, mongoc_auto_encrypt_opts, &error)) {
+            throw_exception<operation_exception>(error);
+        }
+
+        libmongoc::auto_encryption_opts_destroy(mongoc_auto_encrypt_opts);
+    }
+
 #if defined(MONGOCXX_ENABLE_SSL) && defined(MONGOC_ENABLE_SSL)
     if (options.tls_opts()) {
         auto mongoc_opts = options::make_tls_opts(*options.tls_opts());

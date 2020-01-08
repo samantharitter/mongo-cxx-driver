@@ -71,6 +71,9 @@ else()
   endif()
 endif()
 
+find_package(mongocrypt REQUIRED)
+set(libmongocrypt_target mongo::mongocrypt)
+
 add_subdirectory(config)
 
 set(mongocxx_sources

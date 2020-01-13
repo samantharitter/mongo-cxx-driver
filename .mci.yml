@@ -130,7 +130,6 @@ functions:
                 export TOPOLOGY=${TOPOLOGY|server}
 
                 echo '${workdir}'
-                touch '${workdir}'/mongodb_binaries_path.txt
 
                 echo $MONGODB_BINARIES > '${workdir}'/mongodb_binaries_path.txt
                 
@@ -249,6 +248,9 @@ functions:
                   export GRIDFS_TESTS_PATH="$(pwd)/../data/gridfs"
                   export COMMAND_MONITORING_TESTS_PATH="$(pwd)/../data/command-monitoring"
                   export TRANSACTIONS_TESTS_PATH="$(pwd)/../data/transactions"
+
+                  # bypass spawning in the tests
+                  export ENCRYPTION_TESTS_BYPASS_SPAWN="TRUE"
 
                   # export environment variables for encryption tests (and redact them)
                   set +o xtrace

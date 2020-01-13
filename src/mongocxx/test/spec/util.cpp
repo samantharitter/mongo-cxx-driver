@@ -14,11 +14,11 @@
 
 #include <mongocxx/test/spec/util.hh>
 
-#include <bsoncxx/builder/stream/document.hpp>
-#include <bsoncxx/builder/stream/helpers.hpp>
+#include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/json.hpp>
 #include <bsoncxx/stdx/optional.hpp>
 #include <bsoncxx/string/to_string.hpp>
+#include <bsoncxx/test_util/catch.hh>
 #include <mongocxx/exception/operation_exception.hpp>
 #include <mongocxx/test_util/client_helpers.hh>
 #include <third_party/catch/include/catch.hpp>
@@ -127,7 +127,7 @@ void disable_fail_point(const client& client, stdx::string_view failpoint) {
             client["admin"].run_command(
                 make_document(kvp("configureFailPoint", failpoint), kvp("mode", "off")));
             break;
-        } catch (const std::exception& e) {
+        } catch (const std::exception&) {
             /* Tests that fail with isMaster also fail to disable the failpoint
              * (since we run isMaster when opening the connection). Ignore those
              * errors. */
@@ -157,12 +157,13 @@ void set_up_collection(const client& client, document::view test) {
         validation_criteria validation{};
         validation.rule(test["json_schema"].get_document().value);
 
-        bsoncxx::document::value cmd =
-            bsoncxx::builder::stream::document{}
-            << "collMod" << coll_name << "validator" << bsoncxx::builder::stream::open_document
-            << "$jsonSchema" << test["json_schema"].get_document().value
-            << bsoncxx::builder::stream::close_document << bsoncxx::builder::stream::finalize;
-        db.run_command(cmd.view());
+        auto cmd = bsoncxx::builder::basic::document{};
+        cmd.append(kvp("collMod", coll_name));
+        cmd.append(kvp("validator", [&](bsoncxx::builder::basic::sub_document subdoc) {
+            subdoc.append(kvp("$jsonSchema", test["json_schema"].get_document().value));
+        }));
+
+        db.run_command(cmd.extract());
     }
 
     // Seed collection with data, if we have it
@@ -266,7 +267,6 @@ void run_operation_check_result(document::view op, make_op_runner_fn make_op_run
     // 'errorCodeName' field matches the 'codeName' in the server error response."
     if (op["result"]["errorCodeName"]) {
         REQUIRE(op_exception);
-        REQUIRE(server_error);
         uint32_t expected = error_code_from_name(op["result"]["errorCodeName"].get_utf8().value);
         REQUIRE(op_exception->code().value() == static_cast<int>(expected));
     }

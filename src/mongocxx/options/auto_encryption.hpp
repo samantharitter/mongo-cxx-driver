@@ -1,4 +1,4 @@
-// Copyright 2019 MongoDB Inc.
+// Copyright 2020 MongoDB Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ namespace mongocxx {
 MONGOCXX_INLINE_NAMESPACE_BEGIN
 
 class client;
+class pool;
+
 namespace options {
 
 ///
@@ -40,6 +42,9 @@ class MONGOCXX_API auto_encryption {
     /// When the key vault collection is on a separate MongoDB cluster,
     /// sets the optional client to use to route data key queries to
     /// that cluster.
+    ///
+    /// The given key vault client MUST outlive any client or pool that has
+    /// been enabled to use it through these options.
     ///
     /// @param
     ///   A client to use for routing queries to the key vault collection.
@@ -58,6 +63,34 @@ class MONGOCXX_API auto_encryption {
     ///   An optional pointer to the key vault client.
     ///
     const stdx::optional<client*>& key_vault_client() const;
+
+    ///
+    /// When the key vault collection is on a separate MongoDB cluster,
+    /// sets the optional client pool to use to route data key queries to
+    /// that cluster.
+    ///
+    /// This option may not be used if a key_vault_client is set.
+    ///
+    /// The given key vault pool MUST outlive any client or pool that has
+    /// been enabled to use it through these options.
+    ///
+    /// @param
+    ///   A pool to use for routing queries to the key vault collection.
+    ///
+    /// @return
+    ///   A reference to this object to facilitate method chaining.
+    ///
+    /// @see https://docs.mongodb.com/manual/core/security-client-side-encryption/
+    ///
+    auto_encryption& key_vault_pool(pool* pool);
+
+    ///
+    /// Gets the key vault pool.
+    ///
+    /// @return
+    ///   An optional pointer to the key vault pool.
+    ///
+    const stdx::optional<pool*>& key_vault_pool() const;
 
     ///
     /// Sets the namespace to use to access the key vault collection, which
@@ -151,7 +184,7 @@ class MONGOCXX_API auto_encryption {
     /// @return
     ///   An optional document containing the schema map.
     ///
-    const stdx::optional<bsoncxx::document::view_or_value>& schema_map();
+    const stdx::optional<bsoncxx::document::view_or_value>& schema_map() const;
 
     ///
     /// Automatic encryption is disabled when the 'bypassAutoEncryption'
@@ -173,7 +206,7 @@ class MONGOCXX_API auto_encryption {
     /// @return
     ///   A boolean specifying whether auto encryption is bypassed.
     ///
-    bool bypass_auto_encryption();
+    bool bypass_auto_encryption() const;
 
     ///
     /// Set extra options related to the mongocryptd process. This options
@@ -205,11 +238,17 @@ class MONGOCXX_API auto_encryption {
     /// @return
     ///   An optional document containing the extra options.
     ///
-    const stdx::optional<bsoncxx::document::view_or_value>& extra_options();
+    const stdx::optional<bsoncxx::document::view_or_value>& extra_options() const;
 
    private:
+    friend class mongocxx::client;
+    friend class mongocxx::pool;
+
+    MONGOCXX_PRIVATE void* convert() const;
+
     bool _bypass;
-    stdx::optional<client*> _key_vault_client;
+    stdx::optional<mongocxx::client*> _key_vault_client;
+    stdx::optional<mongocxx::pool*> _key_vault_pool;
     stdx::optional<ns_pair> _key_vault_namespace;
     stdx::optional<bsoncxx::document::view_or_value> _kms_providers;
     stdx::optional<bsoncxx::document::view_or_value> _schema_map;

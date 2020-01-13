@@ -67,8 +67,7 @@ using bsoncxx::builder::basic::make_document;
 using bsoncxx::stdx::optional;
 using bsoncxx::stdx::string_view;
 
-void test_setup(document::view test,
-                document::view test_spec) {
+void test_setup(document::view test, document::view test_spec) {
     // Step 1. "clean up any open transactions from previous test failures"
     client client{uri{}};
     try {
@@ -173,20 +172,20 @@ void run_transactions_tests_in_file(const std::string& test_path) {
             session_lsid1.reset(session1.id());
 
             // Step 9. Perform the operations.
-	    apm_checker.clear();
-	    auto operations = test["operations"].get_array().value;
-	    for (auto&& op : operations) {
-		fail_point_enabled =
-		    fail_point_enabled || op.get_document().value["arguments"]["failPoint"];
-		auto op_view = op.get_document().value;
-		database db = client[db_name];
-		parse_database_options(op_view, &db);
-		collection coll = db[coll_name];
-		parse_collection_options(op_view, &coll);
-		run_operation_check_result(op_view, [&]() {
-							return operation_runner{&db, &coll, &session0, &session1, &client};
-						    });
-	    }
+            apm_checker.clear();
+            auto operations = test["operations"].get_array().value;
+            for (auto&& op : operations) {
+                fail_point_enabled =
+                    fail_point_enabled || op.get_document().value["arguments"]["failPoint"];
+                auto op_view = op.get_document().value;
+                database db = client[db_name];
+                parse_database_options(op_view, &db);
+                collection coll = db[coll_name];
+                parse_collection_options(op_view, &coll);
+                run_operation_check_result(op_view, [&]() {
+                    return operation_runner{&db, &coll, &session0, &session1, &client};
+                });
+            }
         }
         // Step 10. "Call session0.endSession() and session1.endSession." (done in destructors).
 

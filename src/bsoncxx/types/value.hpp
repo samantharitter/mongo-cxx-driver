@@ -353,11 +353,6 @@ class BSONCXX_API value {
     ///
     const b_maxkey& get_maxkey() const;
 
-    ///
-    /// @return A string representation of this value's type.
-    ///
-    // std::string to_string() const;
-
    private:
     void BSONCXX_PRIVATE destroy() noexcept;
 

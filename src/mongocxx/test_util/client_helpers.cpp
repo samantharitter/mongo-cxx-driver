@@ -392,18 +392,18 @@ void check_outcome_collection(mongocxx::collection* coll, bsoncxx::document::vie
     auto it = expected_docs.begin();
 
     for (auto&& doc : coll->find({}, options)) {
-	if (it == expected_docs.end()) {
-	    FAIL("found more documents than expected.");
-	}
+        if (it == expected_docs.end()) {
+            FAIL("found more documents than expected.");
+        }
 
-	auto next_expected = *it;
-	it++;
+        auto next_expected = *it;
+        it++;
 
-	REQUIRE_BSON_MATCHES(doc, next_expected);
+        REQUIRE_BSON_MATCHES(doc, next_expected);
     }
 
     if (it != expected_docs.end()) {
-	FAIL("Had more expected documents than we found.");
+        FAIL("Had more expected documents than we found.");
     }
 }
 

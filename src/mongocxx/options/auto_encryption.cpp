@@ -1,4 +1,4 @@
-// Copyright 2019 MongoDB Inc.
+// Copyright 2020 MongoDB Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,15 @@
 
 #include <mongocxx/options/auto_encryption.hpp>
 
-#include <bsoncxx/json.hpp>
+#include <mongocxx/client.hpp>
+#include <mongocxx/exception/error_code.hpp>
+#include <mongocxx/exception/logic_error.hpp>
+#include <mongocxx/pool.hpp>
+#include <mongocxx/private/client.hh>
+#include <mongocxx/private/libbson.hh>
+#include <mongocxx/private/libmongoc.hh>
+#include <mongocxx/private/pool.hh>
+
 #include <mongocxx/config/private/prelude.hh>
 
 namespace mongocxx {
@@ -30,6 +38,15 @@ auto_encryption& auto_encryption::key_vault_client(mongocxx::client* client) {
 
 const stdx::optional<mongocxx::client*>& auto_encryption::key_vault_client() const {
     return _key_vault_client;
+}
+
+auto_encryption& auto_encryption::key_vault_pool(mongocxx::pool* pool) {
+    _key_vault_pool = pool;
+    return *this;
+}
+
+const stdx::optional<mongocxx::pool*>& auto_encryption::key_vault_pool() const {
+    return _key_vault_pool;
 }
 
 auto_encryption& auto_encryption::key_vault_namespace(auto_encryption::ns_pair ns) {
@@ -55,7 +72,7 @@ auto_encryption& auto_encryption::schema_map(bsoncxx::document::view_or_value sc
     return *this;
 }
 
-const stdx::optional<bsoncxx::document::view_or_value>& auto_encryption::schema_map() {
+const stdx::optional<bsoncxx::document::view_or_value>& auto_encryption::schema_map() const {
     return _schema_map;
 }
 
@@ -64,7 +81,7 @@ auto_encryption& auto_encryption::bypass_auto_encryption(bool should_bypass) {
     return *this;
 }
 
-bool auto_encryption::bypass_auto_encryption() {
+bool auto_encryption::bypass_auto_encryption() const {
     return _bypass;
 }
 
@@ -73,9 +90,62 @@ auto_encryption& auto_encryption::extra_options(bsoncxx::document::view_or_value
     return *this;
 }
 
-const stdx::optional<bsoncxx::document::view_or_value>& auto_encryption::extra_options() {
+const stdx::optional<bsoncxx::document::view_or_value>& auto_encryption::extra_options() const {
     return _extra_options;
 }
+
+void* auto_encryption::convert() const {
+    using libbson::scoped_bson_t;
+
+    auto mongoc_auto_encrypt_opts = libmongoc::auto_encryption_opts_new();
+    if (!mongoc_auto_encrypt_opts) {
+        throw std::logic_error{"could not get object from libmongoc"};
+    }
+
+    if (_key_vault_client && _key_vault_pool) {
+        throw exception{error_code::k_invalid_parameter,
+                        "cannot set both key vault client and key vault pool, please choose one"};
+    }
+
+    if (_key_vault_client) {
+        mongoc_client_t* client_t = (*_key_vault_client)->_get_impl().client_t;
+        libmongoc::auto_encryption_opts_set_keyvault_client(mongoc_auto_encrypt_opts, client_t);
+    }
+
+    if (_key_vault_pool) {
+        mongoc_client_pool_t* pool_t = (*_key_vault_pool)->_impl->client_pool_t;
+        libmongoc::auto_encryption_opts_set_keyvault_client_pool(mongoc_auto_encrypt_opts, pool_t);
+    }
+
+    if (_key_vault_namespace) {
+        auto ns = *_key_vault_namespace;
+        libmongoc::auto_encryption_opts_set_keyvault_namespace(
+            mongoc_auto_encrypt_opts, ns.first.c_str(), ns.second.c_str());
+    }
+
+    if (_kms_providers) {
+        scoped_bson_t kms_providers{*_kms_providers};
+        libmongoc::auto_encryption_opts_set_kms_providers(mongoc_auto_encrypt_opts,
+                                                          kms_providers.bson());
+    }
+
+    if (_schema_map) {
+        scoped_bson_t schema_map{*_schema_map};
+        libmongoc::auto_encryption_opts_set_schema_map(mongoc_auto_encrypt_opts, schema_map.bson());
+    }
+
+    if (_bypass) {
+        libmongoc::auto_encryption_opts_set_bypass_auto_encryption(mongoc_auto_encrypt_opts, true);
+    }
+
+    if (_extra_options) {
+        scoped_bson_t extra{*_extra_options};
+        libmongoc::auto_encryption_opts_set_extra(mongoc_auto_encrypt_opts, extra.bson());
+    }
+
+    return mongoc_auto_encrypt_opts;
+}
+
 }  // namespace options
 MONGOCXX_INLINE_NAMESPACE_END
 }  // namespace mongocxx

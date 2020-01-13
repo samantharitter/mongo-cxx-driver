@@ -104,13 +104,15 @@ void add_auto_encryption_opts(document::view test, options::client* client_opts)
                     kvp("local", test_encrypt_opts["kmsProviders"]["local"].get_document().value));
             }
 
-            auto_encrypt_opts.kms_providers({std::move(kms_doc.extract())});
+            auto_encrypt_opts.kms_providers({kms_doc.extract()});
         }
 
-        // TODO remove this?
-        auto cmd = bsoncxx::builder::basic::document{};
-        cmd.append(bsoncxx::builder::basic::kvp("mongocryptdBypassSpawn", true));
-        auto_encrypt_opts.extra_options({std::move(cmd.extract())});
+        char* bypass_spawn = std::getenv("ENCRYPTION_TESTS_BYPASS_SPAWN");
+        if (bypass_spawn && strcmp(bypass_spawn, "TRUE") == 0) {
+            auto cmd = bsoncxx::builder::basic::document{};
+            cmd.append(bsoncxx::builder::basic::kvp("mongocryptdBypassSpawn", true));
+            auto_encrypt_opts.extra_options({cmd.extract()});
+        }
 
         client_opts->auto_encryption_opts(std::move(auto_encrypt_opts));
     }

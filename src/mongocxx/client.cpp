@@ -20,6 +20,7 @@
 #include <mongocxx/exception/logic_error.hpp>
 #include <mongocxx/exception/operation_exception.hpp>
 #include <mongocxx/exception/private/mongoc_error.hh>
+#include <mongocxx/options/auto_encryption.hpp>
 #include <mongocxx/options/private/apm.hh>
 #include <mongocxx/options/private/ssl.hh>
 #include <mongocxx/private/client.hh>
@@ -95,42 +96,9 @@ client::client(const class uri& uri, const options::client& options) {
     }
 
     if (options.auto_encryption_opts()) {
-        auto mongoc_auto_encrypt_opts = libmongoc::auto_encryption_opts_new();
-        auto auto_encrypt_opts = *options.auto_encryption_opts();
-
-        if (auto_encrypt_opts.key_vault_client()) {
-            mongoc_client_t* client_t =
-                (*auto_encrypt_opts.key_vault_client())->_get_impl().client_t;
-            libmongoc::auto_encryption_opts_set_keyvault_client(mongoc_auto_encrypt_opts, client_t);
-        }
-
-        if (auto_encrypt_opts.key_vault_namespace()) {
-            auto ns = *auto_encrypt_opts.key_vault_namespace();
-            libmongoc::auto_encryption_opts_set_keyvault_namespace(
-                mongoc_auto_encrypt_opts, ns.first.c_str(), ns.second.c_str());
-        }
-
-        if (auto_encrypt_opts.kms_providers()) {
-            scoped_bson_t kms_providers{*auto_encrypt_opts.kms_providers()};
-            libmongoc::auto_encryption_opts_set_kms_providers(mongoc_auto_encrypt_opts,
-                                                              kms_providers.bson());
-        }
-
-        if (auto_encrypt_opts.schema_map()) {
-            scoped_bson_t schema_map{*auto_encrypt_opts.schema_map()};
-            libmongoc::auto_encryption_opts_set_schema_map(mongoc_auto_encrypt_opts,
-                                                           schema_map.bson());
-        }
-
-        if (auto_encrypt_opts.bypass_auto_encryption()) {
-            libmongoc::auto_encryption_opts_set_bypass_auto_encryption(mongoc_auto_encrypt_opts,
-                                                                       true);
-        }
-
-        if (auto_encrypt_opts.extra_options()) {
-            scoped_bson_t extra{*auto_encrypt_opts.extra_options()};
-            libmongoc::auto_encryption_opts_set_extra(mongoc_auto_encrypt_opts, extra.bson());
-        }
+        const auto& auto_encrypt_opts = *options.auto_encryption_opts();
+        auto mongoc_auto_encrypt_opts =
+            static_cast<mongoc_auto_encryption_opts_t*>(auto_encrypt_opts.convert());
 
         bson_error_t error;
         if (!libmongoc::client_enable_auto_encryption(

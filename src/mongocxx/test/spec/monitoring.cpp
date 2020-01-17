@@ -35,6 +35,10 @@ void apm_checker::compare(bsoncxx::array::view expectations,
 
     auto events_iter = _events.begin();
     for (auto expectation : expectations) {
+	//if (events_iter == _events.end()) {
+	//    fprintf(stderr, "expected more events than we had\n");
+	//    fprintf(stderr, "expected: %s\n", to_json(expectations).c_str());
+	//    }
         REQUIRE(events_iter != _events.end());
         auto expected = expectation.get_document().view();
         REQUIRE_BSON_MATCHES_V(*events_iter, expected, match_visitor);

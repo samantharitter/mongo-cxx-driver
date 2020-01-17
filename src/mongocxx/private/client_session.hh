@@ -31,6 +31,39 @@
 namespace mongocxx {
 MONGOCXX_INLINE_NAMESPACE_BEGIN
 
+namespace {
+struct with_transaction_ctx {
+    client_session* parent;
+    client_session::with_transaction_cb cb;
+};
+
+// The callback we pass into libmongoc is a wrapped version of the
+// user callback. Before giving control back to libmongoc, we convert
+// any exception the user callback emits into an error_t and reply object;
+// libmongoc uses these to determine whether to retry.
+bool with_transaction_cpp_cb(mongoc_client_session_t*,
+                             void* ctx,
+                             bson_t** reply,
+                             bson_error_t* error) {
+    with_transaction_ctx* cb_ctx = static_cast<with_transaction_ctx*>(ctx);
+
+    try {
+        cb_ctx->cb(cb_ctx->parent);
+    } catch (operation_exception& e) {
+        make_bson_error(error, e);
+        if (e.raw_server_error()) {
+            libbson::scoped_bson_t raw{e.raw_server_error()->view()};
+            *reply = bson_copy(raw.bson());
+        }
+        return false;
+    } catch (std::exception& e) {
+        make_bson_error(error, e);
+        return false;
+    }
+    return true;
+}
+}  // namespace
+
 class client_session::impl {
    public:
     impl(const class client* client, const options::client_session& session_options)
@@ -130,6 +163,25 @@ class client_session::impl {
         bson_error_t error;
         if (!libmongoc::client_session_abort_transaction(_session_t.get(), &error)) {
             throw_exception<operation_exception>(error);
+        }
+    }
+
+    void with_transaction(client_session* parent,
+                          client_session::with_transaction_cb cb,
+                          options::transaction opts) {
+        auto session_t = _session_t.get();
+        auto opts_t = opts._get_impl().get_transaction_opt_t();
+
+        with_transaction_ctx ctx{parent, std::move(cb)};
+
+        libbson::scoped_bson_t reply;
+        bson_error_t error;
+
+        auto res = libmongoc::client_session_with_transaction(
+            session_t, &with_transaction_cpp_cb, opts_t, &ctx, reply.bson_for_init(), &error);
+
+        if (!res) {
+            throw_exception<operation_exception>(reply.steal(), error);
         }
     }
 

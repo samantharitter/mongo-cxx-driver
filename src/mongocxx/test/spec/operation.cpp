@@ -1291,6 +1291,8 @@ document::value operation_runner::run(document::view operation) {
         return _run_commit_transaction(operation);
     } else if (key.compare("abortTransaction") == 0) {
         return _run_abort_transaction(operation);
+	//} else if (key.compare("withTransaction") == 0) {
+	//return _run_with_transaction(operation);
     } else if (key.compare("runCommand") == 0) {
         return _run_run_command(operation);
     } else if (key.compare("targetedFailPoint") == 0) {

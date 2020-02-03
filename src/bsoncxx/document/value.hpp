@@ -118,6 +118,26 @@ BSONCXX_INLINE value::operator document::view() const noexcept {
     return view();
 }
 
+///
+/// @{
+///
+/// Compares a document value and view for (in)-equality.
+///
+/// @relates document::value
+/// @relates document::view
+///
+BSONCXX_INLINE bool operator==(const value& lhs, view rhs) {
+    return (lhs.view() == rhs);
+}
+
+BSONCXX_INLINE bool operator!=(const value& lhs, view rhs) {
+    return !(lhs == rhs);
+}
+
+///
+/// @}
+///
+
 }  // namespace document
 BSONCXX_INLINE_NAMESPACE_END
 }  // namespace bsoncxx

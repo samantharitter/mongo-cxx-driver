@@ -128,13 +128,14 @@ functions:
                 export MONGODB_VERSION=${mongodb_version}
                 export AUTH=${AUTH}
                 export TOPOLOGY=${TOPOLOGY|server}
-
-                echo '${workdir}'
-
-                echo $MONGODB_BINARIES > '${workdir}'/mongodb_binaries_path.txt
                 
                 echo "{ \"releases\": { \"default\": \"$MONGODB_BINARIES\" }}" > $MONGO_ORCHESTRATION_HOME/orchestration.config
                 ./.evergreen/run-orchestration.sh
+
+                # Spawn mongocryptd
+                echo "starting mongocryptd"
+                $MONGODB_BINARIES/mongocryptd -vvvv --logpath ./mongocryptd.logs &
+
 
     "stop_mongod":
         command: shell.exec
@@ -269,20 +270,9 @@ functions:
                       if [ -z "${disable_slow_tests}" ]; then
                           export MONGOCXX_ENABLE_SLOW_TESTS=1
                       fi
-
-                      # Spawn mongocryptd
-                      if [ ! -f '${workdir}'/mongodb_binaries_path.txt ]; then
-                          echo "ERROR: mongodb_binaries_path.txt not found, call start_mongod first"
-                          exit 1
-                      fi
-
-                      MONGODB_BINARIES=`cat ${workdir}/mongodb_binaries_path.txt`
-                      echo "$MONGODB_BINARIES"
-                      
-                      echo "starting mongocryptd"
-                      $MONGODB_BINARIES/mongocryptd -vvvv --logpath ./mongocryptd.logs --fork --pidfilepath="$(pwd)/mongocryptd.pid"
                       
                       ulimit -c unlimited || true
+
                       # Run tests and examples 1-by-1 with "test_params" so we can run them with valgrind.
                       ${test_params} ./src/bsoncxx/test/test_bson
                       ${test_params} ./src/mongocxx/test/test_driver

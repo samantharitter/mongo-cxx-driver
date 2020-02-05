@@ -14,6 +14,7 @@
 
 #include <mongocxx/options/aggregate.hpp>
 
+#include <bsoncxx/builder/basic/document.hpp>
 #include <mongocxx/private/read_preference.hh>
 
 #include <mongocxx/config/private/prelude.hh>
@@ -22,40 +23,40 @@ namespace mongocxx {
 MONGOCXX_INLINE_NAMESPACE_BEGIN
 namespace options {
 
+using bsoncxx::builder::basic::kvp;
+
 aggregate& aggregate::allow_disk_use(bool allow_disk_use) {
     _allow_disk_use = allow_disk_use;
     return *this;
 }
 
-void append(bsoncxx::builder::basic::document& builder) const {
-    bsoncxx::builder::basic::document b;
-
+void aggregate::append(bsoncxx::builder::basic::document& builder) const {
     if (this->allow_disk_use()) {
-        b.append(kvp("allowDiskUse", *this->allow_disk_use()));
+        builder.append(kvp("allowDiskUse", *this->allow_disk_use()));
     }
 
     if (this->collation()) {
-        b.append(kvp("collation", *this->collation()));
+        builder.append(kvp("collation", *this->collation()));
     }
 
     if (this->max_time()) {
-        b.append(kvp("maxTimeMS", bsoncxx::types::b_int64{this->max_time()->count()}));
+        builder.append(kvp("maxTimeMS", bsoncxx::types::b_int64{this->max_time()->count()}));
     }
 
     if (this->bypass_document_validation()) {
-        b.append(kvp("bypassDocumentValidation", *this->bypass_document_validation()));
+        builder.append(kvp("bypassDocumentValidation", *this->bypass_document_validation()));
     }
 
     if (this->hint()) {
-        b.append(kvp("hint", this->hint()->to_value()));
+        builder.append(kvp("hint", this->hint()->to_value()));
     }
 
     if (this->write_concern()) {
-        b.append(kvp("writeConcern", this->write_concern()->to_document()));
+        builder.append(kvp("writeConcern", this->write_concern()->to_document()));
     }
 
     if (this->batch_size()) {
-        b.append(kvp("batchSize", *this->batch_size()));
+        builder.append(kvp("batchSize", *this->batch_size()));
     }
 }
 

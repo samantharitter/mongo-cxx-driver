@@ -106,8 +106,8 @@ database::operator bool() const noexcept {
 }
 
 cursor database::_aggregate(const client_session* session,
-			    const pipeline& pipeline,
-			    const options::aggregate& options) {
+                            const pipeline& pipeline,
+                            const options::aggregate& options) {
     scoped_bson_t stages(bsoncxx::document::view(pipeline._impl->view_array()));
 
     bsoncxx::builder::basic::document b;
@@ -126,10 +126,8 @@ cursor database::_aggregate(const client_session* session,
         rp_ptr = options.read_preference()->_impl->read_preference_t;
     }
 
-    return cursor(libmongoc::database_aggregate(_get_impl().database_t,
-						stages.bson(),
-						options_bson.bson(),
-						rp_ptr));
+    return cursor(libmongoc::database_aggregate(
+        _get_impl().database_t, stages.bson(), options_bson.bson(), rp_ptr));
 }
 
 cursor database::aggregate(const pipeline& pipeline, const options::aggregate& options) {
@@ -137,8 +135,8 @@ cursor database::aggregate(const pipeline& pipeline, const options::aggregate& o
 }
 
 cursor database::aggregate(const client_session& session,
-			   const pipeline& pipeline,
-			   const options::aggregate& options) {
+                           const pipeline& pipeline,
+                           const options::aggregate& options) {
     return _aggregate(&session, pipeline, options);
 }
 

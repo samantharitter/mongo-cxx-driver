@@ -634,6 +634,10 @@ class MONGOCXX_API database {
 
     MONGOCXX_PRIVATE database(const class client& client, bsoncxx::string::view_or_value name);
 
+    MONGOCXX_PRIVATE cursor _aggregate(const client_session* session,
+                                       const pipeline& pipeline,
+                                       const options::aggregate& options);
+
     MONGOCXX_PRIVATE bsoncxx::document::value _run_command(
         const client_session* session, bsoncxx::document::view_or_value command);
 

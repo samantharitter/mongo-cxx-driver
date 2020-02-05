@@ -17,8 +17,8 @@
 #include <chrono>
 #include <cstdint>
 
-#include <bsoncxx/document/view_or_value.hpp>
 #include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/document/view_or_value.hpp>
 #include <bsoncxx/stdx/optional.hpp>
 #include <mongocxx/hint.hpp>
 #include <mongocxx/read_concern.hpp>

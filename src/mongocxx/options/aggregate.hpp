@@ -18,6 +18,7 @@
 #include <cstdint>
 
 #include <bsoncxx/document/view_or_value.hpp>
+#include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/stdx/optional.hpp>
 #include <mongocxx/hint.hpp>
 #include <mongocxx/read_concern.hpp>
@@ -59,6 +60,14 @@ class MONGOCXX_API aggregate {
     /// @see https://docs.mongodb.com/master/reference/command/aggregate/
     ///
     const stdx::optional<bool>& allow_disk_use() const;
+
+    ///
+    /// Appends the aggregation options to the provided document builder.
+    ///
+    /// @param builder
+    ///   The builder to which options will be appended.
+    ///
+    void append(bsoncxx::builder::basic::document& builder) const;
 
     ///
     /// Sets the number of documents to return per batch.

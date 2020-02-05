@@ -27,6 +27,38 @@ aggregate& aggregate::allow_disk_use(bool allow_disk_use) {
     return *this;
 }
 
+void append(bsoncxx::builder::basic::document& builder) const {
+    bsoncxx::builder::basic::document b;
+
+    if (this->allow_disk_use()) {
+        b.append(kvp("allowDiskUse", *this->allow_disk_use()));
+    }
+
+    if (this->collation()) {
+        b.append(kvp("collation", *this->collation()));
+    }
+
+    if (this->max_time()) {
+        b.append(kvp("maxTimeMS", bsoncxx::types::b_int64{this->max_time()->count()}));
+    }
+
+    if (this->bypass_document_validation()) {
+        b.append(kvp("bypassDocumentValidation", *this->bypass_document_validation()));
+    }
+
+    if (this->hint()) {
+        b.append(kvp("hint", this->hint()->to_value()));
+    }
+
+    if (this->write_concern()) {
+        b.append(kvp("writeConcern", this->write_concern()->to_document()));
+    }
+
+    if (this->batch_size()) {
+        b.append(kvp("batchSize", *this->batch_size()));
+    }
+}
+
 aggregate& aggregate::collation(bsoncxx::document::view_or_value collation) {
     _collation = std::move(collation);
     return *this;

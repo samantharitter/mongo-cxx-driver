@@ -23,6 +23,7 @@
 #include <mongocxx/exception/exception.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/test/spec/operation.hh>
+#include <mongocxx/test/spec/util.hh>
 #include <mongocxx/test_util/client_helpers.hh>
 
 namespace {
@@ -89,7 +90,9 @@ void run_command_monitoring_tests_in_file(std::string test_path) {
 
         // COMMAND STARTED
         apm_opts.on_command_started([&](const events::command_started_event& event) {
-            if (event.command_name().compare("endSessions") == 0) {
+            if (event.command_name().compare("endSessions") == 0 ||
+                event.command_name().compare("serverStatus") == 0 ||
+                event.command_name().compare("isMaster") == 0) {
                 return;
             }
 
@@ -135,7 +138,9 @@ void run_command_monitoring_tests_in_file(std::string test_path) {
 
         // COMMAND SUCCESS
         apm_opts.on_command_succeeded([&](const events::command_succeeded_event& event) {
-            if (event.command_name().compare("endSessions") == 0) {
+            if (event.command_name().compare("endSessions") == 0 ||
+                event.command_name().compare("serverStatus") == 0 ||
+                event.command_name().compare("isMaster") == 0) {
                 return;
             }
 
@@ -166,6 +171,9 @@ void run_command_monitoring_tests_in_file(std::string test_path) {
         // Apply listeners, and run operations.
         client_opts.apm_opts(apm_opts);
         client client{uri{}, client_opts};
+        if (spec::should_skip_spec_test(client, test.get_document().value)) {
+            return;
+        }
 
         collection coll = client[db_name][col_name];
 

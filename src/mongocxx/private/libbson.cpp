@@ -36,6 +36,7 @@ void doc_to_bson_t(const bsoncxx::document::view& doc, bson_t* bson) {
 
 scoped_bson_t::scoped_bson_t(bsoncxx::document::view_or_value doc)
     : _is_initialized{true}, _doc{std::move(doc)} {
+    // if doc is_owning, fine, if doc is non-owning, then we need to make a value?
     doc_to_bson_t(*_doc, &_bson);
 }
 
@@ -86,7 +87,8 @@ bson_t* scoped_bson_t::bson() {
 }
 
 bson_t* scoped_bson_t::bson_for_init() {
-    flag_init();
+    // C driver doesn't always return reply initted, so run an extra init
+    init();
     return &_bson;
 }
 

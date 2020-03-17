@@ -19,6 +19,7 @@
 
 #include <bsoncxx/builder/basic/array.hpp>
 #include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/private/libbson.hh>
 #include <bsoncxx/stdx/string_view.hpp>
 #include <bsoncxx/test_util/catch.hh>
 
@@ -75,11 +76,104 @@ TEST_CASE("b_array", "[bsoncxx::type::b_array]") {
 }
 
 TEST_CASE("b_binary", "[bsoncxx::type::b_binary]") {
-    b_binary a{binary_sub_type::k_binary, 8, reinterpret_cast<const uint8_t*>("deadbeef")};
-    b_binary b{binary_sub_type::k_binary, 8, reinterpret_cast<const uint8_t*>("deadbeef")};
-    b_binary c{binary_sub_type::k_binary, 8, reinterpret_cast<const uint8_t*>("daedbeef")};
-    REQUIRE(a == b);
-    REQUIRE(!(a == c));
+    SECTION("non-owning") {
+        b_binary a{binary_sub_type::k_binary, 8, reinterpret_cast<const uint8_t*>("deadbeef")};
+        b_binary b{binary_sub_type::k_binary, 8, reinterpret_cast<const uint8_t*>("deadbeef")};
+        b_binary c{binary_sub_type::k_binary, 8, reinterpret_cast<const uint8_t*>("daedbeef")};
+        REQUIRE(a == b);
+        REQUIRE(!(a == c));
+    }
+
+    SECTION("owning") {
+        uint32_t n = 4;
+        uint8_t buf[4];
+        memcpy(buf, "AAA\0", n);
+
+        SECTION("unowned to owned") {
+            b_binary unowned{binary_sub_type::k_binary, 3, reinterpret_cast<const uint8_t*>("hey")};
+            REQUIRE(!unowned.is_owned());
+
+            b_binary owned{unowned};
+            REQUIRE(unowned == owned);
+            REQUIRE(!owned.is_owned());
+
+            owned.set_owned_buffer((uint8_t*)bson_malloc(3), 3);
+            memcpy(owned.bytes, unowned.bytes, 3);
+            REQUIRE(owned.is_owned());
+
+            REQUIRE(memcmp(owned.bytes, unowned.bytes, 3) == 0);
+            REQUIRE(unowned == owned);
+        }
+
+        SECTION("move assignment") {
+            b_binary b{};
+            REQUIRE(!b.is_owned());
+
+            {
+                b_binary a{};
+                a.set_owned_buffer((uint8_t*)bson_malloc(n), n);
+                memcpy(a.bytes, buf, n);
+                b = std::move(a);
+            }
+
+            REQUIRE(b.is_owned());
+            REQUIRE(memcmp(b.bytes, buf, n) == 0);
+        }
+
+        SECTION("move construction") {
+            b_binary a{};
+            REQUIRE(!a.is_owned());
+
+            a.set_owned_buffer((uint8_t*)bson_malloc(n), n);
+            REQUIRE(a.is_owned());
+            memcpy(a.bytes, buf, n);
+
+            b_binary b{std::move(a)};
+            REQUIRE(b.is_owned());
+            REQUIRE(memcmp(b.bytes, buf, n) == 0);
+        }
+
+        SECTION("copy assignment") {
+            b_binary a{};
+            REQUIRE(!a.is_owned());
+
+            a.set_owned_buffer((uint8_t*)bson_malloc(n), n);
+            memcpy(a.bytes, buf, n);
+            REQUIRE(a.is_owned());
+
+            b_binary b{};
+            REQUIRE(!b.is_owned());
+
+            b = a;
+
+            REQUIRE(a.is_owned());
+            REQUIRE(b.is_owned());
+
+            REQUIRE(a.size == b.size);
+            REQUIRE(memcmp(a.bytes, buf, n) == 0);
+            REQUIRE(memcmp(b.bytes, buf, n) == 0);
+            REQUIRE(a == b);
+        }
+
+        SECTION("copy construction") {
+            b_binary a{};
+            REQUIRE(!a.is_owned());
+
+            a.set_owned_buffer((uint8_t*)bson_malloc(n), n);
+            memcpy(a.bytes, buf, n);
+            REQUIRE(a.is_owned());
+
+            b_binary b{a};
+
+            REQUIRE(a.is_owned());
+            REQUIRE(b.is_owned());
+
+            REQUIRE(a.size == b.size);
+            REQUIRE(memcmp(a.bytes, buf, n) == 0);
+            REQUIRE(memcmp(b.bytes, buf, n) == 0);
+            REQUIRE(a == b);
+        }
+    }
 }
 
 TEST_CASE("b_undefined", "[bsoncxx::type::b_undefined]") {

@@ -203,9 +203,27 @@ BSONCXX_INLINE bool operator==(const b_array& lhs, const b_array& rhs) {
 struct BSONCXX_API b_binary {
     static constexpr auto type_id = type::k_binary;
 
+    b_binary();
+    b_binary(binary_sub_type type, uint32_t len, const uint8_t* data);
+
+    ~b_binary();
+
+    b_binary(const b_binary& rhs) noexcept;
+    b_binary& operator=(const b_binary& rhs) noexcept;
+
+    b_binary(b_binary&& rhs) noexcept;
+    b_binary& operator=(b_binary&& rhs) noexcept;
+
+    void set_owned_buffer(uint8_t* data, uint32_t size);
+
+    bool is_owned() const;
+
     binary_sub_type sub_type;
     uint32_t size;
-    const uint8_t* bytes;
+    uint8_t* bytes;
+
+   private:
+    bool _is_owned = false;
 };
 
 ///

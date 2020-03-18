@@ -17,7 +17,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#include <bsoncxx/document/element.hpp>
+#include <bsoncxx/document/element/view.hpp>
 
 #include <bsoncxx/config/prelude.hpp>
 
@@ -33,44 +33,44 @@ namespace array {
 /// interrogated by calling type() and a specific value can be extracted through
 /// get_X() accessors.
 ///
-class BSONCXX_API element : private document::element {
+class BSONCXX_API element : private document::element::view {
    public:
     element();
 
-    using document::element::operator bool;
+    using document::elem::view::operator bool;
 
-    using document::element::type;
+    using document::elem::view::type;
 
-    using document::element::get_double;
-    using document::element::get_utf8;
-    using document::element::get_document;
-    using document::element::get_array;
-    using document::element::get_binary;
-    using document::element::get_undefined;
-    using document::element::get_oid;
-    using document::element::get_bool;
-    using document::element::get_date;
-    using document::element::get_null;
-    using document::element::get_regex;
-    using document::element::get_dbpointer;
-    using document::element::get_code;
-    using document::element::get_symbol;
-    using document::element::get_codewscope;
-    using document::element::get_int32;
-    using document::element::get_timestamp;
-    using document::element::get_int64;
-    using document::element::get_decimal128;
-    using document::element::get_minkey;
-    using document::element::get_maxkey;
+    using document::elem::view::get_double;
+    using document::elem::view::get_utf8;
+    using document::elem::view::get_document;
+    using document::elem::view::get_array;
+    using document::elem::view::get_binary;
+    using document::elem::view::get_undefined;
+    using document::elem::view::get_oid;
+    using document::elem::view::get_bool;
+    using document::elem::view::get_date;
+    using document::elem::view::get_null;
+    using document::elem::view::get_regex;
+    using document::elem::view::get_dbpointer;
+    using document::elem::view::get_code;
+    using document::elem::view::get_symbol;
+    using document::elem::view::get_codewscope;
+    using document::elem::view::get_int32;
+    using document::elem::view::get_timestamp;
+    using document::elem::view::get_int64;
+    using document::elem::view::get_decimal128;
+    using document::elem::view::get_minkey;
+    using document::elem::view::get_maxkey;
 
-    using document::element::get_value;
+    using document::elem::view::get_value;
 
-    using document::element::operator[];
+    using document::elem::view::operator[];
 
-    using document::element::raw;
-    using document::element::length;
-    using document::element::offset;
-    using document::element::keylen;
+    using document::elem::view::raw;
+    using document::elem::view::length;
+    using document::elem::view::offset;
+    using document::elem::view::keylen;
 
    private:
     friend class view;

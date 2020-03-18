@@ -99,7 +99,7 @@ class BSONCXX_API view {
     ///
     /// @return The matching element, if found, or the invalid element.
     ///
-    element operator[](stdx::string_view key) const;
+    element::view operator[](stdx::string_view key) const;
 
     ///
     /// Access the raw bytes of the underlying document.
@@ -151,13 +151,13 @@ class BSONCXX_API view {
 /// view elements.
 ///
 class BSONCXX_API view::const_iterator : public std::iterator<std::forward_iterator_tag,
-                                                              element,
+                                                              elem::view,
                                                               std::ptrdiff_t,
-                                                              const element*,
-                                                              const element&> {
+                                                              const elem::view*,
+                                                              const elem::view&> {
    public:
     const_iterator();
-    explicit const_iterator(const element& element);
+    explicit const_iterator(const elem::view& element);
 
     reference operator*();
     pointer operator->();
@@ -179,7 +179,7 @@ class BSONCXX_API view::const_iterator : public std::iterator<std::forward_itera
     ///
 
    private:
-    element _element;
+    elem::view _element;
 };
 
 }  // namespace document

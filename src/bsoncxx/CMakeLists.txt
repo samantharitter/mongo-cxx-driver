@@ -124,7 +124,8 @@ set(bsoncxx_sources
     array/view.cpp
     builder/core.cpp
     decimal128.cpp
-    document/element.cpp
+    document/elem/value.cpp
+    document/elem/view.cpp
     document/value.cpp
     document/view.cpp
     exception/error_code.cpp
@@ -237,7 +238,10 @@ set_local_dist (src_bsoncxx_DIST_local
    cmake/libbsoncxx-static-config.cmake.in
    decimal128.cpp
    decimal128.hpp
-   document/element.cpp
+   document/elem/value.cpp
+   document/elem/value.hpp
+   document/elem/view.cpp
+   document/elem/view.hpp
    document/element.hpp
    document/value.cpp
    document/value.hpp

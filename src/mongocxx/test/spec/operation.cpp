@@ -647,7 +647,7 @@ document::value operation_runner::_run_insert_one(document::view operation) {
     } else {
         insert_one_result = _coll->insert_one(document);
     }
-    types::value inserted_id{types::b_null{}};
+    types::bson_value::view inserted_id{types::b_null{}};
 
     if (insert_one_result) {
         inserted_id = insert_one_result->inserted_id();
@@ -683,7 +683,7 @@ document::value operation_runner::_run_replace_one(document::view operation) {
     } else {
         replace_result = _coll->replace_one(filter, replacement, options);
     }
-    bsoncxx::stdx::optional<types::value> upserted_id{};
+    bsoncxx::stdx::optional<types::bson_value::view> upserted_id{};
 
     if (replace_result) {
         matched_count = replace_result->matched_count();
@@ -768,7 +768,7 @@ document::value operation_runner::_run_update_many(document::view operation) {
             throw std::logic_error{"update must be a document or an array"};
     }
 
-    bsoncxx::stdx::optional<types::value> upserted_id{};
+    bsoncxx::stdx::optional<types::bson_value::view> upserted_id{};
 
     if (update_result) {
         matched_count = update_result->matched_count();
@@ -853,7 +853,7 @@ document::value operation_runner::_run_update_one(document::view operation) {
             throw std::logic_error{"update must be a document or an array"};
     }
 
-    bsoncxx::stdx::optional<types::value> upserted_id{};
+    bsoncxx::stdx::optional<types::bson_value::view> upserted_id{};
 
     if (update_result) {
         matched_count = update_result->matched_count();

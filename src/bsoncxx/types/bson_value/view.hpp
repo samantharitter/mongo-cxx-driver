@@ -32,6 +32,8 @@ class element;
 namespace types {
 namespace bson_value {
 
+class value;
+
 ///
 /// A view-only variant that can contain any BSON type.
 ///
@@ -362,6 +364,7 @@ class BSONCXX_API view {
 
    private:
     friend class document::element;
+    friend class bson_value::value;
 
     view(const std::uint8_t* raw, std::uint32_t length, std::uint32_t offset, std::uint32_t keylen);
 

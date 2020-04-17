@@ -623,6 +623,9 @@ stdx::optional<result::update> collection::_update_many(const client_session* se
     if (options.collation()) {
         update_op.collation(*options.collation());
     }
+    if (options.hint()) {
+        update_op.hint(*options.hint());
+    }
     if (options.upsert()) {
         update_op.upsert(*options.upsert());
     }
@@ -699,6 +702,9 @@ stdx::optional<result::update> collection::_update_one(const client_session* ses
     model::update_one update_op(std::move(filter), std::move(update));
     if (options.collation()) {
         update_op.collation(*options.collation());
+    }
+    if (options.hint()) {
+        update_op.hint(*options.hint());
     }
     if (options.upsert()) {
         update_op.upsert(*options.upsert());

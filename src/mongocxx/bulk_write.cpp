@@ -61,6 +61,9 @@ bulk_write& bulk_write::append(const model::write& operation) {
             if (operation.get_update_one().collation()) {
                 options_builder.append(kvp("collation", *operation.get_update_one().collation()));
             }
+            if (operation.get_update_one().hint()) {
+                options_builder.append(kvp("hint", operation.get_update_one().hint()->to_value()));
+            }
             if (operation.get_update_one().upsert()) {
                 options_builder.append(kvp("upsert", *operation.get_update_one().upsert()));
             }
@@ -85,6 +88,9 @@ bulk_write& bulk_write::append(const model::write& operation) {
             bsoncxx::builder::basic::document options_builder;
             if (operation.get_update_many().collation()) {
                 options_builder.append(kvp("collation", *operation.get_update_many().collation()));
+            }
+            if (operation.get_update_many().hint()) {
+                options_builder.append(kvp("hint", operation.get_update_many().hint()->to_value()));
             }
             if (operation.get_update_many().upsert()) {
                 options_builder.append(kvp("upsert", *operation.get_update_many().upsert()));

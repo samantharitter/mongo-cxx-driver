@@ -259,7 +259,6 @@ TEST_CASE("Transactions Documentation Examples", "[transactions]") {
                     kvp("employee", 3),
                     kvp("status", make_document(kvp("new", "Inactive"), kvp("old", "Active")))));
             } catch (const operation_exception& oe) {
-                std::cout << "Caught exception during transaction, aborting." << std::endl;
                 session.abort_transaction();
                 throw oe;
             }

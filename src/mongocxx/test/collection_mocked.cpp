@@ -470,6 +470,8 @@ TEST_CASE("Collection", "[collection]") {
         auto expected_bypass_document_validation = false;
         bool bulk_operation_op_called = false;
         bool bulk_operation_destroy_called = false;
+        hint index_hint("a_1");
+        bool use_hint = false;
 
         auto modification_doc = make_document(kvp("cool", "wow"), kvp("foo", "bar"));
 
@@ -493,6 +495,7 @@ TEST_CASE("Collection", "[collection]") {
                     REQUIRE(BSON_ITER_HOLDS_BOOL(&iter));
                     REQUIRE(!bson_iter_bool(&iter));
                 }
+
                 collection_create_bulk_operation_called = true;
                 return nullptr;
             });
@@ -600,6 +603,12 @@ TEST_CASE("Collection", "[collection]") {
                     }
                 }
 
+                if (use_hint) {
+                    REQUIRE(options_view["hint"]);
+                } else {
+                    REQUIRE(!options_view["hint"]);
+                }
+
                 return true;
             });
 
@@ -619,7 +628,13 @@ TEST_CASE("Collection", "[collection]") {
                 options.upsert(upsert_option);
             }
 
+            SECTION("With hint") {
+                options.hint(index_hint);
+                use_hint = true;
+            }
+
             SECTION("With bypass_document_validation") {
+                use_hint = false;
                 expect_set_bypass_document_validation_called = true;
                 expected_bypass_document_validation = true;
                 expected_order_setting = true;
@@ -713,6 +728,12 @@ TEST_CASE("Collection", "[collection]") {
                     }
                 }
 
+                if (use_hint) {
+                    REQUIRE(options_view["hint"]);
+                } else {
+                    REQUIRE(!options_view["hint"]);
+                }
+
                 return true;
             });
 
@@ -722,9 +743,15 @@ TEST_CASE("Collection", "[collection]") {
                 upsert_option = false;
             }
 
+            SECTION("With hint") {
+                options.hint(index_hint);
+                use_hint = true;
+            }
+
             SECTION("Upsert true") {
                 upsert_option = true;
                 options.upsert(upsert_option);
+                use_hint = false;
             }
 
             SECTION("Upsert false") {

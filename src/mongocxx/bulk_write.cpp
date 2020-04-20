@@ -116,6 +116,10 @@ bulk_write& bulk_write::append(const model::write& operation) {
             if (operation.get_delete_one().collation()) {
                 options_builder.append(kvp("collation", *operation.get_delete_one().collation()));
             }
+            if (operation.get_delete_one().hint()) {
+                options_builder.append(kvp("hint", operation.get_delete_one().hint()->to_value()));
+            }
+
             scoped_bson_t options(options_builder.extract());
 
             bson_error_t error;
@@ -133,6 +137,10 @@ bulk_write& bulk_write::append(const model::write& operation) {
             if (operation.get_delete_many().collation()) {
                 options_builder.append(kvp("collation", *operation.get_delete_many().collation()));
             }
+            if (operation.get_delete_many().hint()) {
+                options_builder.append(kvp("hint", operation.get_delete_many().hint()->to_value()));
+            }
+
             scoped_bson_t options(options_builder.extract());
 
             bson_error_t error;

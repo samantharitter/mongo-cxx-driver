@@ -31,8 +31,17 @@ delete_one& delete_one::collation(bsoncxx::document::view_or_value collation) {
     return *this;
 }
 
+delete_one& delete_one::hint(class hint index_hint) {
+    _hint = std::move(index_hint);
+    return *this;
+}
+
 const stdx::optional<bsoncxx::document::view_or_value>& delete_one::collation() const {
     return _collation;
+}
+
+const stdx::optional<class hint>& delete_one::hint() const {
+    return _hint;
 }
 
 }  // namespace model

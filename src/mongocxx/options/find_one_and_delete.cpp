@@ -25,6 +25,11 @@ find_one_and_delete& find_one_and_delete::collation(bsoncxx::document::view_or_v
     return *this;
 }
 
+find_one_and_delete& find_one_and_delete::hint(class hint index_hint) {
+    _hint = std::move(index_hint);
+    return *this;
+}
+
 find_one_and_delete& find_one_and_delete::max_time(std::chrono::milliseconds max_time) {
     _max_time = std::move(max_time);
     return *this;
@@ -47,6 +52,10 @@ find_one_and_delete& find_one_and_delete::write_concern(mongocxx::write_concern 
 
 const stdx::optional<bsoncxx::document::view_or_value>& find_one_and_delete::collation() const {
     return _collation;
+}
+
+const stdx::optional<class hint>& find_one_and_delete::hint() const {
+    return _hint;
 }
 
 const stdx::optional<bsoncxx::document::view_or_value>& find_one_and_delete::projection() const {

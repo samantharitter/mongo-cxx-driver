@@ -25,6 +25,11 @@ delete_options& delete_options::collation(bsoncxx::document::view_or_value colla
     return *this;
 }
 
+delete_options& delete_options::hint(class hint index_hint) {
+    _hint = std::move(index_hint);
+    return *this;
+}
+
 delete_options& delete_options::write_concern(class write_concern wc) {
     _write_concern = std::move(wc);
     return *this;
@@ -32,6 +37,10 @@ delete_options& delete_options::write_concern(class write_concern wc) {
 
 const stdx::optional<bsoncxx::document::view_or_value>& delete_options::collation() const {
     return _collation;
+}
+
+const stdx::optional<class hint>& delete_options::hint() const {
+    return _hint;
 }
 
 const stdx::optional<class write_concern>& delete_options::write_concern() const {

@@ -464,6 +464,49 @@ TEST_CASE("Collection", "[collection]") {
         }
     }
 
+    SECTION("Find and Modify", "[collection::find_and_modify]") {
+        bool find_and_modify_called = false;
+        hint index_hint("a_1");
+        bool use_hint = false;
+
+        auto modification_doc = make_document(kvp("cool", "wow"), kvp("foo", "bar"));
+
+        auto perform_checks = [&]() { REQUIRE(find_and_modify_called); };
+
+        collection_find_and_modify_with_opts->interpose(
+            [&](mongoc_collection_t* collection,
+                const bson_t* query,
+                const mongoc_find_and_modify_opts_t* opts,
+                bson_t* reply,
+                bson_error_t* error) {
+                find_and_modify_called = true;
+
+                bsoncxx::document::view options_view{bson_get_data(opts), options->len};
+
+                if (use_hint) {
+                    REQUIRE(options_view["hint"]);
+                } else {
+                    REQUIRE(!options_view["hint"]);
+                }
+            });
+
+        SECTION("find_one_and_delete") {}
+
+        SECTION("find_one_and_replace") {}
+
+        SECTION("find_one_and_update") {
+            options::find_one_and_update options;
+
+            SECTION("Use a hint") {
+                use_hint = true;
+                options.hint(index_hint);
+            }
+
+            mongo_coll.find_one_and_update(filter_doc.view(), modification_doc.view(), options);
+            perform_checks();
+        }
+    }
+
     SECTION("Writes", "[collection::writes]") {
         auto expected_order_setting = false;
         auto expect_set_bypass_document_validation_called = false;
@@ -855,14 +898,33 @@ TEST_CASE("Collection", "[collection]") {
 
         SECTION("Delete One", "[collection::delete_one]") {
             expected_order_setting = true;
-            bulk_operation_remove_one_with_opts->interpose(
-                [&](mongoc_bulk_operation_t*, const bson_t* doc, const bson_t*, bson_error_t*) {
-                    bulk_operation_op_called = true;
-                    REQUIRE(bson_get_data(doc) == filter_doc.view().data());
-                    return true;
-                });
 
-            mongo_coll.delete_one(filter_doc.view());
+            options::delete_options options;
+
+            bulk_operation_remove_one_with_opts->interpose([&](
+                mongoc_bulk_operation_t*, const bson_t* doc, const bson_t* options, bson_error_t*) {
+                bulk_operation_op_called = true;
+                REQUIRE(bson_get_data(doc) == filter_doc.view().data());
+
+                bsoncxx::document::view options_view{bson_get_data(options), options->len};
+
+                if (use_hint) {
+                    REQUIRE(options_view["hint"]);
+                } else {
+                    REQUIRE(!options_view["hint"]);
+                }
+
+                return true;
+            });
+
+            SECTION("Default options") {}
+
+            SECTION("Use a hint") {
+                use_hint = true;
+                options.hint(index_hint);
+            }
+
+            mongo_coll.delete_one(filter_doc.view(), options);
             REQUIRE(bulk_operation_execute_called);
             perform_checks();
         }
@@ -883,14 +945,33 @@ TEST_CASE("Collection", "[collection]") {
 
         SECTION("Delete Many", "[collection::delete_many]") {
             expected_order_setting = true;
-            bulk_operation_remove_many_with_opts->interpose(
-                [&](mongoc_bulk_operation_t*, const bson_t* doc, const bson_t*, bson_error_t*) {
-                    bulk_operation_op_called = true;
-                    REQUIRE(bson_get_data(doc) == filter_doc.view().data());
-                    return true;
-                });
 
-            mongo_coll.delete_many(filter_doc.view());
+            options::delete_options options;
+
+            bulk_operation_remove_many_with_opts->interpose([&](
+                mongoc_bulk_operation_t*, const bson_t* doc, const bson_t* options, bson_error_t*) {
+                bulk_operation_op_called = true;
+                REQUIRE(bson_get_data(doc) == filter_doc.view().data());
+
+                bsoncxx::document::view options_view{bson_get_data(options), options->len};
+
+                if (use_hint) {
+                    REQUIRE(options_view["hint"]);
+                } else {
+                    REQUIRE(!options_view["hint"]);
+                }
+
+                return true;
+            });
+
+            SECTION("Default options") {}
+
+            SECTION("Use a hint") {
+                use_hint = true;
+                options.hint(index_hint);
+            }
+
+            mongo_coll.delete_many(filter_doc.view(), options);
             REQUIRE(bulk_operation_execute_called);
             perform_checks();
         }

@@ -36,10 +36,41 @@ BSONCXX_INLINE char* make_copy_for_libbson(stdx::string_view s, uint32_t* len_ou
     return copy;
 }
 
+<<<<<<< HEAD
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_binary& binary, bson_value_t* v) {
     v->value_type = BSON_TYPE_BINARY;
 
     v->value.v_binary.subtype = static_cast<bson_subtype_t>(binary.sub_type);
+=======
+BSONCXX_INLINE bson_subtype_t convert_subtype(binary_sub_type type) {
+    switch (type) {
+        case binary_sub_type::k_binary:
+            return BSON_SUBTYPE_BINARY;
+        case binary_sub_type::k_function:
+            return BSON_SUBTYPE_FUNCTION;
+        case binary_sub_type::k_binary_deprecated:
+            return BSON_SUBTYPE_UUID_DEPRECATED;
+        case binary_sub_type::k_uuid_deprecated:
+            return BSON_SUBTYPE_UUID_DEPRECATED;
+        case binary_sub_type::k_uuid:
+            return BSON_SUBTYPE_UUID;
+        case binary_sub_type::k_md5:
+            return BSON_SUBTYPE_MD5;
+        // TODO CXX-1687
+        // case binary_sub_type::k_encrypted:
+        // return BSON_SUBTYPE_ENCRYPTED;
+        case binary_sub_type::k_user:
+            return BSON_SUBTYPE_USER;
+        default:
+            BSONCXX_UNREACHABLE;
+    }
+}
+
+BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_binary& binary, bson_value_t* v) {
+    v->value_type = BSON_TYPE_BINARY;
+
+    v->value.v_binary.subtype = convert_subtype(binary.sub_type);
+>>>>>>> CXX-1972 construct bson_value::values from views
     v->value.v_binary.data_len = binary.size;
     v->value.v_binary.data = (uint8_t*)bson_malloc0(binary.size);
     std::memcpy(v->value.v_binary.data, binary.bytes, binary.size);
@@ -47,7 +78,14 @@ BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_binary& binary, b
 
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_utf8& utf8, bson_value_t* v) {
     v->value_type = BSON_TYPE_UTF8;
+<<<<<<< HEAD
     v->value.v_utf8.str = make_copy_for_libbson(utf8.value, &(v->value.v_utf8.len));
+=======
+
+    v->value.v_utf8.len = (uint32_t)utf8.value.size();
+    v->value.v_utf8.str = (char*)bson_malloc0(utf8.value.size());
+    std::memcpy(v->value.v_utf8.str, utf8.value.data(), utf8.value.size());
+>>>>>>> CXX-1972 construct bson_value::values from views
 }
 
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_double& val, bson_value_t* v) {
@@ -71,7 +109,12 @@ BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_undefined&, bson_
 
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_oid& val, bson_value_t* v) {
     v->value_type = BSON_TYPE_OID;
+<<<<<<< HEAD
     std::memcpy(&v->value.v_oid.bytes, val.value.bytes(), val.value.k_oid_length);
+=======
+    // oid size is 12
+    std::memcpy(&v->value.v_oid.bytes, val.value.bytes(), 12);
+>>>>>>> CXX-1972 construct bson_value::values from views
 }
 
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_decimal128& decimal,
@@ -98,35 +141,62 @@ BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_null&, bson_value
 
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_regex& regex, bson_value_t* v) {
     v->value_type = BSON_TYPE_REGEX;
+<<<<<<< HEAD
     v->value.v_regex.options = make_copy_for_libbson(regex.options);
     v->value.v_regex.regex = make_copy_for_libbson(regex.regex);
+=======
+    v->value.v_regex.options = make_copy_for_bson(regex.options);
+    v->value.v_regex.regex = make_copy_for_bson(regex.regex);
+>>>>>>> CXX-1972 construct bson_value::values from views
 }
 
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_dbpointer& db, bson_value_t* v) {
     v->value_type = BSON_TYPE_DBPOINTER;
 
     v->value.v_dbpointer.collection =
+<<<<<<< HEAD
         make_copy_for_libbson(db.collection, &(v->value.v_dbpointer.collection_len));
 
     std::memcpy((v->value.v_dbpointer.oid.bytes), db.value.bytes(), db.value.k_oid_length);
+=======
+        make_copy_for_bson(db.collection, &(v->value.v_dbpointer.collection_len));
+
+    // oid size is 12
+    std::memcpy((v->value.v_dbpointer.oid.bytes), db.value.bytes(), 12);
+
+    char oid[25];
+    bson_oid_to_string(&v->value.v_dbpointer.oid, oid);
+>>>>>>> CXX-1972 construct bson_value::values from views
 }
 
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_code& code, bson_value_t* v) {
     v->value_type = BSON_TYPE_CODE;
+<<<<<<< HEAD
     v->value.v_code.code = make_copy_for_libbson(code.code, &(v->value.v_code.code_len));
+=======
+    v->value.v_code.code = make_copy_for_bson(code.code, &(v->value.v_code.code_len));
+>>>>>>> CXX-1972 construct bson_value::values from views
 }
 
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_symbol& symbol, bson_value_t* v) {
     v->value_type = BSON_TYPE_SYMBOL;
+<<<<<<< HEAD
     v->value.v_symbol.symbol = make_copy_for_libbson(symbol.symbol, &(v->value.v_symbol.len));
+=======
+    v->value.v_symbol.symbol = make_copy_for_bson(symbol.symbol, &(v->value.v_symbol.len));
+>>>>>>> CXX-1972 construct bson_value::values from views
 }
 
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_codewscope& code, bson_value_t* v) {
     v->value_type = BSON_TYPE_CODEWSCOPE;
 
     // Copy the code
+<<<<<<< HEAD
     v->value.v_codewscope.code =
         make_copy_for_libbson(code.code, &(v->value.v_codewscope.code_len));
+=======
+    v->value.v_codewscope.code = make_copy_for_bson(code.code, &(v->value.v_codewscope.code_len));
+>>>>>>> CXX-1972 construct bson_value::values from views
 
     // Copy the scope
     if (code.scope.length() == 0) {
@@ -156,6 +226,11 @@ BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_maxkey&, bson_val
 BSONCXX_INLINE void convert_to_libbson(const bsoncxx::types::b_document& doc, bson_value_t* v) {
     v->value_type = BSON_TYPE_DOCUMENT;
 
+<<<<<<< HEAD
+=======
+    // TODO: correct way to represent an empty bson document?
+
+>>>>>>> CXX-1972 construct bson_value::values from views
     v->value.v_doc.data_len = (uint32_t)doc.value.length();
     if (0 == (v->value.v_doc.data_len)) {
         v->value.v_doc.data = nullptr;

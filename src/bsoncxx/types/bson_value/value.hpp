@@ -23,6 +23,10 @@
 namespace bsoncxx {
 BSONCXX_INLINE_NAMESPACE_BEGIN
 
+namespace options {
+class encrypt;
+}  // namespace options
+
 namespace types {
 namespace bson_value {
 
@@ -63,6 +67,7 @@ class BSONCXX_API value {
 
    private:
     friend class bsoncxx::document::element;
+    friend class options::encrypt;
 
     value(const std::uint8_t* raw,
           std::uint32_t length,
@@ -70,6 +75,8 @@ class BSONCXX_API value {
           std::uint32_t keylen);
 
     value(void* internal_value);
+
+    void* _steal_value();
 
     class BSONCXX_PRIVATE impl;
     std::unique_ptr<impl> _impl;

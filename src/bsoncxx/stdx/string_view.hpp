@@ -14,6 +14,9 @@
 
 #pragma once
 
+#include <cstdlib>
+#include <cstring>
+
 #include <bsoncxx/config/prelude.hpp>
 
 #if defined(BSONCXX_POLY_USE_MNMLSTC)
@@ -105,5 +108,41 @@ BSONCXX_INLINE_NAMESPACE_END
 #else
 #error "Cannot find a valid polyfill for string_view"
 #endif
+
+namespace bsoncxx {
+BSONCXX_INLINE_NAMESPACE_BEGIN
+namespace stdx {
+
+BSONCXX_INLINE bool null_blind_strcmp(stdx::string_view lhs, stdx::string_view rhs) {
+    auto diff = std::abs((int)(lhs.length() - rhs.length()));
+
+    if (diff == 0) {
+        return lhs == rhs;
+    }
+
+    if (diff > 1) {
+        return false;
+    }
+
+    stdx::string_view longer;
+    stdx::string_view shorter;
+
+    if (lhs.length() > rhs.length()) {
+        longer = lhs;
+        shorter = rhs;
+    } else {
+        longer = rhs;
+        shorter = lhs;
+    }
+
+    if (longer.back() != '\0') {
+        return false;
+    }
+
+    return (std::strncmp(shorter.data(), longer.data(), shorter.length()) == 0);
+}
+}  // namespace stdx
+BSONCXX_INLINE_NAMESPACE_END
+}  // namespace bsoncxx
 
 #include <bsoncxx/config/postlude.hpp>

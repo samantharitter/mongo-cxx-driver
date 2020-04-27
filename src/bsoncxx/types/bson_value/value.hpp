@@ -23,6 +23,10 @@
 namespace bsoncxx {
 BSONCXX_INLINE_NAMESPACE_BEGIN
 
+namespace options {
+class encrypt;
+}  // namespace options
+
 namespace types {
 namespace bson_value {
 
@@ -47,6 +51,11 @@ class BSONCXX_API value {
     value& operator=(value&&) noexcept;
 
     ///
+    /// Create an owning copy of a bson_value::view.
+    ///
+    value(const view&);
+
+    ///
     /// Get a view over the bson_value owned by this object.
     ///
     bson_value::view view() const noexcept;
@@ -58,6 +67,7 @@ class BSONCXX_API value {
 
    private:
     friend class bsoncxx::document::element;
+    friend class options::encrypt;
 
     value(const std::uint8_t* raw,
           std::uint32_t length,
@@ -65,6 +75,8 @@ class BSONCXX_API value {
           std::uint32_t keylen);
 
     value(void* internal_value);
+
+    void* _steal_value();
 
     class BSONCXX_PRIVATE impl;
     std::unique_ptr<impl> _impl;
@@ -88,6 +100,29 @@ BSONCXX_INLINE bool operator!=(const value& lhs, const value& rhs) {
 ///
 /// @}
 ///
+
+///
+/// @{
+///
+/// Compares a value with a view for (in)-equality.
+///
+/// @relates bson_value::value
+///
+BSONCXX_INLINE bool operator==(const value& lhs, const view& rhs) {
+    return (lhs.view() == rhs);
+}
+
+BSONCXX_INLINE bool operator==(const view& lhs, const value& rhs) {
+    return (rhs == lhs);
+}
+
+BSONCXX_INLINE bool operator!=(const value& lhs, const view& rhs) {
+    return !(lhs == rhs);
+}
+
+BSONCXX_INLINE bool operator!=(const view& lhs, const value& rhs) {
+    return !(lhs == rhs);
+}
 
 }  // namespace bson_value
 }  // namespace types

@@ -137,7 +137,7 @@ struct BSONCXX_API b_utf8 {
 /// @relatesalso b_utf8
 ///
 BSONCXX_INLINE bool operator==(const b_utf8& lhs, const b_utf8& rhs) {
-    return lhs.value == rhs.value;
+    return stdx::null_blind_strcmp(lhs.value, rhs.value);
 }
 
 ///
@@ -387,7 +387,8 @@ struct BSONCXX_API b_regex {
 /// @relatesalso b_regex
 ///
 BSONCXX_INLINE bool operator==(const b_regex& lhs, const b_regex& rhs) {
-    return lhs.regex == rhs.regex && lhs.options == rhs.options;
+    return stdx::null_blind_strcmp(lhs.regex, rhs.regex) &&
+           stdx::null_blind_strcmp(lhs.options, rhs.options);
 }
 
 ///
@@ -409,7 +410,7 @@ struct BSONCXX_API b_dbpointer {
 /// @relatesalso b_dbpointer
 ///
 BSONCXX_INLINE bool operator==(const b_dbpointer& lhs, const b_dbpointer& rhs) {
-    return lhs.collection == rhs.collection && lhs.value == rhs.value;
+    return stdx::null_blind_strcmp(lhs.collection, rhs.collection) && lhs.value == rhs.value;
 }
 
 ///
@@ -445,7 +446,7 @@ struct BSONCXX_API b_code {
 /// @relatesalso b_code
 ///
 BSONCXX_INLINE bool operator==(const b_code& lhs, const b_code& rhs) {
-    return lhs.code == rhs.code;
+    return stdx::null_blind_strcmp(lhs.code, rhs.code);
 }
 
 ///
@@ -484,7 +485,7 @@ struct BSONCXX_API b_symbol {
 /// @relatesalso b_symbol
 ///
 BSONCXX_INLINE bool operator==(const b_symbol& lhs, const b_symbol& rhs) {
-    return lhs.symbol == rhs.symbol;
+    return stdx::null_blind_strcmp(lhs.symbol, rhs.symbol);
 }
 
 ///
@@ -520,7 +521,7 @@ struct BSONCXX_API b_codewscope {
 /// @relatesalso b_codewscope
 ///
 BSONCXX_INLINE bool operator==(const b_codewscope& lhs, const b_codewscope& rhs) {
-    return lhs.code == rhs.code && lhs.scope == rhs.scope;
+    return stdx::null_blind_strcmp(lhs.code, rhs.code) && lhs.scope == rhs.scope;
 }
 
 ///

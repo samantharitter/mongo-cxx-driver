@@ -115,7 +115,9 @@ functions:
                 set -o errexit
                 set -o xtrace
                 set -o pipefail
-                git clone git@github.com:mongodb-labs/drivers-evergreen-tools.git
+                if [ ! -d "drivers-evergreen-tools" ]; then
+                    git clone git@github.com:mongodb-labs/drivers-evergreen-tools.git
+                fi
                 cd drivers-evergreen-tools
                 # Convert shell script line endings.  TODO: Remove this when
                 # <https://github.com/mongodb-labs/drivers-evergreen-tools/pull/6> is merged.

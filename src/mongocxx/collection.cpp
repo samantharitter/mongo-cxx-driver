@@ -102,7 +102,13 @@ mongocxx::stdx::optional<bsoncxx::document::value> find_and_modify(
         std::unique_ptr<mongoc_find_and_modify_opts_t,
                         std::function<void MONGOCXX_CALL(mongoc_find_and_modify_opts_t*)>>;
 
-    auto opts = unique_opts(mongocxx::libmongoc::find_and_modify_opts_new(), destroy_fam_opts);
+    unique_opts opts{mongoc_find_and_modify_opts_new(), destroy_fam_opts};
+
+    //auto opts = unique_opts(mongocxx::libmongoc::find_and_modify_opts_new(), destroy_fam_opts);
+    if (!opts.get()) {
+	throw mongocxx::logic_error{mongocxx::error_code::k_invalid_parameter, "couldn't construct unique_ptr to opts"};
+	// error...
+    }
 
     bsoncxx::builder::basic::document extra;
     ::bson_error_t error;

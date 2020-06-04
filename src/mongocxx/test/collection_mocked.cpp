@@ -481,13 +481,17 @@ TEST_CASE("Collection", "[collection]") {
                 bson_error_t* error) {
                 find_and_modify_called = true;
 
-                bsoncxx::document::view options_view{bson_get_data(opts), options->len};
+		mongocxx::libbson::scoped_bson_t extra;
+	        mongoc_find_and_modify_opts_get_extra(opts, extra.bson_for_init());
+		bsoncxx::document::view options_view{bson_get_data(extra.bson()), extra.bson()->len};
 
                 if (use_hint) {
                     REQUIRE(options_view["hint"]);
                 } else {
                     REQUIRE(!options_view["hint"]);
                 }
+
+		return true;
             });
 
         SECTION("find_one_and_delete") {}

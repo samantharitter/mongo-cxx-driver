@@ -16,6 +16,9 @@
 
 //#include <mongocxx/config/private/prelude.hh>
 
+#include <fstream>
+#include <sstream>
+
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/builder/stream/helpers.hpp>
 #include <bsoncxx/stdx/string_view.hpp>
@@ -52,6 +55,22 @@ using bsoncxx::builder::stream::close_document;
 using bsoncxx::builder::stream::finalize;
 
 using namespace mongocxx;
+
+    // Takes a path relative to the ENCRYPTION_TESTS_PATH variable, with leading '/'.
+    bsoncxx::document::value _doc_from_file(std::string_view sub_path) {
+	char* encryption_tests_path = std::getenv("ENCRYPTION_TESTS_PATH");
+	std::string path{encryption_tests_path};
+	if (path.back() == '/') {
+	    path.pop_back();
+	}
+
+	std::stringstream stream;
+	std::ifstream file{path + sub_path};
+	REQUIRE(!file.bad());
+	stream << file.rdbuf();
+
+	return bsoncxx::from_json(stream.str());
+    }
 
 void _setup_drop_collections(const client& client) {
     write_concern wc_majority;
@@ -94,27 +113,15 @@ bsoncxx::document::value _make_kms_doc() {
     return {kms_doc.extract()};
 }
 
-void _add_client_encrypted_opts(options::client* client_opts) {
+    void _add_client_encrypted_opts(options::client* client_opts,
+				    bsoncxx::document::view_or_value schema_map,
+				    bsoncxx::document::view_or_value kms_doc,
+				    class client* key_vault_client = nullptr) {
     options::auto_encryption auto_encrypt_opts{};
 
-    // KMS providers
-    auto kms = _make_kms_doc();
-    auto_encrypt_opts.kms_providers(std::move(kms));
-
+    // KMS
+    auto_encrypt_opts.kms_providers(std::move(kms_doc));
     auto_encrypt_opts.key_vault_namespace({"keyvault", "datakeys"});
-
-    // Schema Map
-    auto schema_map = document{} << "db.coll" << open_document << "bsonType"
-                                 << "object"
-                                 << "properties" << open_document << "encrypted_placeholder"
-                                 << open_document << "encrypt" << open_document << "keyId"
-                                 << "/placeholder"
-                                 << "bsonType"
-                                 << "string"
-                                 << "algorithm"
-                                 << "AEAD_AES_256_CBC_HMAC_SHA_512-Random" << close_document
-                                 << close_document << close_document << close_document << finalize;
-
     auto_encrypt_opts.schema_map({std::move(schema_map)});
 
     // For evergreen testing
@@ -135,16 +142,22 @@ void _add_client_encrypted_opts(options::client* client_opts) {
         auto_encrypt_opts.extra_options({cmd.extract()});
     }
 
+    if (key_vault_client) {
+	auto_encrypt_opts.key_vault_client(key_vault_client);
+    }
+
     client_opts->auto_encryption_opts(std::move(auto_encrypt_opts));
 }
 
-void _add_cse_opts(options::client_encryption* opts, class client* client) {
+void _add_cse_opts(options::client_encryption* opts, class client* client = nullptr) {
     // KMS providers
     auto kms = _make_kms_doc();
     opts->kms_providers(std::move(kms));
 
     // Key vault client
-    opts->key_vault_client(client);
+    if (client) {
+	opts->key_vault_client(client);
+    }
 
     // Key vault namespace
     opts->key_vault_namespace({"keyvault", "datakeys"});
@@ -265,8 +278,19 @@ TEST_CASE("Datakey and double encryption", "[client_side_encryption]") {
     _setup_drop_collections(setup_client);
 
     // 3. Create and configure client_encrypted, client_encryption.
+    auto schema_map = document{} << "db.coll" << open_document << "bsonType"
+                                 << "object"
+                                 << "properties" << open_document << "encrypted_placeholder"
+                                 << open_document << "encrypt" << open_document << "keyId"
+                                 << "/placeholder"
+                                 << "bsonType"
+                                 << "string"
+                                 << "algorithm"
+                                 << "AEAD_AES_256_CBC_HMAC_SHA_512-Random" << close_document
+                                 << close_document << close_document << close_document << finalize;    
+
     options::client encrypted_client_opts;
-    _add_client_encrypted_opts(&encrypted_client_opts);
+    _add_client_encrypted_opts(&encrypted_client_opts, _make_kms_doc(), std::move(schema_map));
     class client client_encrypted {
         uri{}, std::move(encrypted_client_opts)
     };
@@ -316,12 +340,228 @@ TEST_CASE("Datakey and double encryption", "[client_side_encryption]") {
         &apm_checker);
 }
 
+    void run_external_key_vault_test(bool with_external_key_vault) {
+	// Create a MongoClient without encryption enabled (referred to as client).
+	class client client{uri{}};
+
+	// Using client, drop the collections keyvault.datakeys and db.coll.
+	_setup_drop_collections(client);
+
+	// Insert the document external/external-key.json into keyvault.datakeys.
+	auto external_key = _doc_from_file("/external/external-key.json");
+	auto external_schema = _doc_from_file("/external/external-schema.json");
+
+	auto datakeys = client["keyvault"]["datakeys"];
+	datakeys.insert_one(external_key.view());
+	auto schema_map = document{} << "db"
+			             << open_document
+				     << "coll"
+				     << external_schema
+				     << close_document
+				     << finalize;
+	
+	// Create the following:
+	//
+	// - A MongoClient configured with auto encryption (referred to as client_encrypted)
+	// - A ClientEncryption object (referred to as client_encryption)
+	//
+	// If withExternalKeyVault == true, configure both objects with an external
+	// key vault client. The external client MUST connect to the same MongoDB
+	// cluster that is being tested against, except it MUST use the username
+	// fake-user and password fake-pwd.
+	class client external_key_vault_client{uri{"mongodb://fake-user:fake-pwd@localhost:27017"}};
+
+	// A MongoClient configured with auto encryption (referred to as client_encrypted)
+	options::client encrypted_client_opts;
+	if (with_external_key_vault) {
+	    _add_client_encrypted_opts(&encrypted_client_opts,
+				       std::move(schema_map),
+				       _make_kms_doc(),
+				       &external_key_vault_client);
+	} else {
+	    _add_client_encrypted_opts(&encrypted_client_opts, std::move(schema_map));
+	}
+	class client client_encrypted {
+				       uri{}, std::move(encrypted_client_opts)
+	};
+
+	// A ClientEncryption object (referred to as client_encryption)
+	options::client_encryption cse_opts;
+	if (with_external_key_vault) {
+	    _add_cse_opts(&cse_opts, &external_key_vault_client);
+	} else {
+	    _add_cse_opts(&cse_opts);
+	}
+
+	client_encryption client_encryption{std::move(cse_opts)};
+
+	// Use client_encrypted to insert the document {"encrypted": "test"} into db.coll.
+	auto doc = make_document(kvp("encrypted", "test"));
+	auto coll = client_encrypted["db"]["coll"];
+
+
+	// If withExternalKeyVault == true, expect an authentication exception to be thrown.
+	// Otherwise, expect the insert to succeed.
+	if (with_external_key_vault) {
+	    REQUIRE_THROWS(coll.insert_one(doc.view()));
+	} else {
+	    coll.insert_one(doc.view());
+	}
+
+	// Use client_encryption to explicitly encrypt the string "test" with key ID
+	// LOCALAAAAAAAAAAAAAAAAA== and deterministic algorithm. If withExternalKeyVault == true,
+	// expect an authentication exception to be thrown. Otherwise, expect the insert to succeed.
+
+	options::encrypt opts;
+	auto key_id = external_key.view()["_id"].get_binary();
+	opts.key_id(key_id);
+	
+	auto test_doc = make_document(kvp("v", "test"));
+	auto value = test_doc.view()["v"].get_value();
+	if (with_external_key_vault) {
+	    REQUIRE_THROWS(client_encryption.encrypt(value, opts));
+	} else {
+	    auto res = client_encryption.encrypt(value, opts);
+	}
+    }
+
 TEST_CASE("External key vault", "[client_side_encryption]") {
-    // TODO CXX-2021
+    run_external_key_vault_test(false);
+    run_external_key_vault_test(true);
 }
 
 TEST_CASE("BSON size limits and batch splitting", "[client_side_encryption]") {
-    // TODO CXX-2021
+    // Create a MongoClient without encryption enabled (referred to as client).
+    class client client {uri{}};
+
+    // Load in json schema limits/limits-schema.json and limits/limits-key.json
+    auto limits_schema = _doc_from_file("/limits/limits-schema.json");
+    auto limits_key = _doc_from_file("limits/limits-key.json");
+
+    // Using client, drop db.coll and keyvault.datakeys.
+    _setup_drop_collections(&client);
+
+    // Create the collection db.coll configured with the JSON schema limits/limits-schema.json.
+    auto db = client["db"];
+    options::create_collection create_opts;
+    validation_criteria validation{};
+    auto cmd = document{} << "create" << "coll"
+			  << "validator" << open_document
+			  << "$jsonSchema" << limits_schema.view()
+			  << close_document << finalize;
+    db.run_command(cmd.view());
+    
+    // Insert the document limits/limits-key.json into keyvault.datakeys.
+    auto datakeys = client["keyvault"]["datakeys"];
+    datakeys.insert_one(limits_key.view());
+
+    // Create a MongoClient configured with auto encryption (referred to as client_encrypted),
+    // with local KMS provider as follows:
+    //     { "local": { "key": <base64 decoding of LOCAL_MASTERKEY> } }
+    // and with the keyVaultNamespace set to keyvault.datakeys.
+    char key_storage[96];
+    memcpy(&(key_storage[0]), kLocalMasterKey, 96);
+    bsoncxx::types::b_binary local_master_key{bsoncxx::binary_sub_type::k_binary, 96, (const uint8_t*)&key_storage};
+
+    auto kms_doc = document{} << "local" << open_document
+			      << "key" << local_master_key
+			      << close_document << finalize;
+
+    options::client client_encrypted_opts;
+    _add_client_encrypted_opts(&client_encrypted_opts, std::move(kms_doc), limits_schema);
+    class client client_encrypted{uri{}, std::move(client_encrypted_opts)};
+
+    // Using client_encrypted perform the following operations:
+    // Insert { "_id": "over_2mib_under_16mib",
+    //          "unencrypted": <the string "a" repeated 2097152 times> }.
+    std::string over_2mib_under_16mib{2097152, "a"};
+    auto over_2mib_under_16mib_doc = make_document(kvp("_id", "over_2mib_under_16mib"),
+						   kvp("unencrypted", over_2mib_under_16mib));
+
+    // Expect this to succeed since this is still under the maxBsonObjectSize limit.
+    auto coll = client_encrypted["db"]["coll"];
+    coll.insert_one(over_2mib_under_16mib_doc.view());
+
+    // Insert the document limits/limits-doc.json concatenated with
+    // { "_id": "encryption_exceeds_2mib",
+    //   "unencrypted": < the string "a" repeated (2097152 - 2000) times > }
+    // Note: limits-doc.json is a 1005 byte BSON document that encrypts to a ~10,000 byte document.
+    std::string encryption_exceeds_2mib{2097152 - 2000, "a"};
+    auto limits_doc = _doc_from_file("/limits/limits-doc.json");
+    auto encryption_exceeds_2mib_doc = document{} << "_id" << "encryption_exceeds_2mib"
+						  << "unencrypted" << encryption_exceeds_2mib
+						  << concatenate(limits_doc.view())
+						  << finalize;
+
+    // Expect this to succeed since after encryption this still is below the normal
+    // maximum BSON document size. Note, before auto encryption this document is under
+    // the 2 MiB limit. After encryption it exceeds the 2 MiB limit, but does NOT exceed
+    // the 16 MiB limit.
+    coll.insert_one(encryption_exceeds_2mib_doc.view());
+
+    // Bulk insert the following:
+    // { "_id": "over_2mib_1", "unencrypted": <the string "a" repeated (2097152) times> }
+    // { "_id": "over_2mib_2", "unencrypted": <the string "a" repeated (2097152) times> }
+    auto over_2mib_1 = document{} << "_id" << "over_2mib_1"
+				  << "unencrypted" << over_2mib_under_16mib
+				  << finalize;
+    auto over_2mib_2 = document{} << "_id" << "over_2mib_2"
+				  << "unencrypted" << over_2mib_under_16mib
+				  << finalize;
+
+    std::vector<bsoncxx::document::view> docs;
+    docs.push_back(std::move(over_2mib_1));
+    docs.push_back(std::move(over_2mib_2));
+
+    // Expect the bulk write to succeed and split after first doc (i.e. two inserts occur).
+    // Note: C++ driver does not verify using command monitoring, as splitting logic is handled by
+    // the C driver.
+    auto res = coll.insert_many(docs);
+    REQUIRE(res.inserted_count() == 2);
+
+    // Bulk insert the following:
+
+    // The document limits/limits-doc.json concatenated with
+    // { "_id": "encryption_exceeds_2mib_1",
+    //   "unencrypted": < the string "a" repeated (2097152 - 2000) times > }
+    // The document limits/limits-doc.json concatenated with
+    // { "_id": "encryption_exceeds_2mib_2",
+    //   "unencrypted": < the string "a" repeated (2097152 - 2000) times > }
+    docs.clear();
+    auto concat_1 = document{} << "_id" << "encryption_exceeds_2mib_1"
+			       << "unencrypted" << encryption_exceeds_2mib
+			       << concatenate(limits_doc.view())
+			       << finalize;
+    auto concat_2 = document{} << "_id" << "encryption_exceeds_2mib_2"
+			       << "unencrypted" << encryption_exceeds_2mib
+			       << concatenate(limits_doc.view())
+			       << finalize;
+    
+    // Expect the bulk write to succeed.
+    res = coll.insert_many(docs);
+    REQUIRE(res.inserted_count() == 2);
+
+    // Insert { "_id": "under_16mib", "unencrypted": <the string "a" repeated 16777216 - 2000 times> }
+    std::string under_16mib{16777216 - 2000, "a"};
+    auto under_16mib_doc = document{} << "_id" << "under_16mib"
+				      << "unencrypted" << under_16mib << finalize;
+
+    // Expect this to succeed since this is still (just) under the maxBsonObjectSize limit.
+    coll.insert_one(under_16mib_doc.view());
+
+    // Insert the document limits/limits-doc.json concatenated with
+    // { "_id": "encryption_exceeds_16mib",
+    //   "unencrypted": < the string "a" repeated (16777216 - 2000) times > }
+    auto encryption_exceeds_16mib << document{} << "_id" << "encryption_exceeds_16mib"
+				  << "unencrypted" << under_16mib
+				  << concatenate(limits_doc.view())
+				  << finalize;
+
+    // Expect this to fail since encryption results in a document exceeding
+    // the maxBsonObjectSize limit.
+    REQUIRE_THROWS(coll.insert_one(encryption_exceeds_16mib));
+
+    // Optionally, if it is possible to mock the maxWriteBatchSize (i.e. the maximum number of documents in a batch) test that setting maxWriteBatchSize=1 and inserting the two documents { "_id": "a" }, { "_id": "b" } with client_encrypted splits the operation into two inserts. */
 }
 
 TEST_CASE("Views are prohibited", "[client_side_encryption]") {

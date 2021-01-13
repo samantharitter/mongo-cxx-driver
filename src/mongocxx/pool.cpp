@@ -74,6 +74,22 @@ pool::pool(const uri& uri, const options::pool& options)
         }
     }
 
+    if (options.client_opts().server_api()) {
+	const auto& server_api = *options.server_api();
+	const mongoc_server_api = static_cast<mongoc_server_api_t*>(server_api.convert());
+
+	bson_error_t error;
+	auto r = libmongoc::client_pool_set_server_api(
+	    _impl->client_pool_t, mongoc_server_api, &error);
+
+	libmongoc::server_api_destroy(mongoc_server_api);
+
+	if (!r) {
+	    throw_exception<operation_exception>(error);
+	}
+
+    }
+
     if (options.client_opts().apm_opts()) {
         _impl->listeners = *options.client_opts().apm_opts();
         auto callbacks = options::make_apm_callbacks(_impl->listeners);

@@ -55,6 +55,16 @@ const stdx::optional<auto_encryption>& client::auto_encryption_opts() const {
     return _auto_encrypt_opts;
 }
 
+    client& client::server_api(server_api server_api_opts) {
+	_server_api = std::move(server_api_opts);
+	return *this;
+    }
+
+    const stdx::optional<server_api>& client::server_api() const {
+	return _server_api;
+    }
+
+
 }  // namespace options
 MONGOCXX_INLINE_NAMESPACE_END
 }  // namespace mongocxx

@@ -22,9 +22,14 @@
 #include <mongocxx/options/apm.hpp>
 #include <mongocxx/options/auto_encryption.hpp>
 #include <mongocxx/options/tls.hpp>
+#include <mongocxx/server_api.hpp>
 
 namespace mongocxx {
 MONGOCXX_INLINE_NAMESPACE_BEGIN
+
+class client;
+    class pool;
+    
 namespace options {
 
 // NOTE: client options interface still evolving
@@ -116,10 +121,35 @@ class MONGOCXX_API client {
     ///
     const stdx::optional<apm>& apm_opts() const;
 
+   ///
+   /// Sets the current server API options.
+   ///
+   /// @param server_api
+   ///   The server API options.
+   ///
+   /// @return
+   ///   A reference to this object to facilitate method chaining.
+   ///
+   client& server_api(server_api server_api_opts);
+
+   ///
+   /// Gets the current server API options.
+   ///
+   /// @return
+   ///   The current server API options.
+   ///
+   const stdx::optional<server_api>& server_api() const;
+
    private:
-    stdx::optional<tls> _tls_opts;
+   friend class mongocxx::client;
+   friend class mongocxx::pool;
+
+   MONGOCXX_PRIVATE void* convert() const;
+
+   stdx::optional<tls> _tls_opts;
     stdx::optional<apm> _apm_opts;
     stdx::optional<auto_encryption> _auto_encrypt_opts;
+   stdx::optional<server_api> _server_api;
 };
 
 }  // namespace options

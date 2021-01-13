@@ -173,6 +173,7 @@ set(mongocxx_sources
     result/insert_one.cpp
     result/replace_one.cpp
     result/update.cpp
+    server_api.cpp
     uri.cpp
     validation_criteria.cpp
     write_concern.cpp
@@ -455,6 +456,8 @@ set_local_dist (src_mongocxx_DIST_local
    result/replace_one.hpp
    result/update.cpp
    result/update.hpp
+   server_api.cpp
+   server_api.hpp
    stdx.hpp
    test_util/client_helpers.cpp
    test_util/client_helpers.hh

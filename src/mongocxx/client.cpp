@@ -110,6 +110,21 @@ client::client(const class uri& uri, const options::client& options) {
         }
     }
 
+    if (options.server_api()) {
+	const auto& server_api = *options.server_api();
+	const mongoc_server_api = static_cast<mongoc_server_api_t*>(server_api.convert());
+
+	bson_error_t error;
+	auto r = libmongoc::client_set_server_api(
+	    _get_impl().client_t, mongoc_server_api, &error);
+
+	libmongoc::server_api_destroy(mongoc_server_api);
+
+	if (!r) {
+	    throw_exception<operation_exception>(error);
+	}
+    }
+
 #if defined(MONGOCXX_ENABLE_SSL) && defined(MONGOC_ENABLE_SSL)
     if (options.tls_opts()) {
         auto mongoc_opts = options::make_tls_opts(*options.tls_opts());
